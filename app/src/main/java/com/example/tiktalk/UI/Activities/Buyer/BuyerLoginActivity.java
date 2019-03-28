@@ -12,7 +12,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.EditText; 
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -133,10 +133,7 @@ public class BuyerLoginActivity extends BaseActivity {
             public void onSuccess(LoginResult loginResult) {
 
 //                        Toast.makeText(BuyerLoginActivity.this, "Success Login Success", Toast.LENGTH_SHORT).show();
-
                 handleFacebookAccessToken(loginResult.getAccessToken());
-                Intent in = new Intent(BuyerLoginActivity.this, BuyerDashboard.class);
-                startActivity(in);
             }
 
             @Override
@@ -364,6 +361,8 @@ public class BuyerLoginActivity extends BaseActivity {
             }
         } else {
 
+            dialog.setMessage("Signing in...");
+            dialog.show();
             callbackManager.onActivityResult(requestCode, resultCode, data);
 //            super.onActivityResult(requestCode, resultCode, data);
         }

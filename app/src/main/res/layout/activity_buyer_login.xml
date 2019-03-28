@@ -124,7 +124,7 @@
                     android:inputType="textEmailAddress"
                     android:paddingLeft="60dp"
                     android:singleLine="true"
-                    android:text="buyer@mailinator.com" />
+                     />
 
                 <ImageView
                     android:id="@+id/check"
@@ -155,7 +155,7 @@
                     android:inputType="textPassword"
                     android:paddingLeft="60dp"
                     android:singleLine="true"
-                    android:text="buyer123" />
+                     />
 
                 <TextView
                     android:id="@+id/forget_textView"
