@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5CA4FC</color>
+    <color name="colorPrimaryDark">#5CA4FC</color>
+    <color name="colorAccent">#5CA4FC</color>
+    <color name="signupColor">#00BCD4</color>
+    <color name="themeColor">#5CA4FC</color>
+    <color name="textColor">#000</color>
+    <color name="lightGray">#DCDCDC</color>
+    <color name="purple">#63029D</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="colorText">#346da3</color>
+    <color name="grey">#b7b7b7</color>
+    <color name="mgrey">#d9d7d7</color>
+    <color name="lgrey">#f1f1f1</color>
+    <color name="red">#ff0303</color>
+    <color name="pie_green">#85e6b6</color>
+    <color name="CornflowerBlue">#6495ed</color>
+    <color name="orange">#FFEA6C12</color>
+    <color name="sinch_purple">#ff63029d</color>
+    <color name="off_white">#fffafafa</color>
+    <color name="greyish">#fff2f1f2</color>
+    <color name="colorRouteLine">@color/colorAccent</color>
+    <color name="SkyBlue">#1e90ff</color>
+
+
+
+    <color name="wallet_bright_foreground_holo_dark">#fff3f3f3</color>
+
+    <color name="black_overlay">#66000000</color>
+    <color name="black">#000000</color>
+
+
+    <!-- Open Chat -->
+    <color name="openChatText">#47505d</color>
+    <color name="openChatNicknameOther">#3a414d</color>
+    <color name="openChatNicknameMe">#00BCD4</color>
+
+    <!-- Group Chat -->
+    <color name="groupChatBubbleMe">#774df2</color>
+    <color name="groupChatTextMe">#ffffff</color>
+    <color name="groupChatBubbleOther">#eef1f6</color>
+    <color name="groupChatTextOther">#000000</color>
+
+    <color name="groupChatReadReceiptMe">#1fcc94</color>
+    <color name="groupChatReadReceiptOther">#00BCD4</color>
+
+    <color name="groupChatAdminBackground">#e0fcff</color>
+    <color name="groupChatAdminText">#39474e</color>
+
+    <color name="groupChatDateText">#ffffff</color>
+    <color name="groupChatDateBackground">#C0C0C0</color>
+
+    <!-- Group Channel List -->
+    <color name="groupChannelUnreadCountBackground">#7d62df</color>
+    <color name="groupChannelUnreadCountText">#ffffff</color>
+
+    <!-- Selector -->
+    <color name="btn_create">#ffffff</color>
+    <color name="btn_create_disabled">#c1acff</color>
+    <color name="btn_edit">#ffffff</color>
+    <color name="btn_edit_disabled">#c1acff</color>
+    <color name="btn_send">#774df2</color>
+    <color name="btn_send_disabled">#8e8e8e</color>
+</resources>

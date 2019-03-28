@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.tiktalk">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerDashboard"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity android:name=".SendBird.PhotoViewerActivity" />
+        <activity android:name=".SendBird.MediaPlayerActivity" />
+        <activity android:name=".SendBird.SendbirdChatActivity" />
+        <activity
+            android:name=".Sinch.LoginActivity"
+            android:label="Log In" />
+        <activity
+            android:name=".Sinch.CallActivity"
+            android:label="Make a Call"
+            android:screenOrientation="portrait" />
+        <activity android:name=".UI.Activities.SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".UI.Activities.Seller.SellerDashboardActivity"
+            android:label="@string/title_activity_seller_dashboard"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerHomeActivity"
+            android:label="@string/title_activity_dashboard"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerLoginActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Seller.SellerLoginActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".UI.Activities.Buyer.BuyerSignupActivity" />
+        <activity android:name=".UI.Activities.Seller.SellerSignupActivity" />
+        <activity android:name=".UI.Activities.Buyer.UploadPhotoActivity" />
+        <activity android:name=".UI.Activities.Seller.UploadPhotoActivity" />
+        <activity android:name=".UI.Activities.Buyer.BuyerProfileActivity" />
+        <activity android:name=".UI.Activities.Seller.SellerProfileActivity" />
+        <activity android:name=".UI.Activities.ResetPasswordActivity" />
+        <activity
+            android:name=".UI.Activities.NumberVerificationActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".UI.Activities.Buyer.BuyerSettingsActivity" />
+        <activity android:name=".UI.Activities.Seller.SellerSettingsActivity" />
+        <activity android:name=".UI.Activities.Buyer.BuyerChatActivity" />
+        <activity android:name=".UI.Activities.AllSellerActivity" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerRatingActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".UI.Activities.Buyer.BuyerCallActivity" />
+        <activity android:name=".UI.Activities.Seller.SellerCallDetailsActivity" />
+        <activity android:name=".UI.Activities.WithdrawActivity" />
+
+        <service android:name=".AppServices.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".AppServices.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".Sinch.SinchService" />
+
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
+    </application>
+
+</manifest>

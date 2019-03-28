@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/menu_bg">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/mytoolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@android:color/white">
+
+        <Button
+            android:id="@+id/close_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/cancel" />
+
+        <Button
+            android:id="@+id/settings_btn"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/settings"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/menu_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Menu"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="36sp"
+        android:layout_below="@id/mytoolbar"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/home_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@id/menu_textView"
+        android:drawableLeft="@drawable/home"
+        android:drawablePadding="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/wallet_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Wallet"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@id/home_textView"
+        android:drawableLeft="@drawable/my_wallets"
+        android:drawablePadding="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/inbox_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inbox"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@id/wallet_textView"
+        android:drawableLeft="@drawable/inbox"
+        android:drawablePadding="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/notification_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notification"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@id/inbox_textView"
+        android:drawableLeft="@drawable/notification"
+        android:drawablePadding="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/contact_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@id/notification_textView"
+        android:drawableLeft="@drawable/contact"
+        android:drawablePadding="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/logout_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@id/contact_textView"
+        android:drawableLeft="@drawable/logout"
+        android:drawablePadding="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="30dp"/>
+
+        <android.support.v7.widget.CardView
+            app:cardCornerRadius="30dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:elevation="10dp"
+            android:layout_marginBottom="60dp">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/buyer_image"
+                android:src="@drawable/nine"
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="30dp"
+                app:riv_border_width="3dp"
+                app:riv_border_color="#FFF"
+                app:riv_mutate_background="true"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
+
+        </android.support.v7.widget.CardView>
+
+</RelativeLayout>

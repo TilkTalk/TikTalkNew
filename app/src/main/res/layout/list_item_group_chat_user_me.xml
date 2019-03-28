@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:clickable="true"
+    android:paddingRight="8dp">
+
+    <View
+        android:id="@+id/view_group_chat_padding"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/text_group_chat_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@id/view_group_chat_padding"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/group_chat_date_background"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        android:text="February 22"
+        android:textColor="@color/groupChatDateText"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:layout_below="@id/text_group_chat_date">
+
+        <TextView
+            android:id="@+id/text_group_chat_read_receipt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text=""
+            android:textColor="@color/groupChatReadReceiptMe"
+            android:textSize="10dp"
+            android:textStyle="bold"
+            android:layout_gravity="bottom"/>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/card_group_chat_message"
+            android:layout_below="@id/text_group_chat_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
+            card_view:cardUseCompatPadding="true"
+            android:paddingEnd="15dp"
+            card_view:cardElevation="4dp"
+            card_view:cardCornerRadius="5dp">
+
+            <!--app:cardElevation="4dp"-->
+            <!--app:cardCornerRadius="12dp"-->
+            <!--app:cardBackgroundColor="@color/groupChatBubbleMe"-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:background="@drawable/linearlayout_bg_blue">
+
+
+
+                <LinearLayout
+                    android:id="@+id/group_chat_message_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_group_chat_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="288dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="8dp"
+                        android:paddingRight="25dp"
+                        android:text="Hi, how are you today?"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                    <!--android:textColor="@color/groupChatTextMe"-->
+                    <TextView
+                        android:id="@+id/text_group_chat_edited"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:text="(edited)"
+                        android:textColor="#d8ceff"
+                        android:textSize="14sp"
+                        android:visibility="gone" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp" />
+
+                    <LinearLayout
+                        android:id="@+id/url_preview_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginRight="12dp"
+                            android:layout_marginBottom="8dp"
+                            android:background="@android:color/darker_gray"
+                            android:maxWidth="264dp" />
+
+                        <TextView
+                            android:id="@+id/text_url_preview_site_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxWidth="288dp"
+                            android:maxLines="1"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:text="\@Reddit"
+                            android:textColor="@color/white"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/text_url_preview_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxWidth="288dp"
+                            android:maxLines="1"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:text="Title will be here."
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/text_url_preview_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxWidth="288dp"
+                            android:maxLines="3"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:paddingBottom="4dp"
+                            android:text="Description will be here. Blah Blah WWW Blah Wl Blah W WW WW ABCD EFG WW WW WW W Third Line. WWW Z XCVB QWER"
+                            android:textColor="@color/white"
+                            android:textSize="12sp" />
+
+                        <ImageView
+                            android:id="@+id/image_url_preview_main"
+                            android:layout_width="match_parent"
+                            android:layout_height="148dp"
+                            android:adjustViewBounds="true"
+                            android:maxWidth="288dp"
+                            android:scaleType="centerCrop" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/text_group_chat_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="21:27"
+                        android:textColor="@color/white"
+                        android:textSize="10dp"
+                        android:layout_gravity="right"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="3dp">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/userImage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@mipmap/user"
+                    app:riv_border_color="#FFF"
+                    app:riv_border_width="1dp"
+                    app:riv_corner_radius="10dp"
+                    app:riv_mutate_background="true" />
+
+            <ImageView
+                android:id="@+id/uploadPhoto_btn"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/online_icon" />
+
+        </RelativeLayout>
+
+        <!--<ImageView
+            android:id="@+id/userImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:elevation="4dp"
+            android:layout_gravity="bottom"
+            android:src="@mipmap/user"
+            android:layout_marginBottom="3dp"/>-->
+
+    </LinearLayout>
+
+    <!--<android.support.v7.widget.CardView
+        android:id="@+id/card_group_chat_message"
+        android:layout_below="@id/text_group_chat_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="18dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        card_view:cardUseCompatPadding="true"
+        android:paddingEnd="15dp"
+        card_view:cardElevation="4dp"
+        card_view:cardCornerRadius="3dp">
+
+        &lt;!&ndash;app:cardElevation="4dp"&ndash;&gt;
+        &lt;!&ndash;app:cardCornerRadius="12dp"&ndash;&gt;
+        &lt;!&ndash;app:cardBackgroundColor="@color/groupChatBubbleMe"&ndash;&gt;
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+
+
+            <LinearLayout
+                android:id="@+id/group_chat_message_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_group_chat_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="288dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="25dp"
+                    android:text="Hi, how are you today?"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+                &lt;!&ndash;android:textColor="@color/groupChatTextMe"&ndash;&gt;
+                <TextView
+                    android:id="@+id/text_group_chat_edited"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:text="(edited)"
+                    android:textColor="#d8ceff"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/url_preview_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/darker_gray"
+                        android:maxWidth="264dp" />
+
+                    <TextView
+                        android:id="@+id/text_url_preview_site_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="288dp"
+                        android:maxLines="1"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:text="\@Reddit"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/text_url_preview_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="288dp"
+                        android:maxLines="1"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:text="Title will be here."
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/text_url_preview_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="288dp"
+                        android:maxLines="3"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingBottom="4dp"
+                        android:text="Description will be here. Blah Blah WWW Blah Wl Blah W WW WW ABCD EFG WW WW WW W Third Line. WWW Z XCVB QWER"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/image_url_preview_main"
+                        android:layout_width="match_parent"
+                        android:layout_height="148dp"
+                        android:adjustViewBounds="true"
+                        android:maxWidth="288dp"
+                        android:scaleType="centerCrop" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+    <ImageView
+        android:id="@+id/userImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:elevation="4dp"
+        android:layout_alignBottom="@+id/card_group_chat_message"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="-15dp"
+        android:layout_marginBottom="-15dp"
+        android:layout_gravity="bottom"
+        android:background="@color/black"
+        android:layout_marginLeft="3dp"
+        android:src="@mipmap/user" />-->
+    <!--<TextView
+        android:id="@+id/text_group_chat_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/card_group_chat_message"
+        android:layout_marginBottom="4dp"
+        android:layout_alignStart="@+id/card_group_chat_message"
+        android:layout_marginStart="5dp"
+        android:text="21:27"
+        android:textColor="#8e8e8e"
+        android:textSize="10dp" />-->
+
+    <!--<TextView
+        android:id="@+id/text_group_chat_read_receipt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/card_group_chat_message"
+        android:layout_toStartOf="@id/card_group_chat_message"
+        android:layout_marginBottom="5dp"
+        android:text=""
+        android:textColor="@color/groupChatReadReceiptMe"
+        android:textSize="10dp"
+        android:textStyle="bold" />-->
+
+
+</RelativeLayout>
