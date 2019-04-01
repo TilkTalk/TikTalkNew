@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,12 @@ import com.example.tiktalk.UI.Fragments.Buyer.BuyerHome;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -63,6 +69,7 @@ public class BuyerDashboard extends BaseActivity
     BuyCoinsAdapter adaper;
     CoinsCategory buyCoins;
     String coins;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,12 @@ public class BuyerDashboard extends BaseActivity
         setSupportActionBar(toolbar);
 
         firestore = FirebaseFirestore.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         buyer_image = findViewById(R.id.buyer_image);
         Glide.with(BuyerDashboard.this).load(PreferenceUtils.getImageUrl(BuyerDashboard.this)).into(buyer_image);
 
@@ -132,7 +145,7 @@ public class BuyerDashboard extends BaseActivity
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots){
+                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
                                     CoinsCategory cc = new CoinsCategory(
                                             documentSnapshot.getString("coins"),
@@ -186,7 +199,8 @@ public class BuyerDashboard extends BaseActivity
                                             }
                                         });
 
-                                        dialog2.show();                                    }
+                                        dialog2.show();
+                                    }
                                 });
                                 alert.show();
                             }
@@ -211,7 +225,7 @@ public class BuyerDashboard extends BaseActivity
                 drawer.closeDrawers();
             }
         });
-}
+    }
 
     @Override
     public void onBackPressed() {
@@ -283,16 +297,18 @@ public class BuyerDashboard extends BaseActivity
             map.put("isOnline", "0");
 
             firestore.collection("users")
-                    .document(PreferenceUtils.getId(this))
+                    .document(PreferenceUtils.getId(BuyerDashboard.this))
                     .update(map);
 
             FirebaseAuth.getInstance().signOut();
+            mGoogleSignInClient.signOut();
             LoginManager.getInstance().logOut();
             PreferenceUtils.clearMemory(getApplicationContext());
 
             Intent intent = new Intent(BuyerDashboard.this, BuyerLoginActivity.class);
             startActivity(intent);
             finish();
+
 
         }
 

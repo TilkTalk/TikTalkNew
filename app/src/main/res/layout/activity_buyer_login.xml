@@ -112,19 +112,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="30dp"
                 android:background="@drawable/edit_text_shadow"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="2dp">
 
                 <EditText
                     android:id="@+id/login_email"
                     android:layout_width="300dp"
                     android:layout_height="48dp"
                     android:layout_marginTop="14dp"
-                    android:background="@color/white"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
                     android:paddingLeft="60dp"
                     android:singleLine="true"
-                     />
+                    android:background="@drawable/view_bg"/>
 
                 <ImageView
                     android:id="@+id/check"
@@ -154,8 +154,7 @@
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:paddingLeft="60dp"
-                    android:singleLine="true"
-                     />
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/forget_textView"
@@ -178,25 +177,36 @@
                 android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
 
-                <RelativeLayout
+                <!--<RelativeLayout
+                    android:id="@+id/loginBtn_layout"
                     android:layout_width="120dp"
                     android:layout_height="70dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/login_btn">
+                    android:layout_marginBottom="8dp">
 
                     <Button
                         android:id="@+id/login_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginTop="2dp"
-                        android:background="@color/transparent"
+                        android:paddingTop="5dp"
+                        android:background="@drawable/login_btn"
                         android:text="login"
-                        android:textColor="@android:color/white" />
+                        android:textColor="@android:color/white"
+                        android:gravity="center_horizontal"/>
 
-                </RelativeLayout>
+                </RelativeLayout>-->
+
+                <Button
+                    android:id="@+id/login_btn"
+                    android:layout_width="110dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/login_btn_bg"
+                    android:text="login"
+                    android:textColor="@android:color/white" />
 
                 <com.facebook.login.widget.LoginButton
                     android:id="@+id/login_with_facebook"
@@ -209,10 +219,10 @@
                     android:id="@+id/facebookSignInBtn"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginRight="16dp"
                     android:background="@drawable/facebook" />
-
 
                 <Button
                     android:id="@+id/googleSignInBtn"

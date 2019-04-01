@@ -52,6 +52,14 @@ public class PreferenceUtils {
         return true;
     }
 
+    public static boolean saveId(String id, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString("id", id);
+        prefsEditor.apply();
+        return true;
+    }
+
     public static boolean saveImageUrl(String imageUrl, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = prefs.edit();

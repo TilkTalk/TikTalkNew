@@ -12,10 +12,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText; 
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,17 +58,21 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 import spencerstudios.com.bungeelib.Bungee;
 
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
+
 public class BuyerLoginActivity extends BaseActivity {
 
     private static int RC_SIGN_IN = 123;
     private static String TAG = "BuyerLoginActivity";
     private static final String APP_ID = "4B0405B2-D5BD-49F5-B912-C9F7C009F374";
+    private GoogleSignInClient mGoogleSignInClient;
 
     ProgressBar progressBar;
     ProgressDialog dialog;
@@ -123,6 +129,29 @@ public class BuyerLoginActivity extends BaseActivity {
         password_layout = findViewById(R.id.password_layout);
         regButton_fb = (LoginButton) findViewById(R.id.login_with_facebook);
 
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        // [END build_client]
+
+        PushDownAnim.setPushDownAnimTo(googleSignInBtn)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        signIn();
+                    }
+                });
+
         //Facebook button
 
         callbackManager = CallbackManager.Factory.create();
@@ -146,7 +175,7 @@ public class BuyerLoginActivity extends BaseActivity {
             public void onError(FacebookException exception) {
 //                progressDialog.dismiss();
                 System.out.println("onError");
-                Toast.makeText(BuyerLoginActivity.this, "onError"+exception.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(BuyerLoginActivity.this, "onError" + exception.toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -159,7 +188,7 @@ public class BuyerLoginActivity extends BaseActivity {
             }
         });
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        /*GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
@@ -173,7 +202,7 @@ public class BuyerLoginActivity extends BaseActivity {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
-        });
+        });*/
 
 
         signupBtn.setOnClickListener(new View.OnClickListener() {
@@ -199,13 +228,19 @@ public class BuyerLoginActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                if (emailEditText.getText().toString().contains(".com")){
+                if (emailEditText.getText().toString().contains(".com")) {
                     check.setVisibility(View.VISIBLE);
-                }
-                else
+                } else
                     check.setVisibility(View.GONE);
             }
         });
+
+        PushDownAnim.setPushDownAnimTo(loginBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,6 +265,18 @@ public class BuyerLoginActivity extends BaseActivity {
             }
         });
     }
+
+    /*@Override
+    public void onStart() {
+        super.onStart();
+
+        // [START on_start_sign_in]
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        updateUI(account);
+        // [END on_start_sign_in]
+    }*/
 
     @Override
     public void initializeComponents() {
@@ -256,7 +303,7 @@ public class BuyerLoginActivity extends BaseActivity {
                             boolean newuser = task.getResult().getAdditionalUserInfo().isNewUser();
                             final FirebaseUser userDetails = auth.getCurrentUser();
 
-                            if (newuser){
+                            if (newuser) {
 
                                 final HashMap<String, String> users = new HashMap<String, String>();
                                 users.put("id", userDetails.getUid());
@@ -283,10 +330,10 @@ public class BuyerLoginActivity extends BaseActivity {
                                                 dialog.dismiss();
                                                 Intent in = new Intent(BuyerLoginActivity.this, BuyerDashboard.class);
                                                 startActivity(in);
+                                                finish();
                                             }
                                         });
-                            }
-                            else{
+                            } else {
 
                                 HashMap<String, Object> online = new HashMap<String, Object>();
                                 online.put("isOnline", "1");
@@ -324,6 +371,7 @@ public class BuyerLoginActivity extends BaseActivity {
                                                     dialog.dismiss();
                                                     Intent intent = new Intent(BuyerLoginActivity.this, BuyerDashboard.class);
                                                     startActivity(intent);
+                                                    finish();
                                                 }
                                             }
                                         });
@@ -339,7 +387,7 @@ public class BuyerLoginActivity extends BaseActivity {
                 });
     }
 
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
 
@@ -366,14 +414,163 @@ public class BuyerLoginActivity extends BaseActivity {
             callbackManager.onActivityResult(requestCode, resultCode, data);
 //            super.onActivityResult(requestCode, resultCode, data);
         }
-    }
+    }*/
 
-    @Override
+   /* @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
         //updateUI(currentUser);
+    }*/
+
+    // [START onActivityResult]
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+        else {
+
+            dialog.setMessage("Signing in...");
+            dialog.show();
+            super.onActivityResult(requestCode, resultCode, data);
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+    // [END onActivityResult]
+
+    // [START handleSignInResult]
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
+            // Signed in successfully, show authenticated UI.
+            updateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            updateUI(null);
+        }
+    }
+    // [END handleSignInResult]
+
+    // [START signIn]
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    // [END signIn]
+
+    private void updateUI(@Nullable GoogleSignInAccount account) {
+        if (account != null) {
+
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            auth.signInWithCredential(credential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+
+                                boolean newuser = task.getResult().getAdditionalUserInfo().isNewUser();
+                                final FirebaseUser userDetails = auth.getCurrentUser();
+
+                                if (newuser) {
+
+                                    final HashMap<String, String> users = new HashMap<String, String>();
+                                    users.put("id", userDetails.getUid());
+                                    users.put("username", userDetails.getDisplayName());
+                                    users.put("email", userDetails.getEmail());
+                                    users.put("password", "");
+                                    users.put("imageUrl", String.valueOf(userDetails.getPhotoUrl()));
+                                    users.put("IsActive", isActive);
+                                    users.put("Type", type);
+                                    users.put("isOnline", isOnline);
+                                    users.put("coins", coins);
+
+                                    firestore.collection("users")
+                                            .document(userDetails.getUid())
+                                            .set(users)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+
+                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), BuyerLoginActivity.this);
+
+                                                    MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+
+                                                    dialog.dismiss();
+                                                    Intent in = new Intent(BuyerLoginActivity.this, BuyerDashboard.class);
+                                                    startActivity(in);
+                                                    finish();
+                                                }
+                                            });
+
+                                } else {
+                                    //Continue with Sign up
+
+                                    firestore.collection("users")
+                                            .document(userDetails.getUid())
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+
+                                                        DocumentSnapshot dc = task.getResult();
+
+                                                        user.username = dc.getString("username");
+                                                        user.email = dc.getString("email");
+                                                        user.password = dc.getString("password");
+                                                        user.IsActive = dc.getString("IsActive");
+                                                        user.Type = dc.getString("Type");
+                                                        user.id = dc.getString("id");
+                                                        user.imageUrl = dc.getString("imageUrl");
+                                                        user.isOnline = dc.getString("isOnline");
+                                                        user.coins = dc.getString("coins");
+
+//                                                connectToSendBird(userId, userNickname);
+
+                                                        PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
+
+                                                        MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+
+                                                        dialog.dismiss();
+                                                        Intent intent = new Intent(BuyerLoginActivity.this, BuyerDashboard.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                }
+                                            });
+                                }
+
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "signInWithCredential:success");
+//                            FirebaseUser user = auth.getCurrentUser();
+//                            Toast.makeText(BuyerLoginActivity.this, user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                                //updateUI(user);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "signInWithCredential:failure", task.getException());
+//                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                                Toast.makeText(BuyerLoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                                //updateUI(null);
+                            }
+
+                            // ...
+                        }
+                    });
+
+        } else {
+            Toast.makeText(this, "Not available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -389,7 +586,7 @@ public class BuyerLoginActivity extends BaseActivity {
                             boolean newuser = task.getResult().getAdditionalUserInfo().isNewUser();
                             final FirebaseUser userDetails = auth.getCurrentUser();
 
-                            if(newuser){
+                            if (newuser) {
 
                                 final HashMap<String, String> users = new HashMap<String, String>();
                                 users.put("id", userDetails.getUid());
@@ -420,7 +617,7 @@ public class BuyerLoginActivity extends BaseActivity {
                                             }
                                         });
 
-                            }else{
+                            } else {
                                 //Continue with Sign up
 
                                 firestore.collection("users")

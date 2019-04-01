@@ -66,6 +66,7 @@ dependencies {
     implementation 'com.andrognito.flashbar:flashbar:1.0.2'
     implementation 'com.crowdfire.cfalertdialog:cfalertdialog:1.1.0'
     implementation 'com.orhanobut:dialogplus:1.11@aar'
+    implementation 'com.sdsmdg.harjot:materialshadows:1.2.5'
 
     implementation 'com.facebook.android:facebook-android-sdk:4.14.1'
     //    SINCH
@@ -75,6 +76,10 @@ dependencies {
     implementation 'com.sendbird.sdk:sendbird-android-sdk:3.0.90'
 
     implementation files('libs/sinch-android-rtc-3.8.0-VIDEO-SNAPSHOT.jar')
+
+    implementation ( 'com.github.thekhaeng:pushdown-anim-click:1.1.1' ){
+        exclude group: 'com.android.support'
+    }
 }
 repositories {
     mavenCentral()

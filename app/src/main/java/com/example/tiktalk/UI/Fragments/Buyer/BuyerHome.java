@@ -78,6 +78,9 @@ public class BuyerHome extends BaseFragment implements TopRatedSellersAdapter.On
     User user;
 
     String sellerId, SellerName, SellerImage, sellerName, coinPerMin, SellerRating;
+    String firstName;
+    String middleName;
+    String lastName;
 
     @Override
     public void initializeComponents(View rootView) {
@@ -89,7 +92,20 @@ public class BuyerHome extends BaseFragment implements TopRatedSellersAdapter.On
         buyer_name = rootView.findViewById(R.id.buyer_name);
         home_layout = rootView.findViewById(R.id.home_layout);
 
-        buyer_name.setText(PreferenceUtils.getUsername(getContext()));
+        String[] fullName = PreferenceUtils.getUsername(getContext()).split(" ");
+
+        if (fullName.length == 2){
+            firstName = fullName[0].trim();
+            lastName = fullName[1].trim();
+        }
+
+        if (fullName.length == 3){
+            firstName = fullName[0].trim();
+            middleName = fullName[1].trim();
+            lastName = fullName[2].trim();
+        }
+
+        buyer_name.setText(lastName);
 
         if (checkPermission()) {
 
