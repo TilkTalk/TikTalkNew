@@ -89,7 +89,7 @@
 
     <com.ncorti.slidetoact.SlideToActView
         android:id="@+id/call_end"
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         app:text="Slide to End"
         app:outer_color="#71B0FF"

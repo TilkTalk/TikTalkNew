@@ -1,25 +1,41 @@
 package com.example.tiktalk.UI.Activities.Buyer;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.BuyCoinsAdapter;
+import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
 import com.example.tiktalk.Adapters.OnlineSellersAdapter;
 import com.example.tiktalk.Adapters.TopRatedSellersAdapter;
 import com.example.tiktalk.BaseClasses.BaseActivity;
+import com.example.tiktalk.MessageModule.ChannelsList_Fragment;
 import com.example.tiktalk.Model.CoinsCategory;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
@@ -27,13 +43,29 @@ import com.example.tiktalk.SendBird.SendBirdService;
 import com.example.tiktalk.SendBird.SendbirdChatActivity;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.AllSellerActivity;
+import com.example.tiktalk.UI.Activities.Seller.SellerProfileActivity;
+import com.example.tiktalk.UI.Fragments.Buyer.BuyerInboxFragment;
+import com.example.tiktalk.UI.Fragments.Buyer.BuyerMyWalletFragment;
+import com.example.tiktalk.UI.Fragments.Buyer.BuyerNotificationFragment;
 import com.example.tiktalk.Utils.PreferenceUtils;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.github.ybq.android.spinkit.style.Wave;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelListQuery;
 import com.sendbird.android.GroupChannelParams;
@@ -48,21 +80,25 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import spencerstudios.com.bungeelib.Bungee;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.example.tiktalk.TikTalk.getContext;
 
-public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAdapter.OnCallClickListener, TopRatedSellersAdapter.OnChatClickListener, SinchService.StartFailedListener {
+public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAdapter.OnCallClickListener, TopRatedSellersAdapter.OnChatClickListener, TopRatedSellersAdapter.OnImageClickListener, OnlineSellersAdapter.OnItemClickListener, SinchService.StartFailedListener {
 
     ProgressBar progressBar;
     ProgressDialog dialog;
+    private GoogleSignInClient mGoogleSignInClient;
 
     TextView seeAllBtn, buyer_name;
     Button menu_btn, buycoins_btn;
     LinearLayout home_layout;
     FirebaseFirestore firestore;
+    Button cancel_btn, settings_btn;
 
     RecyclerView recyclerView, recyclerViewNew;
     LinearLayoutManager manager;
@@ -80,22 +116,132 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     User user;
     CoinsCategory buyCoins;
 
-    String sellerId, SellerName, SellerImage, sellerName, coinPerMin;
+    String sellerId, SellerName, SellerImage, sellerName, coinPerMin, SellerRating;
     BuyCoinsAdapter adaper;
 
-    String coins;
+    String coins, firstName, middleName, lastName, myId;
+
+    public String[] menuName = {"Home", "My Wallet", "Inbox", "Notifications", "Contact", "Logout"};
+    public int[] menuicons = {R.drawable.home, R.drawable.my_wallets, R.drawable.inbox,
+            R.drawable.notification, R.drawable.contact, R.drawable.logout};
+
+    public DrawerLayout drawer_layout;
+    public ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_buyer_home);
-
         SendBird.init(APP_ID, this.getApplicationContext());
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
         setupComponents();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        home_layout = findViewById(R.id.home_layout);
+        drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        View viewinflate = getLayoutInflater().inflate(R.layout.nav_header_main, null);
+        View viewinflate_footer = getLayoutInflater().inflate(R.layout.nav_footer_main, null);
+
+        Navigations_ItemsAdapter navigations_itemsAdapter = new Navigations_ItemsAdapter(BuyerHomeActivity.this, menuName, menuicons);
+        mDrawerList.setAdapter(navigations_itemsAdapter);
+        mDrawerList.addHeaderView(viewinflate);
+        mDrawerList.addFooterView(viewinflate_footer);
+
+        cancel_btn = viewinflate.findViewById(R.id.cancel_btn);
+        settings_btn = viewinflate.findViewById(R.id.settings_btn);
+
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer_layout.closeDrawer(mDrawerList);
+            }
+        });
+
+        settings_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(BuyerHomeActivity.this, BuyerSettingsActivity.class);
+                startActivity(in);
+            }
+        });
+
+        RoundedImageView buyer_image = viewinflate_footer.findViewById(R.id.buyer_image);
+        Glide.with(this).load(PreferenceUtils.getImageUrl(this)).into(buyer_image);
+
+        mDrawerToggle = new ActionBarDrawerToggle(BuyerHomeActivity.this, drawer_layout, null, R.string.app_name, R.string.app_name) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                drawer_layout.bringChildToFront(drawerView);
+                drawer_layout.requestLayout();
+            }
+
+        };
+        drawer_layout.setDrawerListener(mDrawerToggle);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                switch (i) {
+                    case 1:
+                        Intent in = new Intent(BuyerHomeActivity.this, BuyerHomeActivity.class);
+                        startActivity(in);
+                        finish();
+                        break;
+                    case 2:
+                        onReplaceFragment(R.id.drawer_layout, new BuyerMyWalletFragment(), true);
+                        drawer_layout.closeDrawer(mDrawerList);
+                        break;
+                    case 3:
+                        onReplaceFragment(R.id.drawer_layout, new ChannelsList_Fragment(), true);
+                        drawer_layout.closeDrawer(mDrawerList);
+                        break;
+                    case 4:
+                        onReplaceFragment(R.id.drawer_layout, new BuyerNotificationFragment(), true);
+                        drawer_layout.closeDrawer(mDrawerList);
+                    case 5:
+                        break;
+                    case 6:
+
+                        myId = PreferenceUtils.getId(BuyerHomeActivity.this);
+
+                        HashMap<String, Object> map = new HashMap<String, Object>();
+                        map.put("isOnline", "0");
+
+                        firestore.collection("users")
+                                .document(myId)
+                                .update(map)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+                                            PreferenceUtils.clearMemory(getApplicationContext());
+                                            FirebaseAuth.getInstance().signOut();
+                                            mGoogleSignInClient.signOut();
+                                            LoginManager.getInstance().logOut();
+
+                                            Intent intent = new Intent(BuyerHomeActivity.this, BuyerLoginActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else {
+                                            showToast("Unable to logout!");
+                                        }
+                                    }
+                                });
+
+                        break;
+                }
+            }
+        });
 
         dialog = new ProgressDialog(this);
         progressBar = findViewById(R.id.spin_kit);
@@ -154,6 +300,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         dialog.dismiss();
                         adapter.setOnCallClickListener(BuyerHomeActivity.this);
                         adapter.setOnChatClickListener(BuyerHomeActivity.this);
+                        adapter.setOnImageClickListener(BuyerHomeActivity.this);
 
                     }
                 });
@@ -194,11 +341,12 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         Collections.sort(sellerArrayList, c);
                         adapternew = new OnlineSellersAdapter(onlineArrayList, BuyerHomeActivity.this);
                         recyclerViewNew.setAdapter(adapternew);
+                        adapternew.setOnClickListener(BuyerHomeActivity.this);
 
                     }
                 });
 
-        /*firestore.collection("users")
+        firestore.collection("users")
                 .document(PreferenceUtils.getId(this))
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
@@ -208,9 +356,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         PreferenceUtils.saveBuyerData(documentSnapshot.getString("username"), documentSnapshot.getString("email"), documentSnapshot.getString("password"), documentSnapshot.getString("id"), documentSnapshot.getString("IsActive"), documentSnapshot.getString("Type"), documentSnapshot.getString("imageUrl"), documentSnapshot.getString("isOnline"), documentSnapshot.getString("coins"), BuyerHomeActivity.this);
 
                     }
-                });*/
-
-
+                });
     }
 
     protected void get_group_channels() {
@@ -220,10 +366,9 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         channelListQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
             @Override
             public void onResult(List<GroupChannel> list, SendBirdException e) {
-                if (e != null) {    // Error.
+                if (e != null) {
                     return;
                 }
-//                populate_group_channel_list(list);
                 groupChannerls = list;
             }
         });
@@ -236,11 +381,27 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
 
         seeAllBtn = findViewById(R.id.seeAll_btn);
         buyer_name = findViewById(R.id.buyer_name);
-//        menu_btn = findViewById(R.id.menu_btn);
-//        buycoins_btn = findViewById(R.id.buycoins_btn);
-        home_layout = findViewById(R.id.home_layout);
+        menu_btn = findViewById(R.id.menu_btn);
+        buycoins_btn = findViewById(R.id.buycoins_btn);
 
-        buyer_name.setText(PreferenceUtils.getUsername(BuyerHomeActivity.this));
+        String[] fullName = PreferenceUtils.getUsername(this).split(" ");
+
+        if (fullName.length == 1) {
+            lastName = fullName[0].trim();
+        }
+
+        if (fullName.length == 2) {
+            firstName = fullName[0].trim();
+            lastName = fullName[1].trim();
+        }
+
+        if (fullName.length == 3) {
+            firstName = fullName[0].trim();
+            middleName = fullName[1].trim();
+            lastName = fullName[2].trim();
+        }
+
+        buyer_name.setText(lastName);
 
         if (checkPermission()) {
 
@@ -253,100 +414,109 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     @Override
     public void setupListeners() {
 
-//        menu_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onReplaceFragment(R.id.buyer_content_frame, new BuyerMenuFragment(), true);
-//            }
-//        });
+        menu_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawer_layout.openDrawer(mDrawerList);
+            }
+        });
 
-//        buycoins_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                final AlertDialog.Builder dialog = new AlertDialog.Builder(BuyerHomeActivity.this);
-//                final AlertDialog alert = dialog.create();
-//                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-//                final View attachFileLayout = inflater.inflate(R.layout.buy_coins_layout, null);
-//                attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                alert.setView(attachFileLayout);
-//
-//                final RecyclerView recycler_view = attachFileLayout.findViewById(R.id.recycler_view);
-//                LinearLayoutManager manager = new LinearLayoutManager(attachFileLayout.getContext());
-//                final ArrayList<CoinsCategory> buyCoinsArrayList = new ArrayList<>();
-//                recycler_view.setLayoutManager(manager);
-//
-//
-//                firestore.collection("coins")
-//                        .get()
-//                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                            @Override
-//                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//
-//                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots){
-//
-//                                    CoinsCategory cc = new CoinsCategory(
-//                                            documentSnapshot.getString("coins"),
-//                                            documentSnapshot.getString("amount"));
-//                                    buyCoinsArrayList.add(cc);
-//                                }
-//                                Comparator<CoinsCategory> c = new Comparator<CoinsCategory>() {
-//
-//                                    @Override
-//                                    public int compare(CoinsCategory a, CoinsCategory b) {
-//                                        return Integer.compare(Integer.valueOf(a.getCoins()), Integer.valueOf(b.getCoins()));
-//                                    }
-//                                };
-//                                Collections.sort(buyCoinsArrayList, c);
-//                                adaper = new BuyCoinsAdapter(buyCoinsArrayList, attachFileLayout.getContext());
-//                                recycler_view.setAdapter(adaper);
-//                                adaper.setOnClickListener(new BuyCoinsAdapter.OnCallClickListener() {
-//                                    @Override
-//                                    public void onClick(int position) {
-//
-//                                        buyCoins = buyCoinsArrayList.get(position);
-//                                        final String coin = buyCoins.getCoins();
-//                                        String amount = buyCoins.getAmount();
-//
-//                                        final AlertDialog alert;
-//
-//                                        final AlertDialog.Builder dialog2 = new AlertDialog.Builder(BuyerHomeActivity.this);
-//                                        dialog2.setTitle("Do you want to proceed?");
-//                                        dialog2.setMessage("$" + amount + " would be deducted from your account.");
-//
-//                                        dialog2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//
-//                                                int totalCoins = Integer.valueOf(coins) + Integer.valueOf(coin);
-//
-//                                                HashMap<String, Object> coinMap = new HashMap<String, Object>();
-//                                                coinMap.put("coins", String.valueOf(totalCoins));
-//
-//                                                firestore.collection("users")
-//                                                        .document(PreferenceUtils.getId(BuyerHomeActivity.this))
-//                                                        .update(coinMap);
-//
-//                                            }
-//                                        });
-//
-//                                        dialog2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                dialog.dismiss();
-//                                            }
-//                                        });
-//
-//                                        dialog2.show();                                    }
-//                                });
-//                                alert.show();
-//                            }
-//                        });
-//
-//
-//            }
-//
-//        });
+        buycoins_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(BuyerHomeActivity.this);
+                final AlertDialog alert = dialog.create();
+                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                final View attachFileLayout = inflater.inflate(R.layout.buy_coins_layout, null);
+                attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                alert.setView(attachFileLayout);
+
+                final RecyclerView recycler_view = attachFileLayout.findViewById(R.id.recycler_view);
+                LinearLayoutManager manager = new LinearLayoutManager(attachFileLayout.getContext());
+                final ArrayList<CoinsCategory> buyCoinsArrayList = new ArrayList<>();
+                recycler_view.setLayoutManager(manager);
+
+                firestore.collection("coins")
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                                    CoinsCategory cc = new CoinsCategory(
+                                            documentSnapshot.getString("coins"),
+                                            documentSnapshot.getString("amount"));
+                                    buyCoinsArrayList.add(cc);
+                                }
+                                Comparator<CoinsCategory> c = new Comparator<CoinsCategory>() {
+
+                                    @Override
+                                    public int compare(CoinsCategory a, CoinsCategory b) {
+                                        return Integer.compare(Integer.valueOf(a.getCoins()), Integer.valueOf(b.getCoins()));
+                                    }
+                                };
+                                Collections.sort(buyCoinsArrayList, c);
+                                adaper = new BuyCoinsAdapter(buyCoinsArrayList, attachFileLayout.getContext());
+                                recycler_view.setAdapter(adaper);
+                                adaper.setOnClickListener(new BuyCoinsAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onClick(int position) {
+
+                                        buyCoins = buyCoinsArrayList.get(position);
+                                        final String coin = buyCoins.getCoins();
+                                        String amount = buyCoins.getAmount();
+
+                                        Intent in = new Intent(BuyerHomeActivity.this, BuyCoinsActivity.class);
+                                        in.putExtra("coin", coin);
+                                        in.putExtra("amount", amount);
+                                        in.putExtra("totalCoins", coins);
+                                        startActivity(in);
+
+                                        /*buyCoins = buyCoinsArrayList.get(position);
+                                        final String coin = buyCoins.getCoins();
+                                        String amount = buyCoins.getAmount();
+
+                                        final AlertDialog alert;
+
+                                        final AlertDialog.Builder dialog2 = new AlertDialog.Builder(BuyerHomeActivity.this);
+                                        dialog2.setTitle("Do you want to proceed?");
+                                        dialog2.setMessage("$" + amount + " would be deducted from your account.");
+
+                                        dialog2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                int totalCoins = Integer.valueOf(coins) + Integer.valueOf(coin);
+
+                                                HashMap<String, Object> coinMap = new HashMap<String, Object>();
+                                                coinMap.put("coins", String.valueOf(totalCoins));
+
+                                                firestore.collection("users")
+                                                        .document(PreferenceUtils.getId(BuyerHomeActivity.this))
+                                                        .update(coinMap);
+
+                                            }
+                                        });
+
+                                        dialog2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                        dialog2.show();*/
+                                    }
+                                });
+                                alert.show();
+                            }
+                        });
+
+            }
+
+        });
 
         seeAllBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -457,15 +627,64 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         sellerId = user.id;
         SellerName=user.username;
         SellerImage=user.imageUrl;
+        coinPerMin = user.coinPerMin;
 
         directMessage();
+
+    }
+
+    @Override
+    public void onImageClick(int position) {
+
+        Comparator<User> c = new Comparator<User>() {
+
+            @Override
+            public int compare(User a, User b) {
+                return Float.compare(Float.valueOf(b.getRating()), Float.valueOf(a.getRating()));
+            }
+        };
+        Collections.sort(sellerArrayList, c);
+
+        user = sellerArrayList.get(position);
+        sellerId = user.id;
+        SellerName = user.username;
+        SellerImage = user.imageUrl;
+        SellerRating = user.rating;
+        coinPerMin = user.coinPerMin;
+
+        Intent in = new Intent(this, SellerProfileActivity.class);
+        in.putExtra("sellerId", sellerId);
+        in.putExtra("sellerName", SellerName);
+        in.putExtra("sellerImage", SellerImage);
+        in.putExtra("sellerRating", SellerRating);
+        in.putExtra("coinPerMin", coinPerMin);
+        startActivity(in);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+
+        User user = onlineArrayList.get(position);
+        String sellerId = user.id;
+        String SellerName = user.username;
+        String SellerImage = user.imageUrl;
+        String SellerRating = user.rating;
+        String coinPerMin = user.coinPerMin;
+
+        Intent in = new Intent(this, SellerProfileActivity.class);
+        in.putExtra("sellerId", sellerId);
+        in.putExtra("sellerName", SellerName);
+        in.putExtra("sellerImage", SellerImage);
+        in.putExtra("sellerRating", SellerRating);
+        in.putExtra("coinPerMin", coinPerMin);
+        startActivity(in);
+
     }
 
     @Override
     protected void onServiceConnected() {
         getSinchServiceInterface().setStartListener(this);
         loginClicked();
-
     }
 
     @Override
@@ -495,23 +714,23 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         }
     }
 
-    private void showToast(String msg){
+    private void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void directMessage(){
+    public void directMessage() {
 
 
         GroupChannel.GroupChannelCreateHandler groupChannelCreateHandler = new GroupChannel.GroupChannelCreateHandler() {
             @Override
             public void onResult(GroupChannel groupChannel, SendBirdException e) {
                 if (e != null) {    // Error.
-                }else {
+                } else {
                     final Intent chatIntent = new Intent(BuyerHomeActivity.this, SendbirdChatActivity.class);
                     chatIntent.putExtra("title", groupChannel.getName());
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
-                    chatIntent.putExtra("cover",groupChannel.getCoverUrl());
-                    chatIntent.putExtra("members",sellerId);
+                    chatIntent.putExtra("cover", groupChannel.getCoverUrl());
+                    chatIntent.putExtra("members", sellerId);
 
                     startActivity(chatIntent);
                 }

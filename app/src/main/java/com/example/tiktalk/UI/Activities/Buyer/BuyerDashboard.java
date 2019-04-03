@@ -276,7 +276,6 @@ public class BuyerDashboard extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            // Handle the camera action
             onReplaceFragment(R.id.buyer_content_frame, new BuyerHome(), false);
         } else if (id == R.id.nav_mywallet) {
             onReplaceFragment(R.id.buyer_content_frame, new BuyerMyWalletFragment(), false);

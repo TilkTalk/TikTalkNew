@@ -16,6 +16,7 @@ import com.example.tiktalk.Sinch.AudioPlayer;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.Seller.SellerCallDetailsActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerDashboardActivity;
+import com.example.tiktalk.UI.Fragments.Buyer.BuyerHome;
 import com.example.tiktalk.UI.Fragments.Seller.SellerHomeFragment;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -205,7 +206,7 @@ public class BuyerCallActivity extends BaseActivity {
             if (PreferenceUtils.getType(BuyerCallActivity.this).equals("Buyer")) {
 
                 if (callDuration == null){
-                    Intent in = new Intent(BuyerCallActivity.this, BuyerDashboard.class);
+                    Intent in = new Intent(BuyerCallActivity.this, BuyerHomeActivity.class);
                     startActivity(in);
                     finish();
                 }

@@ -197,8 +197,11 @@ public class BuyerRatingActivity extends AppCompatActivity {
                                         .document(buyerId)
                                         .update(coinsRemain);
 
+                                /*firestore.collection("payment")
+                                        .add()*/
+
                                 dialog.dismiss();
-                                Intent in = new Intent(BuyerRatingActivity.this, BuyerDashboard.class);
+                                Intent in = new Intent(BuyerRatingActivity.this, BuyerHomeActivity.class);
                                 startActivity(in);
                                 Bungee.slideDown(BuyerRatingActivity.this);
                                 finish();

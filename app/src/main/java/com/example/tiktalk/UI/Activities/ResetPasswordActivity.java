@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.R;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ResetPasswordActivity extends BaseActivity {
 
+    FirebaseAuth auth;
     Button sendPasswordBtn;
     Button cancelBtn;
     EditText forgotpassword_email;
@@ -32,6 +34,8 @@ public class ResetPasswordActivity extends BaseActivity {
 
     @Override
     public void initializeComponents() {
+
+        auth = FirebaseAuth.getInstance();
         sendPasswordBtn = findViewById(R.id.sendpassword_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
         forgotpassword_email = findViewById(R.id.forgotpassword_email);
@@ -43,15 +47,18 @@ public class ResetPasswordActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                FirebaseAuth.getInstance().sendPasswordResetEmail(forgotpassword_email.getText().toString())
+                auth.sendPasswordResetEmail(forgotpassword_email.getText().toString())
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    AppUtils.Toast("Password Send ");
-                                    AppUtils.Toast("Check Email");
+//                                    AppUtils.Toast("Password Send ");
+//                                    AppUtils.Toast("Check Email");
+                                    Toast.makeText(ResetPasswordActivity.this, "Password Sent!", Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
+                                else
+                                    Toast.makeText(ResetPasswordActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                             }
                         });
 

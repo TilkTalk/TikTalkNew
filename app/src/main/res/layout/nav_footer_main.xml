@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        app:cardCornerRadius="30dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:elevation="10dp"
+        android:layout_centerInParent="true">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/buyer_image"
+            android:src="@drawable/nine"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="30dp"
+            app:riv_border_width="3dp"
+            app:riv_border_color="#FFF"
+            app:riv_mutate_background="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

@@ -67,6 +67,8 @@ dependencies {
     implementation 'com.crowdfire.cfalertdialog:cfalertdialog:1.1.0'
     implementation 'com.orhanobut:dialogplus:1.11@aar'
     implementation 'com.sdsmdg.harjot:materialshadows:1.2.5'
+    implementation 'com.stripe:stripe-android:8.0.0'
+    implementation 'com.stripe:stripe-java:5.36.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:4.14.1'
     //    SINCH
@@ -77,7 +79,7 @@ dependencies {
 
     implementation files('libs/sinch-android-rtc-3.8.0-VIDEO-SNAPSHOT.jar')
 
-    implementation ( 'com.github.thekhaeng:pushdown-anim-click:1.1.1' ){
+    implementation('com.github.thekhaeng:pushdown-anim-click:1.1.1') {
         exclude group: 'com.android.support'
     }
 }

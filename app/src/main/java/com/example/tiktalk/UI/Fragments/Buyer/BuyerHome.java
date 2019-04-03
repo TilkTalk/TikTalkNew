@@ -42,6 +42,7 @@ import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -93,6 +94,10 @@ public class BuyerHome extends BaseFragment implements TopRatedSellersAdapter.On
         home_layout = rootView.findViewById(R.id.home_layout);
 
         String[] fullName = PreferenceUtils.getUsername(getContext()).split(" ");
+
+        if (fullName.length == 1){
+            lastName = fullName[0].trim();
+        }
 
         if (fullName.length == 2){
             firstName = fullName[0].trim();

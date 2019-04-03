@@ -81,7 +81,6 @@ public class BuyerMenuFragment extends BaseFragment {
             public void onClick(View v) {
 
                 goBack();
-                replaceFragment(R.id.buyer_frame, new BuyerMyWalletFragment(), true);
             }
         });
 
@@ -89,7 +88,6 @@ public class BuyerMenuFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 goBack();
-                replaceFragment(R.id.buyer_frame, new ChannelsList_Fragment(), true);
             }
         });
 
@@ -97,7 +95,6 @@ public class BuyerMenuFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 goBack();
-                replaceFragment(R.id.buyer_frame, new BuyerNotificationFragment(), true);
             }
         });
 

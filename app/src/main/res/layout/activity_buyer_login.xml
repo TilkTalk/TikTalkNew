@@ -95,11 +95,6 @@
             android:visibility="gone"
             app:SpinKit_Color="@color/colorAccent" />
 
-        <!--<ImageView
-            android:id="@+id/picture"
-            android:layout_width="200dp"
-            android:layout_height="200dp" />-->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -124,7 +119,8 @@
                     android:inputType="textEmailAddress"
                     android:paddingLeft="60dp"
                     android:singleLine="true"
-                    android:background="@drawable/view_bg"/>
+                    android:background="@drawable/view_bg"
+                    android:text="buyer@mailinator.com"/>
 
                 <ImageView
                     android:id="@+id/check"
@@ -154,7 +150,8 @@
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:paddingLeft="60dp"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:text="buyer456"/>
 
                 <TextView
                     android:id="@+id/forget_textView"
@@ -176,27 +173,6 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="12dp"
                 android:orientation="horizontal">
-
-                <!--<RelativeLayout
-                    android:id="@+id/loginBtn_layout"
-                    android:layout_width="120dp"
-                    android:layout_height="70dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginBottom="8dp">
-
-                    <Button
-                        android:id="@+id/login_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:paddingTop="5dp"
-                        android:background="@drawable/login_btn"
-                        android:text="login"
-                        android:textColor="@android:color/white"
-                        android:gravity="center_horizontal"/>
-
-                </RelativeLayout>-->
 
                 <Button
                     android:id="@+id/login_btn"

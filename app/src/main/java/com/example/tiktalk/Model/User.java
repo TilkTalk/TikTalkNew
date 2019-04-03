@@ -16,6 +16,7 @@ public class User  implements Serializable {
     public String ratePerMin;
     public String coinPerMin;
     public String coins;
+    public String dollersEarned;
 
     public User() {
     }
@@ -44,6 +45,14 @@ public class User  implements Serializable {
         this.imageUrl = imageUrl;
         this.isOnline = isOnline;
         this.coins = coins;
+    }
+
+    public String getDollersEarned() {
+        return dollersEarned;
+    }
+
+    public void setDollersEarned(String dollersEarned) {
+        this.dollersEarned = dollersEarned;
     }
 
     public String getCoins() {
