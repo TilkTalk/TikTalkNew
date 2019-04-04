@@ -64,8 +64,8 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
                 e.printStackTrace();
             }
 
-            Glide.with(context).load(historyListItems.get(position).getSellerImage()).into(holder.buyerimage);
-            holder.buyername.setText(historyListItems.get(position).getSellerName());
+            Glide.with(context).load(historyListItems.get(position).getBuyerImage()).into(holder.buyerimage);
+            holder.buyername.setText(historyListItems.get(position).getBuyerName());
             holder.calltime.setText(time);
             holder.callamount.setText("$" + historyListItems.get(position).getDollerEarned());
             return;

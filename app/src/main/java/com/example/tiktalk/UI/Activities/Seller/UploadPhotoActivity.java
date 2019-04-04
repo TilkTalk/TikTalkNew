@@ -105,7 +105,7 @@ public class UploadPhotoActivity extends BaseActivity {
         seller_signup_image = findViewById(R.id.seller_signup_image);
         seller_uploadPhoto_btn = findViewById(R.id.seller_uploadPhoto_btn);
         seller_spinner = findViewById(R.id.seller_spinner);
-        final List<String> list = new ArrayList<String>();;
+        final List<String> list = new ArrayList<String>();
 
         firestore.collection("rates")
                 .get()

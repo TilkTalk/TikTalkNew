@@ -2,7 +2,9 @@ package com.example.tiktalk.Model;
 
 import java.io.Serializable;
 
-public class User  implements Serializable {
+import ir.mirrajabi.searchdialog.core.Searchable;
+
+public class User implements Searchable {
 
     public String username;
     public String email;
@@ -45,6 +47,11 @@ public class User  implements Serializable {
         this.imageUrl = imageUrl;
         this.isOnline = isOnline;
         this.coins = coins;
+    }
+
+    @Override
+    public String getTitle() {
+        return username;
     }
 
     public String getDollersEarned() {

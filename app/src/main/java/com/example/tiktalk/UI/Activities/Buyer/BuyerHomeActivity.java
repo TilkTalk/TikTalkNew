@@ -5,8 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,16 +23,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.BuyCoinsAdapter;
+import com.example.tiktalk.Adapters.ContactSearchDialogCompat;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
 import com.example.tiktalk.Adapters.OnlineSellersAdapter;
 import com.example.tiktalk.Adapters.TopRatedSellersAdapter;
@@ -73,20 +78,32 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
+import com.stripe.android.Stripe;
+import com.stripe.android.TokenCallback;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
+import com.stripe.android.view.CardMultilineWidget;
+import com.stripe.model.Charge;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import spencerstudios.com.bungeelib.Bungee;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static com.example.tiktalk.TikTalk.getContext;
 
 public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAdapter.OnCallClickListener, TopRatedSellersAdapter.OnChatClickListener, TopRatedSellersAdapter.OnImageClickListener, OnlineSellersAdapter.OnItemClickListener, SinchService.StartFailedListener {
 
@@ -97,6 +114,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     TextView seeAllBtn, buyer_name;
     Button menu_btn, buycoins_btn;
     LinearLayout home_layout;
+    EditText searchView;
     FirebaseFirestore firestore;
     Button cancel_btn, settings_btn;
 
@@ -254,8 +272,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         onlineArrayList = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler_view);
         recyclerViewNew = findViewById(R.id.recycler_view_new);
-        manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        managerNew = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        managerNew = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(manager);
         recyclerViewNew.setLayoutManager(managerNew);
 
@@ -383,6 +401,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         buyer_name = findViewById(R.id.buyer_name);
         menu_btn = findViewById(R.id.menu_btn);
         buycoins_btn = findViewById(R.id.buycoins_btn);
+        searchView = findViewById(R.id.searchView);
 
         String[] fullName = PreferenceUtils.getUsername(this).split(" ");
 
@@ -408,6 +427,29 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         } else {
             requestPermission();
         }
+
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new ContactSearchDialogCompat<>(BuyerHomeActivity.this, "Search...",
+                        "What are you looking for...?", null, sellerArrayList,
+                        new SearchResultListener<User>() {
+                            @Override
+                            public void onSelected(BaseSearchDialogCompat dialog, User item, int position) {
+//                                dialog.dismiss();
+                                Intent in = new Intent(BuyerHomeActivity.this, SellerProfileActivity.class);
+                                in.putExtra("sellerId", item.id);
+                                in.putExtra("sellerName", item.username);
+                                in.putExtra("sellerImage", item.imageUrl);
+                                in.putExtra("sellerRating", item.rating);
+                                in.putExtra("coinPerMin", item.coinPerMin);
+                                startActivity(in);
+                            }
+                        }
+                ).show();
+            }
+        });
 
     }
 
@@ -569,6 +611,12 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     @Override
     public void onCallClick(int position) {
 
+        SimpleDateFormat simpleCallTime = new SimpleDateFormat("mm:ss", Locale.US);
+        SimpleDateFormat CallTime = new SimpleDateFormat("mm:ss", Locale.US);
+
+        SimpleDateFormat simpleTime = new SimpleDateFormat("HH:mm:ss", Locale.US);
+        SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss", Locale.US);
+
         Comparator<User> c = new Comparator<User>() {
 
             @Override
@@ -584,30 +632,69 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         coinPerMin = user.getCoinPerMin();
         SellerImage = user.getImageUrl();
 
-        Call call = getSinchServiceInterface().calluser(sellerId);
-        String callId = call.getCallId();
-        Intent callScreen = new Intent(this, BuyerCallActivity.class);
-        callScreen.putExtra(SinchService.CALL_ID, callId);
-        callScreen.putExtra("toid", sellerId);
-        callScreen.putExtra("name", sellerName);
-        callScreen.putExtra("imageUrl", SellerImage);
-        callScreen.putExtra("coinPerMin", coinPerMin);
+        int callMins = Integer.valueOf(coins) / Integer.valueOf(coinPerMin);
+        int displayHours = callMins / 60;
+        int displayMins = callMins % 60;
+        int displaySecs = 0;
+        String callEndTime = null;
 
-        callScreen.putExtra("fromid", PreferenceUtils.getId(this));
-        callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(this));
-        callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
-        callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
-        startActivity(callScreen);
+        if (displayHours == 0){
+            String diplayTime = displayMins + ":00";
 
-        final HashMap<String, Object> callDetails = new HashMap<String, Object>();
-        callDetails.put("buyerId", PreferenceUtils.getId(this));
-        callDetails.put("buyerName", PreferenceUtils.getUsername(this));
-        callDetails.put("buyerImage", PreferenceUtils.getImageUrl(this));
-        callDetails.put("callTime", FieldValue.serverTimestamp());
-        callDetails.put("status", "missed");
+            try {
+                Date d = simpleCallTime.parse(diplayTime);
+                callEndTime = String.valueOf(CallTime.format(d));
 
-        firestore.collection("calls")
-                .add(callDetails);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (displayHours > 0){
+            String diplayTime = displayHours + ":" + displayMins + ":00";
+
+            try {
+                Date d = simpleTime.parse(diplayTime);
+                callEndTime = String.valueOf(time.format(d));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        if (Integer.valueOf(PreferenceUtils.getCoins(this)) > Integer.valueOf(coinPerMin)){
+            Call call = getSinchServiceInterface().calluser(sellerId);
+            String callId = call.getCallId();
+            Intent callScreen = new Intent(this, BuyerCallActivity.class);
+            callScreen.putExtra(SinchService.CALL_ID, callId);
+            callScreen.putExtra("toid", sellerId);
+            callScreen.putExtra("name", sellerName);
+            callScreen.putExtra("imageUrl", SellerImage);
+            callScreen.putExtra("coinPerMin", coinPerMin);
+
+            callScreen.putExtra("fromid", PreferenceUtils.getId(this));
+            callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(this));
+            callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
+            callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
+
+            callScreen.putExtra("callMins", String.valueOf(callMins));
+            callScreen.putExtra("callEndTime", callEndTime);
+            startActivity(callScreen);
+
+            final HashMap<String, Object> callDetails = new HashMap<String, Object>();
+            callDetails.put("buyerId", PreferenceUtils.getId(this));
+            callDetails.put("buyerName", PreferenceUtils.getUsername(this));
+            callDetails.put("buyerImage", PreferenceUtils.getImageUrl(this));
+            callDetails.put("callTime", FieldValue.serverTimestamp());
+            callDetails.put("status", "missed");
+
+            firestore.collection("calls")
+                    .add(callDetails);
+        }
+        else {
+            showToast("You don't have enough coins in your wallet.");
+        }
 
     }
 

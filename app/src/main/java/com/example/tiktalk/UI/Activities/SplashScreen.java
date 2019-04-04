@@ -15,6 +15,7 @@ import com.example.tiktalk.UI.Activities.Buyer.BuyerDashboard;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerHomeActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerDashboardActivity;
+import com.example.tiktalk.UI.Activities.Seller.SellerHomeActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 
 import java.security.MessageDigest;
@@ -61,7 +62,7 @@ public class SplashScreen extends AppCompatActivity {
             }
             else  {
 
-                Intent intent = new Intent(SplashScreen.this, SellerDashboardActivity.class);
+                Intent intent = new Intent(SplashScreen.this, SellerHomeActivity.class);
                 startActivity(intent);
                 finish();
             }

@@ -245,8 +245,17 @@ public class BuyerRatingActivity extends AppCompatActivity {
             coinsUsed = (mins + 1) * Integer.valueOf(coinPerMin);
 
             remainingCoins = Integer.valueOf(coins) - coinsUsed;
+            coins_used.setText(String.valueOf(coinsUsed) + " coins");
+            return;
         }
 
-        coins_used.setText(String.valueOf(coinsUsed) + " coins");
+        if (sec == 0){
+
+            coinsUsed = mins * Integer.valueOf(coinPerMin);
+
+            remainingCoins = Integer.valueOf(coins) - coinsUsed;
+            coins_used.setText(String.valueOf(coinsUsed) + " coins");
+            return;
+        }
     }
 }

@@ -226,6 +226,7 @@ public class BuyerLoginActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(BuyerLoginActivity.this, SellerLoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -310,23 +311,39 @@ public class BuyerLoginActivity extends BaseActivity {
 
                                                     DocumentSnapshot dc = task.getResult();
 
-                                                    user.username = dc.getString("username");
-                                                    user.email = dc.getString("email");
-                                                    user.password = dc.getString("password");
-                                                    user.IsActive = dc.getString("IsActive");
-                                                    user.Type = dc.getString("Type");
-                                                    user.id = dc.getString("id");
-                                                    user.imageUrl = dc.getString("imageUrl");
-                                                    user.isOnline = dc.getString("isOnline");
-                                                    user.coins = dc.getString("coins");
+                                                    if (dc.getString("Type").equals("Seller")){
 
-                                                    PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
-                                                    MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+                                                        Toast.makeText(BuyerLoginActivity.this, "You are already signed up as a Seller!", Toast.LENGTH_SHORT).show();
+                                                        dialog.dismiss();
+                                                    }
+                                                    else {
 
-                                                    dialog.dismiss();
-                                                    Intent intent = new Intent(BuyerLoginActivity.this, BuyerHomeActivity.class);
-                                                    startActivity(intent);
-                                                    finish();
+                                                        HashMap<String, Object> online = new HashMap<String, Object>();
+                                                        online.put("isOnline", "1");
+
+                                                        firestore.collection("users")
+                                                                .document(userDetails.getUid())
+                                                                .update(online);
+
+                                                        user.username = dc.getString("username");
+                                                        user.email = dc.getString("email");
+                                                        user.password = dc.getString("password");
+                                                        user.IsActive = dc.getString("IsActive");
+                                                        user.Type = dc.getString("Type");
+                                                        user.id = dc.getString("id");
+                                                        user.imageUrl = dc.getString("imageUrl");
+                                                        user.isOnline = dc.getString("isOnline");
+                                                        user.coins = dc.getString("coins");
+
+                                                        PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
+                                                        MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+
+                                                        dialog.dismiss();
+                                                        Intent intent = new Intent(BuyerLoginActivity.this, BuyerHomeActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+
                                                 }
                                             }
                                         });
@@ -431,26 +448,38 @@ public class BuyerLoginActivity extends BaseActivity {
 
                                                         DocumentSnapshot dc = task.getResult();
 
-                                                        user.username = dc.getString("username");
-                                                        user.email = dc.getString("email");
-                                                        user.password = dc.getString("password");
-                                                        user.IsActive = dc.getString("IsActive");
-                                                        user.Type = dc.getString("Type");
-                                                        user.id = dc.getString("id");
-                                                        user.imageUrl = dc.getString("imageUrl");
-                                                        user.isOnline = dc.getString("isOnline");
-                                                        user.coins = dc.getString("coins");
+                                                        if (dc.getString("Type").equals("Seller")){
+                                                            Toast.makeText(BuyerLoginActivity.this, "You are already signed up as a Seller!", Toast.LENGTH_SHORT).show();
+                                                            dialog.dismiss();
+                                                        }
+                                                        else {
 
-//                                                connectToSendBird(userId, userNickname);
+                                                            HashMap<String, Object> online = new HashMap<String, Object>();
+                                                            online.put("isOnline", "1");
 
-                                                        PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
+                                                            firestore.collection("users")
+                                                                    .document(userDetails.getUid())
+                                                                    .update(online);
 
-                                                        MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+                                                            user.username = dc.getString("username");
+                                                            user.email = dc.getString("email");
+                                                            user.password = dc.getString("password");
+                                                            user.IsActive = dc.getString("IsActive");
+                                                            user.Type = dc.getString("Type");
+                                                            user.id = dc.getString("id");
+                                                            user.imageUrl = dc.getString("imageUrl");
+                                                            user.isOnline = dc.getString("isOnline");
+                                                            user.coins = dc.getString("coins");
 
-                                                        dialog.dismiss();
-                                                        Intent intent = new Intent(BuyerLoginActivity.this, BuyerHomeActivity.class);
-                                                        startActivity(intent);
-                                                        finish();
+                                                            PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
+                                                            MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+
+                                                            dialog.dismiss();
+                                                            Intent intent = new Intent(BuyerLoginActivity.this, BuyerHomeActivity.class);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        }
+
                                                     }
                                                 }
                                             });
@@ -458,18 +487,10 @@ public class BuyerLoginActivity extends BaseActivity {
 
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithCredential:success");
-//                            FirebaseUser user = auth.getCurrentUser();
-//                            Toast.makeText(BuyerLoginActivity.this, user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                                //updateUI(user);
                             } else {
-                                // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                                 Toast.makeText(BuyerLoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
                             }
-
-                            // ...
                         }
                     });
 

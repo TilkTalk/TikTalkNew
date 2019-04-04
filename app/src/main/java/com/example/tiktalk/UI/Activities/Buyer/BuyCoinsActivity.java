@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ public class BuyCoinsActivity extends AppCompatActivity {
     ProgressDialog dialog;
     FirebaseFirestore firestore;
     String coins, amount, totalCoins;
+    ImageButton back_btn;
     CardMultilineWidget mCardMultilineWidget;
 
     @Override
@@ -50,9 +53,18 @@ public class BuyCoinsActivity extends AppCompatActivity {
         progressBar.setIndeterminateDrawable(wave);
         dialog.setIndeterminateDrawable(wave);
 
+        back_btn = findViewById(R.id.back_btn);
+
         coins = getIntent().getStringExtra("coin");
         totalCoins = getIntent().getStringExtra("totalCoins");
         amount = getIntent().getStringExtra("amount");
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy =
@@ -60,7 +72,7 @@ public class BuyCoinsActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
 
-        mCardMultilineWidget = (CardMultilineWidget) findViewById(R.id.card_multiline_widget);
+        mCardMultilineWidget = findViewById(R.id.card_multiline_widget);
 
         final Stripe stripe = new Stripe(getApplicationContext());
         stripe.setDefaultPublishableKey("pk_test_W8SfnQTCA4Tf4Puwj1O5xRX000jnzEooa1");
@@ -70,9 +82,12 @@ public class BuyCoinsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Card cardToSave = mCardMultilineWidget.getCard();
+                dialog.setMessage("Loading...");
+                dialog.show();
 
                 if (cardToSave == null) {
                     Log.d("Error Log : ", "Invalid Card Data");
+                    dialog.dismiss();
                     return;
                 } else {
                     stripe.createToken(
@@ -80,9 +95,6 @@ public class BuyCoinsActivity extends AppCompatActivity {
                             new TokenCallback() {
                                 public void onSuccess(Token token) {
                                     Log.d("Error Log : ", token.getId().toString());
-
-                                    dialog.setMessage("Loading...");
-                                    dialog.show();
 
                                     Map<String, Object> params = new HashMap<>();
                                     params.put("amount", Integer.valueOf(amount) * 100);

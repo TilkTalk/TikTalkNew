@@ -84,41 +84,6 @@ public class SendbirdChatActivity extends BaseActivity {
                 finish();
             }
         });
-        /*title.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                GroupChannel.getChannel(channelUrl, new GroupChannel.GroupChannelGetHandler() {
-                    @Override
-                    public void onResult(GroupChannel groupChannel, SendBirdException e) {
-                        if (e != null) {    // Error!
-                            AppUtils.Toast(e.getMessage());
-                        } else {
-
-                            AlertDialog.Builder builderSingle = new AlertDialog.Builder(SendbirdChatActivity.this);
-//                builderSingle.setIcon(R.drawable.ic_launcher);
-                            builderSingle.setTitle("Chat Members");
-                            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(SendbirdChatActivity.this, android.R.layout.select_dialog_singlechoice);
-
-                            List<Member> members = groupChannel.getMembers();
-//                            String membersList = "";
-                            for (Member member : members) {
-//                                membersList += member.getNickname()+"\n";
-                                arrayAdapter.add(member.getNickname());
-                            }
-                            builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                            builderSingle.show();
-                        }
-                    }
-                });
-
-            }
-        });*/
-
 
         GroupChatFragment fragment = GroupChatFragment.newInstance(channelUrl);
         getSupportFragmentManager().beginTransaction()

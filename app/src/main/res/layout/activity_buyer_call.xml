@@ -59,21 +59,46 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
 
-        <ImageView
+        <ToggleButton
+            android:id="@+id/loadSpeaker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/speaker"
-            android:layout_weight="1"/>
-        <ImageView
+            android:layout_weight="1"
+            android:background="@drawable/speaker"
+            android:textOn=""
+            android:textOff=""
+            android:text=""
+            android:layout_margin="8dp"/>
+        <View
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/themeColor"/>
+        <ToggleButton
+            android:id="@+id/mic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/microphone"
-            android:layout_weight="1"/>
-        <ImageView
+            android:layout_weight="1"
+            android:background="@drawable/microphone"
+            android:textOn=""
+            android:textOff=""
+            android:text=""
+            android:layout_margin="8dp"/>
+        <View
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/themeColor"/>
+        <ToggleButton
+            android:id="@+id/video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/video_call"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:background="@drawable/video_call"
+            android:textOn=""
+            android:textOff=""
+            android:text=""
+            android:layout_margin="8dp"/>
 
     </LinearLayout>
 

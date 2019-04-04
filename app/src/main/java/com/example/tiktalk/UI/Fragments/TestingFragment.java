@@ -24,7 +24,7 @@ public class TestingFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.testing_fragment, null);
+        View view = inflater.inflate(R.layout.seller_online_dialog, null);
         return view;
     }
 }

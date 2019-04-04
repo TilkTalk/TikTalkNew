@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.BaseClasses.BaseActivity;
@@ -49,11 +52,13 @@ public class BuyerCallActivity extends BaseActivity {
     private long mCallStart = 0;
     private boolean mAddedListener = false;
     private boolean mVideoViewsAdded = false;
+    String callMins, callEndTime;
 
     private TextView call_time;
     private TextView buyer_callName;
     private RoundedImageView buyer_callImage;
     private SlideToActView call_end;
+    private ToggleButton loadSpeaker, mic, video;
 
     private class UpdateCallDurationTask extends TimerTask {
 
@@ -110,7 +115,8 @@ public class BuyerCallActivity extends BaseActivity {
         coins = getIntent().getStringExtra("coins");
         coinPerMin = getIntent().getStringExtra("coinPerMin");
         docId = getIntent().getStringExtra("docId");
-
+        callMins = getIntent().getStringExtra("callMins");
+        callEndTime = getIntent().getStringExtra("callEndTime");
 
         if (savedInstanceState == null) {
             mCallStart = System.currentTimeMillis();
@@ -181,6 +187,13 @@ public class BuyerCallActivity extends BaseActivity {
     public void initializeComponents() {
 
         call_end = findViewById(R.id.call_end);
+        loadSpeaker = findViewById(R.id.loadSpeaker);
+        mic = findViewById(R.id.mic);
+        video = findViewById(R.id.video);
+
+        loadSpeaker.toggle();
+        mic.toggle();
+        video.toggle();
     }
 
     @Override
@@ -192,6 +205,39 @@ public class BuyerCallActivity extends BaseActivity {
 
                 endCall();
 
+            }
+        });
+
+        loadSpeaker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    getSinchServiceInterface().getAudioController().enableSpeaker();
+                }else{
+                    getSinchServiceInterface().getAudioController().disableSpeaker();
+                }
+            }
+        });
+
+        mic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    getSinchServiceInterface().getAudioController().mute();
+                }else{
+                    getSinchServiceInterface().getAudioController().unmute();
+                }
+            }
+        });
+
+        video.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    
+                }else{
+
+                }
             }
         });
     }
@@ -251,6 +297,11 @@ public class BuyerCallActivity extends BaseActivity {
         if (mCallStart > 0) {
             call_time.setText(formatTimespan(System.currentTimeMillis() - mCallStart));
             callDuration = formatTimespan(System.currentTimeMillis() - mCallStart);
+
+            if (call_time.getText().equals(callEndTime)){
+                endCall();
+            }
+
         }
     }
 

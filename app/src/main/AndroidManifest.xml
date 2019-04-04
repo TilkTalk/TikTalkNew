@@ -26,7 +26,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".UI.Activities.Buyer.BuyCoinsActivity"></activity>
+        <activity android:name=".UI.Activities.Seller.SellerHomeActivity"></activity>
+        <activity android:name=".UI.Activities.Buyer.BuyCoinsActivity" />
         <activity
             android:name=".UI.Activities.Buyer.BuyerDashboard"
             android:label="@string/title_activity_main"
@@ -63,10 +64,12 @@
         <activity
             android:name=".UI.Activities.Seller.SellerLoginActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".UI.Activities.Buyer.BuyerSignupActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".UI.Activities.Seller.SellerSignupActivity"
-            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerSignupActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Seller.SellerSignupActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity android:name=".UI.Activities.Buyer.UploadPhotoActivity" />
         <activity android:name=".UI.Activities.Seller.UploadPhotoActivity" />
         <activity android:name=".UI.Activities.Buyer.BuyerProfileActivity" />
@@ -97,6 +100,7 @@
             </intent-filter>
         </service>
         <service android:name=".Sinch.SinchService" />
+        <service android:name=".AppServices.TimerService"></service>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

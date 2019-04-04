@@ -220,4 +220,28 @@ public class PreferenceUtils {
         return prefs.getString("$perMin", null);
     }
 
+    public static boolean setRatePerMin(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString("$perMin", value);
+        prefsEditor.apply();
+        return true;
+    }
+
+    public static boolean setEmail(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString("email", value);
+        prefsEditor.apply();
+        return true;
+    }
+
+    public static boolean setPassword(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString("password", value);
+        prefsEditor.apply();
+        return true;
+    }
+
 }

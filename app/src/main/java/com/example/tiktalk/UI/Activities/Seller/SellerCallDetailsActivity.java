@@ -90,6 +90,12 @@ public class SellerCallDetailsActivity extends AppCompatActivity {
             coinsUsed = (mins + 1) * Integer.valueOf(coinPerMin);
         }
 
+        if (sec == 0){
+
+            dollerEarned = Float.valueOf(PreferenceUtils.getRatePerMin(this)) * mins;
+            coinsUsed = mins * Integer.valueOf(coinPerMin);
+        }
+
         amount_earned.setText("$" + String.valueOf(dollerEarned) + " USD");
 
     }
@@ -165,7 +171,7 @@ public class SellerCallDetailsActivity extends AppCompatActivity {
                                 .update(amountEarned);
 
                         dialog.dismiss();
-                        Intent in = new Intent(SellerCallDetailsActivity.this, SellerDashboardActivity.class);
+                        Intent in = new Intent(SellerCallDetailsActivity.this, SellerHomeActivity.class);
                         startActivity(in);
                         finish();
                     }

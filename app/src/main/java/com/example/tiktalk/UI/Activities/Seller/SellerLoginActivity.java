@@ -261,7 +261,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();
-                                                Intent in = new Intent(SellerLoginActivity.this, SellerDashboardActivity.class);
+                                                Intent in = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                 startActivity(in);
                                                 finish();
                                             }
@@ -278,9 +278,10 @@ public class SellerLoginActivity extends AppCompatActivity {
 
                                                     DocumentSnapshot dc = task.getResult();
 
-                                                    if (dc.getString("Type") == "Buyer"){
-                                                        Toast.makeText(SellerLoginActivity.this, "You are already signed up as a Buyer!", Toast.LENGTH_SHORT).show();
+                                                    if (dc.getString("Type").equals("Buyer")){
 
+                                                        Toast.makeText(SellerLoginActivity.this, "You are already signed up as a Buyer!", Toast.LENGTH_SHORT).show();
+                                                        dialog.dismiss();
                                                     }
                                                     else {
 
@@ -308,7 +309,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                         MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                         dialog.dismiss();
-                                                        Intent intent = new Intent(SellerLoginActivity.this, SellerDashboardActivity.class);
+                                                        Intent intent = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                         startActivity(intent);
                                                         finish();
                                                     }
@@ -422,6 +423,7 @@ public class SellerLoginActivity extends AppCompatActivity {
 
                                                         if (dc.getString("Type").equals("Buyer")){
                                                             Toast.makeText(SellerLoginActivity.this, "You are already signed up as a Buyer!", Toast.LENGTH_SHORT).show();
+                                                            dialog.dismiss();
                                                         }
                                                         else {
 
@@ -542,7 +544,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                             .document(currentUser)
                                                             .update(online);
 
-                                                    Intent intent = new Intent(SellerLoginActivity.this, SellerDashboardActivity.class);
+                                                    Intent intent = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                     startActivity(intent);
                                                     finish();
                                                 }

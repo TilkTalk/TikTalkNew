@@ -1,15 +1,11 @@
 package com.example.tiktalk.UI.Activities.Seller;
 
 import android.app.ActionBar;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,18 +17,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.MessageModule.ChannelsList_Fragment;
 import com.example.tiktalk.R;
@@ -40,12 +32,10 @@ import com.example.tiktalk.SendBird.SendBirdService;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Fragments.Seller.SellerHomeFragment;
 import com.example.tiktalk.UI.Fragments.Seller.SellerNotificationFragment;
-import com.example.tiktalk.UI.Fragments.TestingFragment;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.orhanobut.dialogplus.DialogPlus;
 import com.sendbird.android.SendBird;
 import com.sinch.android.rtc.SinchError;
 
@@ -145,7 +135,7 @@ public class SellerDashboardActivity extends BaseActivity
                     final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerDashboardActivity.this);
                     final AlertDialog alert = dialog.create();
                     LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-                    final View attachFileLayout = inflater.inflate(R.layout.testing_fragment, null);
+                    final View attachFileLayout = inflater.inflate(R.layout.seller_online_dialog, null);
                     attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     alert.setView(attachFileLayout);
 //                    alert.show();
