@@ -101,14 +101,14 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+
             <LinearLayout
                 android:id="@+id/email_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="30dp"
-                android:background="@drawable/edit_text_shadow"
                 android:orientation="horizontal"
-                android:layout_marginTop="2dp">
+                android:layout_margin="16dp"
+                android:elevation="5dp">
 
                 <EditText
                     android:id="@+id/login_email"
@@ -120,7 +120,7 @@
                     android:paddingLeft="60dp"
                     android:singleLine="true"
                     android:background="@drawable/view_bg"
-                    android:text="buyer@mailinator.com"/>
+                    android:text="buyertesting@mailinator.com"/>
 
                 <ImageView
                     android:id="@+id/check"
@@ -151,7 +151,7 @@
                     android:inputType="textPassword"
                     android:paddingLeft="60dp"
                     android:singleLine="true"
-                    android:text="buyer456"/>
+                    android:text="buyer123"/>
 
                 <TextView
                     android:id="@+id/forget_textView"

@@ -41,6 +41,7 @@ public class SendbirdChatActivity extends BaseActivity {
 
     FirebaseFirestore firestore;
 
+    String type;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,18 +62,22 @@ public class SendbirdChatActivity extends BaseActivity {
             channelUrl = getIntent().getStringExtra("channelUrl");
             cover = getIntent().getStringExtra("cover");
             titleText = getIntent().getStringExtra("title");
-            //title.setText(titleText);
-            //Glide.with(this).load(cover).into(Cover);
-            sellerId = getIntent().getStringExtra("sellerId");
-            sellerName = getIntent().getStringExtra("SellerName");
-            sellerImage = getIntent().getStringExtra("SellerImage");
+            sellerId = getIntent().getStringExtra("members");
             coinPerMin = getIntent().getStringExtra("coinPerMin");
+            type=getIntent().getStringExtra("seller");
 
         } else {
             AppUtils.Toast("Invalid Channel Url");
             finish();
         }
 
+
+        if (type.equals("seller")) {
+            voice.setVisibility(View.GONE);
+
+        }
+        else
+            voice.setVisibility(View.VISIBLE);
 
     }
 
@@ -85,7 +90,14 @@ public class SendbirdChatActivity extends BaseActivity {
             }
         });
 
-        GroupChatFragment fragment = GroupChatFragment.newInstance(channelUrl);
+        Bundle bundle = new Bundle();
+        bundle.putString("name",titleText);
+        bundle.putString("image",cover);
+        bundle.putString("id",sellerId);
+        bundle.putString("channel",channelUrl);
+
+        GroupChatFragment fragment = new GroupChatFragment();
+        fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.chatFragContainer, fragment)
                 .commit();
@@ -117,8 +129,8 @@ public class SendbirdChatActivity extends BaseActivity {
         Intent callScreen = new Intent(this, BuyerCallActivity.class);
         callScreen.putExtra(SinchService.CALL_ID, callId);
         callScreen.putExtra("toid", sellerId);
-        callScreen.putExtra("name", sellerName);
-        callScreen.putExtra("imageUrl", sellerImage);
+        callScreen.putExtra("name", titleText);
+        callScreen.putExtra("imageUrl", cover);
         callScreen.putExtra("coinPerMin", coinPerMin);
 
         callScreen.putExtra("fromid", PreferenceUtils.getId(this));

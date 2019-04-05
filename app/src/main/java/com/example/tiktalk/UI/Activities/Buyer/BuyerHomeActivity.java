@@ -219,7 +219,11 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
                     case 3:
-                        onReplaceFragment(R.id.drawer_layout, new ChannelsList_Fragment(), true);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("buyer","buyer");
+                        ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
+                        channelsList_fragment.setArguments(bundle);
+                        onReplaceFragment(R.id.drawer_layout,  channelsList_fragment, true);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
                     case 4:
@@ -242,6 +246,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()){
                                             PreferenceUtils.clearMemory(getApplicationContext());
+                                            disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
@@ -818,6 +823,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                     chatIntent.putExtra("cover", groupChannel.getCoverUrl());
                     chatIntent.putExtra("members", sellerId);
+                    chatIntent.putExtra("seller","buyer");
 
                     startActivity(chatIntent);
                 }
@@ -837,6 +843,31 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
 //                                .setData(DATA)
 //                                .setCustomType(CUSTOM_TYPE);
         GroupChannel.createChannel(params, groupChannelCreateHandler);
+    }
+
+    private void disconnect() {
+        SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
+            @Override
+            public void onUnregistered(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    e.printStackTrace();
+                    return;
+                }
+
+//                Toast.makeText(Patient_HomeActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
+//                        .show();
+
+                SendBird.disconnect(new SendBird.DisconnectHandler() {
+                    @Override
+                    public void onDisconnected() {
+//                        Intent intent = new Intent(getApplicationContext(), User_Selection_Screen.class);
+//                        startActivity(intent);
+//                        finish();
+                    }
+                });
+            }
+        });
     }
 
 }

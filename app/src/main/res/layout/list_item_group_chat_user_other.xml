@@ -34,7 +34,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="8dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/image_group_chat_profile"
@@ -72,22 +72,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            app:cardCornerRadius="3dp"
-            app:cardElevation="0dp"
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="true"
+            card_view:cardUseCompatPadding="true"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            card_view:cardElevation="4dp"
             card_view:cardCornerRadius="3dp"
-            card_view:cardElevation="0dp">
-            <!--app:cardBackgroundColor="@color/groupChatBubbleOther"-->
+            android:layout_marginBottom="5dp">
 
         <LinearLayout
             android:id="@+id/group_chat_message_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="5dp"
-            android:paddingEnd="5dp"
-            android:paddingBottom="5dp">
+            android:padding="5dp"
+            android:background="@drawable/linearlayout_bg">
 
             <TextView
                 android:id="@+id/text_group_chat_message"
@@ -179,8 +179,8 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 android:text="21:27"
-                android:textColor="#8e8e8e"
-                android:textSize="10dp" />
+                android:textColor="@color/themeColor"
+                android:textSize="8sp" />
 
 
         </LinearLayout>

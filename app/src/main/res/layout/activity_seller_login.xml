@@ -94,6 +94,7 @@
                 android:orientation="horizontal">
 
                 <EditText
+                    android:text="sellertesting@mailinator.com"
                     android:id="@+id/login_email"
                     android:layout_width="300dp"
                     android:layout_height="48dp"
@@ -122,6 +123,7 @@
                 android:orientation="horizontal">
 
                 <EditText
+                    android:text="seller123"
                     android:id="@+id/login_password"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"

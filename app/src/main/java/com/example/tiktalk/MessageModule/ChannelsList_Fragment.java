@@ -36,12 +36,20 @@ public class ChannelsList_Fragment extends BaseFragment {
     String member_name,member_pic,memberid;
     Button menu_btn;
     public DrawerLayout drawer_layout;
-
+    String seller;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-    }
+
+        Bundle bundle = getArguments();
+        if (bundle.containsKey("seller")) {
+            seller = bundle.getString("seller");
+        }
+        else {
+            seller = bundle.getString("buyer");
+        }
+        }
 
     public ListView chat_user_list;
     public ChannelsListAdapter channelsListAdapter;
@@ -103,7 +111,7 @@ public class ChannelsList_Fragment extends BaseFragment {
                 chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                 chatIntent.putExtra("cover", member_pic);
                 chatIntent.putExtra("members",memberid);
-
+                chatIntent.putExtra("seller",seller);
                 startActivity(chatIntent);
             }
         });

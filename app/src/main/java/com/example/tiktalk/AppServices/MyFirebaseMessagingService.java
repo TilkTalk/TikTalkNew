@@ -15,8 +15,13 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.tiktalk.R;
-import com.example.tiktalk.SendBird.PreferenceUtils;
+import com.example.tiktalk.SendBird.SendbirdChatActivity;
+import com.example.tiktalk.UI.Activities.Buyer.BuyerHomeActivity;
 import com.example.tiktalk.UI.Activities.SplashScreen;
+import com.example.tiktalk.Utils.PreferenceUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -25,12 +30,15 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private static final String TAG = "MyFirebaseMsgService";
+    String message;
 
     /**
      * Called when message is received.
@@ -102,15 +110,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String channelUrl = null;
         try {
-            if (remoteMessage.getData().get("sendbird")!=null){
+            if (remoteMessage.getData().get("sendbird") != null) {
                 JSONObject sendBird = new JSONObject(remoteMessage.getData().get("sendbird"));
                 JSONObject channel = (JSONObject) sendBird.get("channel");
                 channelUrl = (String) channel.get("channel_url");
 
                 sendbirdNotification(this, remoteMessage.getData().get("message"), channelUrl);
 
-            }
-            else {
+            } else {
                 sendNotification(remoteMessage.getData());
             }
         } catch (JSONException e) {
@@ -145,20 +152,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Create and show a simple notification containing the received FCM message.
-     *
-     //     * @param messageBody FCM message body received.
-     //     * @param data
+     * <p>
+     * //     * @param messageBody FCM message body received.
+     * //     * @param data
      */
     private void sendNotification(Map<String, String> data) {
 
         Intent intent = new Intent(this, SplashScreen.class);
-       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
 //        String channelId = getString(R.string.default_notification_channel_id);
         String channelId = "TikTalk";
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.mipmap.ic_launcher)
@@ -181,6 +188,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         notificationManager.notify(createID() /* ID of notification */, notificationBuilder.build());
 //        performTaskOnNotificationReceive();
+
     }
 
     public void sendbirdNotification(Context context, String messageBody, String channelUrl) {
@@ -202,11 +210,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent)
                 .setColor(getResources().getColor(R.color.colorPrimary));
 
-        if (PreferenceUtils.getNotificationsShowPreviews()) {
-            notificationBuilder.setContentText(messageBody);
-        } else {
-            notificationBuilder.setContentText("Somebody sent you a message.");
-        }
+//        if (PreferenceUtils.getNotificationsShowPreviews()) {
+        notificationBuilder.setContentText(messageBody);
+        message = messageBody;
+//        } else {
+//            notificationBuilder.setContentText("Somebody sent you a message.");
+//        }
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -221,9 +230,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         notificationManager.notify(createID() /* ID of notification */, notificationBuilder.build());
     }
 
-    public int createID(){
+    public int createID() {
         Date now = new Date();
-        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss",  Locale.US).format(now));
+        int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.US).format(now));
         return id;
     }
+
+
 }

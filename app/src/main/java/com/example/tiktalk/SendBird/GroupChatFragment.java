@@ -40,6 +40,7 @@ import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerCallActivity;
+import com.example.tiktalk.Utils.PreferenceUtils;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sendbird.android.AdminMessage;
@@ -64,7 +65,7 @@ import java.util.List;
 
 public class GroupChatFragment  extends BaseFragment {
 
-    FirebaseFirestore firestore;
+    FirebaseFirestore firestore=FirebaseFirestore.getInstance();
     private static final String LOG_TAG = GroupChatFragment.class.getSimpleName();
 
     private static final int CHANNEL_LIST_LIMIT = 30;
@@ -103,21 +104,31 @@ public class GroupChatFragment  extends BaseFragment {
     private int mCurrentState = STATE_NORMAL;
     private BaseMessage mEditingMessage = null;
 
-    /**
-     * To create an instance of this fragment, a Channel URL should be required.
-     */
-    public static GroupChatFragment newInstance(@NonNull String channelUrl) {
-        GroupChatFragment fragment = new GroupChatFragment();
+    String sellerId, sellerName, sellerImage;
 
-        Bundle args = new Bundle();
-        args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    /**
+//     * To create an instance of this fragment, a Channel URL should be required.
+//     */
+//    public static GroupChatFragment newInstance(@NonNull String channelUrl) {
+//        GroupChatFragment fragment = new GroupChatFragment();
+//
+//        Bundle args = new Bundle();
+//        args.putString(EXTRA_GROUP_CHANNEL_URL, channelUrl);
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        EXTRA_GROUP_CHANNEL_URL=bundle.getString("channel");
+        sellerName=bundle.getString("name");
+        sellerImage=bundle.getString("image");
+        sellerId=bundle.getString("id");
+
+
 
         mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mFileProgressHandlerMap = new HashMap<>();
@@ -127,10 +138,10 @@ public class GroupChatFragment  extends BaseFragment {
             mChannelUrl = savedInstanceState.getString(STATE_CHANNEL_URL);
         } else {
             // Get channel URL from GroupChannelListFragment.
-            mChannelUrl = getArguments().getString(EXTRA_GROUP_CHANNEL_URL);
+            mChannelUrl = getArguments().getString("channel");
         }
 
-//        Log.d(LOG_TAG, mChannelUrl);
+        Log.d(LOG_TAG, mChannelUrl);
 
         mChatAdapter = new GroupChatAdapter(getActivity());
         setUpChatListAdapter();
@@ -144,6 +155,7 @@ public class GroupChatFragment  extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        View rootView = inflater.inflate(R.layout.fragment_group_chat, container, false);
         View rootView = inflater.inflate(R.layout.conversation_frag_pateint, container, false);
+
 
         setRetainInstance(true);
 
@@ -180,6 +192,7 @@ public class GroupChatFragment  extends BaseFragment {
         mMessageSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveNotification();
                 if (mCurrentState == STATE_EDIT) {
                     String userInput = mMessageEditText.getText().toString();
                     if (userInput.length() > 0) {
@@ -293,7 +306,7 @@ public class GroupChatFragment  extends BaseFragment {
 
         // Gets channel from URL user requested
 
-        Log.d(LOG_TAG, mChannelUrl);
+//        Log.d(LOG_TAG, mChannelUrl);
 
         SendBird.addChannelHandler(CHANNEL_HANDLER_ID, new SendBird.ChannelHandler() {
             @Override
@@ -561,7 +574,10 @@ public class GroupChatFragment  extends BaseFragment {
 
     @Override
     public void initializeComponents(View rootView) {
-
+//        Bundle bundle = getArguments();
+//        sellerId=bundle.getString("id");
+//        sellerName=bundle.getString("name");
+//        sellerImage=bundle.getString("image");
     }
 
     @Override
@@ -918,6 +934,20 @@ public class GroupChatFragment  extends BaseFragment {
                 });
             }
         });
+    }
+
+    public void saveNotification() {
+
+        HashMap<String, Object> notify = new HashMap<>();
+        notify.put("sender", PreferenceUtils.getId(getActivity()));
+        notify.put("receiver", sellerId);
+        notify.put("name", sellerName);
+        notify.put("image", sellerImage);
+        notify.put("message", mMessageEditText.getText().toString());
+        notify.put("messageTime", FieldValue.serverTimestamp());
+
+        firestore.collection("notifications")
+                .add(notify);
     }
 
 }

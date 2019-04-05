@@ -37,7 +37,8 @@ public class BuyCoinsActivity extends AppCompatActivity {
     ProgressBar progressBar;
     ProgressDialog dialog;
     FirebaseFirestore firestore;
-    String coins, amount, totalCoins;
+    String coins, amount;
+    int totalCoins;
     ImageButton back_btn;
     CardMultilineWidget mCardMultilineWidget;
 
@@ -56,7 +57,7 @@ public class BuyCoinsActivity extends AppCompatActivity {
         back_btn = findViewById(R.id.back_btn);
 
         coins = getIntent().getStringExtra("coin");
-        totalCoins = getIntent().getStringExtra("totalCoins");
+        totalCoins = Integer.parseInt(getIntent().getStringExtra("totalCoins"));
         amount = getIntent().getStringExtra("amount");
 
         back_btn.setOnClickListener(new View.OnClickListener() {

@@ -361,27 +361,27 @@ public class SellerSettingsActivity extends BaseActivity {
                         if(!PreferenceUtils.getRatePerMin(SellerSettingsActivity.this).equals(settings_spinner.getSelectedItem().toString())){
 
                             String coins = null;
-                            if (settings_spinner.getSelectedItem().toString().equals("$0.2")){
+                            if (settings_spinner.getSelectedItem().toString().equals("0.2")){
                                 coins = "3";
                             }
 
-                            if (settings_spinner.getSelectedItem().toString().equals("$0.3")){
+                            if (settings_spinner.getSelectedItem().toString().equals("0.3")){
                                 coins = "4";
                             }
 
-                            if (settings_spinner.getSelectedItem().toString().equals("$0.4")){
+                            if (settings_spinner.getSelectedItem().toString().equals("0.4")){
                                 coins = "5";
                             }
 
-                            if (settings_spinner.getSelectedItem().toString().equals("$0.5")){
+                            if (settings_spinner.getSelectedItem().toString().equals("0.5")){
                                 coins = "6";
                             }
 
-                            if (settings_spinner.getSelectedItem().toString().equals("$0.6")){
+                            if (settings_spinner.getSelectedItem().toString().equals("0.6")){
                                 coins = "7";
                             }
 
-                            if (settings_spinner.getSelectedItem().toString().equals("$0.7")){
+                            if (settings_spinner.getSelectedItem().toString().equals("0.7")){
                                 coins = "8";
                             }
                             

@@ -73,6 +73,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.SinchError;
 
 import java.text.SimpleDateFormat;
@@ -137,8 +138,6 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
         SendBird.init(APP_ID, this.getApplicationContext());
         setupComponents();
 
-        SendBirdService.Connect(PreferenceUtils.getId(this), PreferenceUtils.getUsername(this), PreferenceUtils.getImageUrl(this));
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
                 .requestEmail()
@@ -161,6 +160,8 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
     @Override
     public void initializeComponents() {
+
+        SendBirdService.Connect(PreferenceUtils.getId(this), PreferenceUtils.getUsername(this), PreferenceUtils.getImageUrl(this));
 
         firestore = FirebaseFirestore.getInstance();
         historyArrayList = new ArrayList<>();
@@ -232,7 +233,11 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         finish();
                         break;
                     case 2:
-                        onReplaceFragment(R.id.drawer_layout, new ChannelsList_Fragment(), true);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("seller","seller");
+                        ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
+                        channelsList_fragment.setArguments(bundle);
+                        onReplaceFragment(R.id.drawer_layout,  channelsList_fragment, true);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
                     case 3:
@@ -255,6 +260,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             PreferenceUtils.clearMemory(getApplicationContext());
+                                            disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
@@ -595,5 +601,30 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             //Toast.makeText(this, "not connected", Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    private void disconnect() {
+        SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
+            @Override
+            public void onUnregistered(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    e.printStackTrace();
+                    return;
+                }
+
+//                Toast.makeText(Patient_HomeActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
+//                        .show();
+
+                SendBird.disconnect(new SendBird.DisconnectHandler() {
+                    @Override
+                    public void onDisconnected() {
+//                        Intent intent = new Intent(getApplicationContext(), User_Selection_Screen.class);
+//                        startActivity(intent);
+//                        finish();
+                    }
+                });
+            }
+        });
     }
 }

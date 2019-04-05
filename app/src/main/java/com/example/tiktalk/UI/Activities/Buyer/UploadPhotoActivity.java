@@ -57,6 +57,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
     String isActive = "1";
     String type = "Buyer";
     String isOnline = "1";
+    String coins = "0";
     String imageUrl;
     ProgressDialog dialog;
     ProgressBar progressBar;
@@ -115,7 +116,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
 
-                                    String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    final String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                                     final HashMap<String, String> users = new HashMap<String, String>();
                                     users.put("id", currentUser);
@@ -125,6 +126,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
                                     users.put("IsActive", isActive);
                                     users.put("Type", type);
                                     users.put("isOnline", isOnline);
+                                    users.put("coins", coins);
 
                                     firestore.collection("users")
                                             .document(currentUser)
@@ -133,8 +135,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("isOnline"),UploadPhotoActivity.this);
-
+                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("isOnline"), users.get("coins"), UploadPhotoActivity.this);
                                                     uploadImage();
                                                 }
                                             });

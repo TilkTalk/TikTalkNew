@@ -31,6 +31,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -646,10 +647,13 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             padding = itemView.findViewById(R.id.view_group_chat_padding);
         }
 
+        SimpleDateFormat simpleTime = new SimpleDateFormat("hh:mm a");
+
         void bind(Context context, final UserMessage message, GroupChannel channel, boolean isContinuous, boolean isNewDay, boolean isTempMessage, boolean isFailedMessage, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener, final int position) {
             Glide.with(context).load(PreferenceUtils.getImageUrl(context)).apply(new RequestOptions().error(R.mipmap.ic_launcher)).into(userImage);
             messageText.setText(message.getMessage());
-            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+//            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setText(simpleTime.format(message.getCreatedAt()));
 
             if (message.getUpdatedAt() > 0) {
                 editedText.setVisibility(View.VISIBLE);
@@ -794,8 +798,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                /*nicknameText*/.setText(message.getSender().getNickname());
             }
 
+            SimpleDateFormat simpleTime = new SimpleDateFormat("hh:mm a");
             messageText.setText(message.getMessage());
-            timeText.setText(DateUtils.formatTime(message.getCreatedAt()));
+            timeText.setText(simpleTime.format(message.getCreatedAt()));
 
             if (message.getUpdatedAt() > 0) {
                 editedText.setVisibility(View.VISIBLE);

@@ -37,9 +37,13 @@ import com.sendbird.android.GroupChannelParams;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.calling.Call;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import static com.example.tiktalk.TikTalk.getContext;
 
@@ -179,36 +183,80 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
 
     public void directCall(int position){
 
+        SimpleDateFormat simpleCallTime = new SimpleDateFormat("mm:ss", Locale.US);
+        SimpleDateFormat CallTime = new SimpleDateFormat("mm:ss", Locale.US);
+
+        SimpleDateFormat simpleTime = new SimpleDateFormat("HH:mm:ss", Locale.US);
+        SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss", Locale.US);
+
         User user = callArrayList.get(position);
         String sellerId = user.id;
         String sellerName = user.username;
         String sellerImage = user.imageUrl;
         String coinPerMin = user.coinPerMin;
 
-        Call call = getSinchServiceInterface().calluser(sellerId);
-        String callId = call.getCallId();
-        Intent callScreen = new Intent(AllSellerActivity.this, BuyerCallActivity.class);
-        callScreen.putExtra(SinchService.CALL_ID, callId);
-        callScreen.putExtra("toid", sellerId);
-        callScreen.putExtra("name", sellerName);
-        callScreen.putExtra("imageUrl", sellerImage);
-        callScreen.putExtra("coinPerMin", coinPerMin);
+        int callMins = Integer.valueOf(PreferenceUtils.getCoins(AllSellerActivity.this)) / Integer.valueOf(coinPerMin);
+        int displayHours = callMins / 60;
+        int displayMins = callMins % 60;
+        int displaySecs = 0;
+        String callEndTime = null;
 
-        callScreen.putExtra("fromid", PreferenceUtils.getId(AllSellerActivity.this));
-        callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(AllSellerActivity.this));
-        callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(AllSellerActivity.this));
-        callScreen.putExtra("coins", PreferenceUtils.getCoins(AllSellerActivity.this));
-        startActivity(callScreen);
+        if (displayHours == 0){
+            String diplayTime = displayMins + ":00";
 
-        final HashMap<String, Object> callDetails = new HashMap<String, Object>();
-        callDetails.put("buyerId", PreferenceUtils.getId(AllSellerActivity.this));
-        callDetails.put("buyerName", PreferenceUtils.getUsername(AllSellerActivity.this));
-        callDetails.put("buyerImage", PreferenceUtils.getImageUrl(AllSellerActivity.this));
-        callDetails.put("callTime", FieldValue.serverTimestamp());
-        callDetails.put("status", "missed");
+            try {
+                Date d = simpleCallTime.parse(diplayTime);
+                callEndTime = String.valueOf(CallTime.format(d));
 
-        firestore.collection("calls")
-                .add(callDetails);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (displayHours > 0){
+            String diplayTime = displayHours + ":" + displayMins + ":00";
+
+            try {
+                Date d = simpleTime.parse(diplayTime);
+                callEndTime = String.valueOf(time.format(d));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (Integer.valueOf(PreferenceUtils.getCoins(this)) > Integer.valueOf(coinPerMin)){
+            Call call = getSinchServiceInterface().calluser(sellerId);
+            String callId = call.getCallId();
+            Intent callScreen = new Intent(AllSellerActivity.this, BuyerCallActivity.class);
+            callScreen.putExtra(SinchService.CALL_ID, callId);
+            callScreen.putExtra("toid", sellerId);
+            callScreen.putExtra("name", sellerName);
+            callScreen.putExtra("imageUrl", sellerImage);
+            callScreen.putExtra("coinPerMin", coinPerMin);
+
+            callScreen.putExtra("fromid", PreferenceUtils.getId(AllSellerActivity.this));
+            callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(AllSellerActivity.this));
+            callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(AllSellerActivity.this));
+            callScreen.putExtra("coins", PreferenceUtils.getCoins(AllSellerActivity.this));
+
+            callScreen.putExtra("callMins", String.valueOf(callMins));
+            callScreen.putExtra("callEndTime", callEndTime);
+            startActivity(callScreen);
+
+            final HashMap<String, Object> callDetails = new HashMap<String, Object>();
+            callDetails.put("buyerId", PreferenceUtils.getId(AllSellerActivity.this));
+            callDetails.put("buyerName", PreferenceUtils.getUsername(AllSellerActivity.this));
+            callDetails.put("buyerImage", PreferenceUtils.getImageUrl(AllSellerActivity.this));
+            callDetails.put("callTime", FieldValue.serverTimestamp());
+            callDetails.put("status", "missed");
+
+            firestore.collection("calls")
+                    .add(callDetails);
+        }
+        else {
+            showToast("You don't have enough coins in your wallet.");
+        }
     }
 
     public void directMessage(int position){
@@ -230,6 +278,7 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                     chatIntent.putExtra("cover",groupChannel.getCoverUrl());
                     chatIntent.putExtra("members",sellerId);
+                    chatIntent.putExtra("seller","buyer");
 
                     startActivity(chatIntent);
                 }

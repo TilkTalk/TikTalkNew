@@ -566,8 +566,11 @@ public class BuyerLoginActivity extends BaseActivity {
                                     });
 
 
-                        } else
+                        } else{
                             Toast.makeText(BuyerLoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+
 
                     }
                 });

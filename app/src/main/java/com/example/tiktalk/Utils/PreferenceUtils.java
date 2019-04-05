@@ -38,7 +38,7 @@ public class PreferenceUtils {
     }
 
     //Signup
-    public static boolean saveBuyerData(String username, String email, String password, String id, String isActive, String type, String isOnline, Context context) {
+    public static boolean saveBuyerData(String username, String email, String password, String id, String isActive, String type, String isOnline, String coins, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString("username", username);
@@ -48,6 +48,7 @@ public class PreferenceUtils {
         prefsEditor.putString("IsActive", isActive);
         prefsEditor.putString("Type", type);
         prefsEditor.putString("isOnline", isOnline);
+        prefsEditor.putString("coins", coins);
         prefsEditor.apply();
         return true;
     }

@@ -56,6 +56,9 @@ public class UploadPhotoActivity extends BaseActivity {
     String type = "Seller";
     String isOnline = "1";
     String rating = "0";
+    String $perMin = "0";
+    String coinPerMin = "0";
+    String dollersEarned = "0";
 
     Uri imageUri;
 
@@ -115,7 +118,7 @@ public class UploadPhotoActivity extends BaseActivity {
 
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots){
 
-                            String rate = documentSnapshot.getString("totalAmount");
+                            String rate = documentSnapshot.getString("amount");
                             list.add(rate);
                         }
 
@@ -157,37 +160,37 @@ public class UploadPhotoActivity extends BaseActivity {
                 startActivity(in);
                 Bungee.slideDown(UploadPhotoActivity.this);*/
 
-                if (seller_spinner.getSelectedItem().toString().equals("$0.2")){
+                if (seller_spinner.getSelectedItem().toString().equals("0.2")){
 
                     value = "0.2";
                     coins = "3";
                 }
 
-                if (seller_spinner.getSelectedItem().toString().equals("$0.3")){
+                if (seller_spinner.getSelectedItem().toString().equals("0.3")){
 
                     value = "0.3";
                     coins = "4";
                 }
 
-                if (seller_spinner.getSelectedItem().toString().equals("$0.4")){
+                if (seller_spinner.getSelectedItem().toString().equals("0.4")){
 
                     value = "0.4";
                     coins = "5";
                 }
 
-                if (seller_spinner.getSelectedItem().toString().equals("$0.5")){
+                if (seller_spinner.getSelectedItem().toString().equals("0.5")){
 
                     value = "0.5";
                     coins = "6";
                 }
 
-                if (seller_spinner.getSelectedItem().toString().equals("$0.6")){
+                if (seller_spinner.getSelectedItem().toString().equals("0.6")){
 
                     value = "0.6";
                     coins = "7";
                 }
 
-                if (seller_spinner.getSelectedItem().toString().equals("$0.7")){
+                if (seller_spinner.getSelectedItem().toString().equals("0.7")){
 
                     value = "0.7";
                     coins = "8";
@@ -215,6 +218,7 @@ public class UploadPhotoActivity extends BaseActivity {
                                     users.put("$perMin", value);
                                     users.put("rating", rating);
                                     users.put("coinPerMin", coins);
+                                    users.put("dollersEarned", dollersEarned);
 
                                     firestore.collection("users")
                                             .document(currentUser)

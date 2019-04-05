@@ -11,10 +11,8 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.example.tiktalk.R;
-import com.example.tiktalk.UI.Activities.Buyer.BuyerDashboard;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerHomeActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
-import com.example.tiktalk.UI.Activities.Seller.SellerDashboardActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerHomeActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 
