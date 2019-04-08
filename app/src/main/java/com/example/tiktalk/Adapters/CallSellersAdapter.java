@@ -10,6 +10,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.chauthai.swipereveallayout.SwipeRevealLayout;
+import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +27,7 @@ public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.
     private OnCallClickListener callListener;
     private OnChatClickListener chatListener;
     private OnImageClickListener imageListener;
+    private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
 
     public interface OnCallClickListener {
         void onCallClick(int position);
@@ -69,6 +72,9 @@ public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        viewBinderHelper.bind(holder.swipe_layout, sellerListItems.get(position).getId());
+        viewBinderHelper.setOpenOnlyOne(true);
+
         Glide.with(context).load(sellerListItems.get(position).getImageUrl()).into(holder.seller_photo);
         holder.seller_name.setText(sellerListItems.get(position).getUsername());
         holder.seller_rating.setText(sellerListItems.get(position).getRating());
@@ -88,6 +94,7 @@ public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.
         public CircleImageView seller_photo;
         public TextView seller_name, seller_rating, rates;
         public RatingBar rating_bar;
+        public SwipeRevealLayout swipe_layout;
 
         public ViewHolder(final View itemView) {
             super(itemView);
@@ -101,6 +108,7 @@ public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.
             rating_bar = itemView.findViewById(R.id.rating_bar);
             call_btn = itemView.findViewById(R.id.call_btn);
             chat_btn = itemView.findViewById(R.id.chat_btn);
+            swipe_layout = itemView.findViewById(R.id.swipe_layout);
 
             call_btn.setOnClickListener(new View.OnClickListener() {
                 @Override

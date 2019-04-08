@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,7 +21,8 @@ import com.example.tiktalk.UI.Activities.Seller.UploadPhotoActivity;
 
 public class NumberVerificationActivity extends BaseActivity {
 
-    Button cancelBtn, ok_btn;
+    Button  ok_btn;
+    ImageButton cancelBtn;
     String name, email, password, code;
     EditText code1, code2, code3, code4;
     TextView emailTxt, resend_textView;
@@ -52,6 +56,60 @@ public class NumberVerificationActivity extends BaseActivity {
 
         emailTxt.setText(email);
 
+        code1.addTextChangedListener(new GenericTextWatcher(code1));
+        code2.addTextChangedListener(new GenericTextWatcher(code2));
+        code3.addTextChangedListener(new GenericTextWatcher(code3));
+        code4.addTextChangedListener(new GenericTextWatcher(code4));
+
+    }
+
+    public class GenericTextWatcher implements TextWatcher
+    {
+        private View view;
+        private GenericTextWatcher(View view)
+        {
+            this.view = view;
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            // TODO Auto-generated method stub
+            String text = editable.toString();
+            switch(view.getId())
+            {
+
+                case R.id.code1:
+                    if(text.length()==1)
+                        code2.requestFocus();
+                    break;
+                case R.id.code2:
+                    if(text.length()==1)
+                        code3.requestFocus();
+                    else if(text.length()==0)
+                        code1.requestFocus();
+                    break;
+                case R.id.code3:
+                    if(text.length()==1)
+                        code4.requestFocus();
+                    else if(text.length()==0)
+                        code2.requestFocus();
+                    break;
+                case R.id.code4:
+                    if(text.length()==0)
+                        code3.requestFocus();
+                    break;
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+        }
     }
 
     @Override

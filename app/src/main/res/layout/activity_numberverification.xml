@@ -7,17 +7,17 @@
     android:fillViewport="true"
     tools:context=".UI.Activities.NumberVerificationActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/login_bg"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_bg">
 
         <LinearLayout
+            android:id="@+id/top_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="200dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/my_toolbar"
@@ -28,11 +28,12 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:titleTextColor="@android:color/white">
 
-                <Button
+                <ImageButton
                     android:id="@+id/number_cancel_btn"
-                    android:layout_width="35dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/back_white" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/back_white"
+                    android:background="@color/transparent" />
 
 
             </android.support.v7.widget.Toolbar>
@@ -84,10 +85,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/bottom_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/top_layout">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -96,20 +98,18 @@
                 android:layout_marginBottom="40dp"
                 android:orientation="horizontal">
 
-                <RelativeLayout
+                <android.support.v7.widget.CardView
                     android:id="@+id/code1_layout"
                     android:layout_width="60dp"
-                    android:layout_height="80dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/edit_text_shadow"
-                    android:orientation="horizontal">
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="3dp"
+                    android:layout_margin="10dp">
 
                     <EditText
                         android:id="@+id/code1"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_height="match_parent"
                         android:background="@color/white"
                         android:inputType="number"
                         android:maxLength="1"
@@ -118,22 +118,20 @@
                         android:textSize="34sp"
                         android:textStyle="bold" />
 
-                </RelativeLayout>
+                </android.support.v7.widget.CardView>
 
-                <RelativeLayout
+                <android.support.v7.widget.CardView
                     android:id="@+id/code2_layout"
                     android:layout_width="60dp"
-                    android:layout_height="80dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/edit_text_shadow"
-                    android:orientation="horizontal">
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="3dp"
+                    android:layout_margin="10dp">
 
                     <EditText
                         android:id="@+id/code2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_height="match_parent"
                         android:background="@color/white"
                         android:inputType="number"
                         android:maxLength="1"
@@ -142,22 +140,20 @@
                         android:textSize="34sp"
                         android:textStyle="bold" />
 
-                </RelativeLayout>
+                </android.support.v7.widget.CardView>
 
-                <RelativeLayout
+                <android.support.v7.widget.CardView
                     android:id="@+id/code3_layout"
                     android:layout_width="60dp"
-                    android:layout_height="80dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/edit_text_shadow"
-                    android:orientation="horizontal">
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="3dp"
+                    android:layout_margin="10dp">
 
                     <EditText
                         android:id="@+id/code3"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_height="match_parent"
                         android:background="@color/white"
                         android:inputType="number"
                         android:maxLength="1"
@@ -166,22 +162,20 @@
                         android:textSize="34sp"
                         android:textStyle="bold" />
 
-                </RelativeLayout>
+                </android.support.v7.widget.CardView>
 
-                <RelativeLayout
+                <android.support.v7.widget.CardView
                     android:id="@+id/code4_layout"
                     android:layout_width="60dp"
-                    android:layout_height="80dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/edit_text_shadow"
-                    android:orientation="horizontal">
+                    android:layout_height="60dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="3dp"
+                    android:layout_margin="10dp">
 
                     <EditText
                         android:id="@+id/code4"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_height="match_parent"
                         android:background="@color/white"
                         android:inputType="number"
                         android:maxLength="1"
@@ -190,31 +184,19 @@
                         android:textSize="34sp"
                         android:textStyle="bold" />
 
-                </RelativeLayout>
+                </android.support.v7.widget.CardView>
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="140dp"
-                android:layout_height="75dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/login_btn"
-                android:layout_gravity="center_horizontal">
-
                 <Button
                     android:id="@+id/ok_btn"
-                    android:layout_width="wrap_content"
+                    android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/transparent"
+                    android:background="@drawable/login_btn_bg"
                     android:text="continue"
                     android:textColor="@android:color/white"
-                    android:textStyle="bold" />
-
-            </RelativeLayout>
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="20dp"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -244,7 +226,7 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </ScrollView>

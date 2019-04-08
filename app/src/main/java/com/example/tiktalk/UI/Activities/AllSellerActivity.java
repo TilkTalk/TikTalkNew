@@ -2,26 +2,34 @@ package com.example.tiktalk.UI.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.tiktalk.Adapters.BuyCoinsAdapter;
 import com.example.tiktalk.Adapters.CallSellersAdapter;
 import com.example.tiktalk.Adapters.OnlineSellersAdapter;
 import com.example.tiktalk.Adapters.TopRatedSellersAdapter;
 import com.example.tiktalk.BaseClasses.BaseActivity;
+import com.example.tiktalk.Model.CoinsCategory;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.example.tiktalk.SendBird.SendbirdChatActivity;
 import com.example.tiktalk.Sinch.SinchService;
+import com.example.tiktalk.UI.Activities.Buyer.BuyCoinsActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerCallActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerProfileActivity;
@@ -40,6 +48,8 @@ import com.sinch.android.rtc.calling.Call;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,13 +63,15 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
     ProgressDialog dialog;
 
     FirebaseFirestore firestore;
-    LinearLayout sellerProfileBtn;
-    Button cancelBtn;
-    ImageView callBtn, chatBtn;
+    ImageButton cancelBtn;
+    Button buycoins_btn;
     RecyclerView recyclerView;
     LinearLayoutManager manager;
     CallSellersAdapter adapter;
     ArrayList<User> callArrayList;
+    CoinsCategory buyCoins;
+    BuyCoinsAdapter adaper;
+    String coins;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +82,8 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
 
     @Override
     public void initializeComponents() {
+
+        coins = getIntent().getStringExtra("coins");
 
         firestore = FirebaseFirestore.getInstance();
         callArrayList = new ArrayList<>();
@@ -83,19 +97,13 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
         progressBar.setIndeterminateDrawable(wave);
         dialog.setIndeterminateDrawable(wave);
 
-        //sellerProfileBtn = findViewById(R.id.sellerProfile_btn);
         cancelBtn = findViewById(R.id.cancel_btn);
+        buycoins_btn = findViewById(R.id.buycoins_btn);
 
-        /*callBtn = findViewById(R.id.call_btn);
-        chatBtn = findViewById(R.id.chat_btn);
+    }
 
-        sellerProfileBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(AllSellerActivity.this, SellerProfileActivity.class);
-                startActivity(in);
-            }
-        });
+    @Override
+    public void setupListeners() {
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,27 +111,6 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
                 finish();
             }
         });
-
-        callBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(AllSellerActivity.this, BuyerCallActivity.class);
-                startActivity(in);
-            }
-        });
-
-        chatBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent in = new Intent(AllSellerActivity.this, BuyerChatActivity.class);
-                startActivity(in);
-            }
-        });*/
-
-    }
-
-    @Override
-    public void setupListeners() {
 
         dialog.setMessage("Loading...");
         dialog.show();
@@ -162,6 +149,68 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
 
                     }
                 });
+
+        buycoins_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(AllSellerActivity.this);
+                final AlertDialog alert = dialog.create();
+                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                final View attachFileLayout = inflater.inflate(R.layout.buy_coins_layout, null);
+                attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                alert.setView(attachFileLayout);
+
+                final RecyclerView recycler_view = attachFileLayout.findViewById(R.id.recycler_view);
+                LinearLayoutManager manager = new LinearLayoutManager(attachFileLayout.getContext());
+                final ArrayList<CoinsCategory> buyCoinsArrayList = new ArrayList<>();
+                recycler_view.setLayoutManager(manager);
+
+                firestore.collection("coins")
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                                    CoinsCategory cc = new CoinsCategory(
+                                            documentSnapshot.getString("coins"),
+                                            documentSnapshot.getString("amount"));
+                                    buyCoinsArrayList.add(cc);
+                                }
+                                Comparator<CoinsCategory> c = new Comparator<CoinsCategory>() {
+
+                                    @Override
+                                    public int compare(CoinsCategory a, CoinsCategory b) {
+                                        return Integer.compare(Integer.valueOf(a.getCoins()), Integer.valueOf(b.getCoins()));
+                                    }
+                                };
+                                Collections.sort(buyCoinsArrayList, c);
+                                adaper = new BuyCoinsAdapter(buyCoinsArrayList, attachFileLayout.getContext());
+                                recycler_view.setAdapter(adaper);
+                                adaper.setOnClickListener(new BuyCoinsAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onClick(int position) {
+
+                                        buyCoins = buyCoinsArrayList.get(position);
+                                        final String coin = buyCoins.getCoins();
+                                        String amount = buyCoins.getAmount();
+
+                                        Intent in = new Intent(AllSellerActivity.this, BuyCoinsActivity.class);
+                                        in.putExtra("coin", coin);
+                                        in.putExtra("amount", amount);
+                                        in.putExtra("totalCoins", coins);
+                                        startActivity(in);
+                                    }
+                                });
+                                alert.show();
+                            }
+                        });
+
+            }
+
+        });
 
     }
 

@@ -7,17 +7,17 @@
     android:fillViewport="true"
     tools:context=".UI.Activities.Buyer.BuyerLoginActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/login_bg"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_bg">
 
         <LinearLayout
+            android:id="@+id/top_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="200dp">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/my_toolbar"
@@ -86,7 +86,8 @@
 
         </LinearLayout>
 
-        <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/spin_kit"
             style="@style/SpinKitView.Large.Wave"
             android:layout_width="wrap_content"
@@ -96,99 +97,119 @@
             app:SpinKit_Color="@color/colorAccent" />
 
         <LinearLayout
+            android:id="@+id/bottom_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/top_layout">
 
-
-            <LinearLayout
-                android:id="@+id/email_layout"
+            <android.support.v7.widget.CardView
+                android:id="@+id/email_cardview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="16dp"
-                android:elevation="5dp">
+                android:layout_height="60dp"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="3dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="5dp">
 
-                <EditText
-                    android:id="@+id/login_email"
-                    android:layout_width="300dp"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="14dp"
-                    android:hint="Email"
-                    android:inputType="textEmailAddress"
-                    android:paddingLeft="60dp"
-                    android:singleLine="true"
-                    android:background="@drawable/view_bg"
-                    android:text="buyertesting@mailinator.com"/>
+                <RelativeLayout
+                    android:id="@+id/email_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/check"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="35dp"
-                    android:src="@drawable/check" />
+                    <EditText
+                        android:id="@+id/login_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:paddingStart="60dp"
+                        android:paddingEnd="10dp"
+                        android:singleLine="true"
+                        android:background="@drawable/view_bg"
+                        android:text="buyertesting@mailinator.com"
+                        android:layout_alignParentStart="true"
+                        android:textSize="14sp"/>
 
-            </LinearLayout>
+                    <ImageView
+                        android:id="@+id/check"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/check"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="20dp"/>
 
-            <LinearLayout
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/password_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="3dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="5dp">
+
+            <RelativeLayout
                 android:id="@+id/password_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="30dp"
-                android:background="@drawable/edit_text_shadow"
-                android:orientation="horizontal">
+                android:layout_height="match_parent">
 
                 <EditText
                     android:id="@+id/login_password"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_weight="2"
+                    android:layout_height="match_parent"
                     android:background="@drawable/view_bg"
                     android:gravity="center_vertical"
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:paddingLeft="60dp"
                     android:singleLine="true"
-                    android:text="buyer123"/>
+                    android:text="buyer123"
+                    android:layout_alignParentStart="true"
+                    android:textSize="14sp"/>
 
                 <TextView
                     android:id="@+id/forget_textView"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_weight="5"
                     android:clickable="true"
                     android:text="Forgot"
                     android:textColor="@color/themeColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"/>
 
-            </LinearLayout>
+            </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="12dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
                 <Button
                     android:id="@+id/login_btn"
                     android:layout_width="110dp"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="3dp"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/login_btn_bg"
                     android:text="login"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:layout_margin="10dp"/>
 
                 <com.facebook.login.widget.LoginButton
                     android:id="@+id/login_with_facebook"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_centerInParent="true"
                     android:visibility="gone" />
 
                 <Button
@@ -196,17 +217,17 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="3dp"
                     android:layout_marginRight="16dp"
-                    android:background="@drawable/facebook" />
+                    android:background="@drawable/facebook"
+                    android:layout_gravity="center_vertical"/>
 
                 <Button
                     android:id="@+id/googleSignInBtn"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/google" />
+                    android:background="@drawable/google"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"/>
 
             </LinearLayout>
 
@@ -238,6 +259,6 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </ScrollView>

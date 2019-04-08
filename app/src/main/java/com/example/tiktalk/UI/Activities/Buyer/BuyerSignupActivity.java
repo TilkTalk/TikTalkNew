@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.R;
 import com.example.tiktalk.UI.Activities.Seller.SellerSignupActivity;
@@ -50,6 +55,8 @@ import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import spencerstudios.com.bungeelib.Bungee;
 
@@ -63,7 +70,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
     private static int RC_SIGN_IN = 123;
     private static String TAG = "BuyerLoginActivity";
 
-    LinearLayout name_layout, email_layout, password_layout;
+    CardView name_cardview, email_cardview, password_cardview;
     View name_view, email_view, password_view;
     EditText nameEditTxt;
     EditText emailEditTxt;
@@ -82,6 +89,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
     String isOnline = "1";
     String coins = "0";
 
+    String name,email,password;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +113,9 @@ public class BuyerSignupActivity extends AppCompatActivity {
         facebookSignInBtn = findViewById(R.id.facebookSignInBtn);
         partnerSignUpBtn = findViewById(R.id.partnerSignup_Btn);
         signinTextView = findViewById(R.id.signin_textView);
-        name_layout = findViewById(R.id.name_layout);
-        email_layout = findViewById(R.id.email_layout);
-        password_layout = findViewById(R.id.password_layout);
+        name_cardview = findViewById(R.id.name_cardview);
+        email_cardview = findViewById(R.id.email_cardview);
+        password_cardview = findViewById(R.id.password_cardview);
         name_view = findViewById(R.id.name_view);
         email_view = findViewById(R.id.email_view);
         password_view = findViewById(R.id.password_view);
@@ -164,9 +172,9 @@ public class BuyerSignupActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    name_layout.setBackgroundResource(R.drawable.edit_text_shadow);
-                    email_layout.setBackgroundResource(R.color.transparent);
-                    password_layout.setBackgroundResource(R.color.transparent);
+                    name_cardview.setCardElevation(4f);
+                    email_cardview.setCardElevation(0f);
+                    password_cardview.setCardElevation(0f);
                     name_view.setVisibility(View.GONE);
                     email_view.setVisibility(View.VISIBLE);
                     password_view.setVisibility(View.VISIBLE);
@@ -178,9 +186,9 @@ public class BuyerSignupActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    name_layout.setBackgroundResource(R.color.transparent);
-                    email_layout.setBackgroundResource(R.drawable.edit_text_shadow);
-                    password_layout.setBackgroundResource(R.color.transparent);
+                    name_cardview.setCardElevation(0f);
+                    email_cardview.setCardElevation(4f);
+                    password_cardview.setCardElevation(0f);
                     name_view.setVisibility(View.VISIBLE);
                     email_view.setVisibility(View.GONE);
                     password_view.setVisibility(View.VISIBLE);
@@ -192,9 +200,9 @@ public class BuyerSignupActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    name_layout.setBackgroundResource(R.color.transparent);
-                    email_layout.setBackgroundResource(R.color.transparent);
-                    password_layout.setBackgroundResource(R.drawable.edit_text_shadow);
+                    name_cardview.setCardElevation(0f);
+                    email_cardview.setCardElevation(0f);
+                    password_cardview.setCardElevation(4f);
                     name_view.setVisibility(View.VISIBLE);
                     email_view.setVisibility(View.VISIBLE);
                     password_view.setVisibility(View.GONE);
@@ -205,7 +213,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signUp();
+                validate();
             }
         });
 
@@ -230,15 +238,21 @@ public class BuyerSignupActivity extends AppCompatActivity {
 
     private void signUp() {
 
-        String name = nameEditTxt.getText().toString();
-        String email = emailEditTxt.getText().toString();
-        String password = passwordEditTxt.getText().toString();
+            Intent intent = new Intent(this, UploadPhotoActivity.class);
+            intent.putExtra("name", name);
+            intent.putExtra("email", email);
+            intent.putExtra("password", password);
+            startActivity(intent);
 
-        Intent intent = new Intent(this, UploadPhotoActivity.class);
-        intent.putExtra("name", name);
-        intent.putExtra("email", email);
-        intent.putExtra("password", password);
-        startActivity(intent);
+
+
+    }
+
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     private void signIn() {
@@ -400,4 +414,31 @@ public class BuyerSignupActivity extends AppCompatActivity {
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
-}
+
+    public void validate(){
+
+        name = nameEditTxt.getText().toString();
+        email = emailEditTxt.getText().toString();
+        password = passwordEditTxt.getText().toString();
+
+        name= name.trim();
+        email= email.trim();
+        password= password.trim();
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(emailEditTxt.getText().toString()).matches()) {
+            emailEditTxt.setError("Please enter a Valid E-Mail Address!");
+        }
+        if (password.length()<6){
+            passwordEditTxt.setError("Password Must Have 6 Characters");
+        }
+        else if (TextUtils.isEmpty(name)){
+            nameEditTxt.setError("required");
+        }else if(TextUtils.isEmpty(email)) {
+            emailEditTxt.setError("required");
+        }else if (TextUtils.isEmpty(password)) {
+            passwordEditTxt.setError("required");
+        } else
+            signUp();
+        }
+    }
+

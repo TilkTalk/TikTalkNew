@@ -209,30 +209,35 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:
+                    case 1:{
                         Intent in = new Intent(BuyerHomeActivity.this, BuyerHomeActivity.class);
                         startActivity(in);
                         finish();
                         break;
-                    case 2:
-                        onReplaceFragment(R.id.drawer_layout, new BuyerMyWalletFragment(), true);
-                        drawer_layout.closeDrawer(mDrawerList);
+                    }
+                    case 2:{
+                        Intent intent = new Intent(BuyerHomeActivity.this, BuyerMyWalletFragment.class);
+                        startActivity(intent);
+                        finish();
                         break;
-                    case 3:
-                        Bundle bundle = new Bundle();
-                        bundle.putString("buyer","buyer");
-                        ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
-                        channelsList_fragment.setArguments(bundle);
-                        onReplaceFragment(R.id.drawer_layout,  channelsList_fragment, true);
-                        drawer_layout.closeDrawer(mDrawerList);
+                    }
+                    case 3:{
+                        Intent intent1 = new Intent(BuyerHomeActivity.this, BuyerInboxFragment.class);
+                        startActivity(intent1);
+                        finish();
                         break;
-                    case 4:
-                        onReplaceFragment(R.id.drawer_layout, new BuyerNotificationFragment(), true);
-                        drawer_layout.closeDrawer(mDrawerList);
-                    case 5:
+                    }
+                    case 4:{
+                        Intent in = new Intent(BuyerHomeActivity.this, BuyerNotificationFragment.class);
+                        startActivity(in);
+                        finish();
                         break;
-                    case 6:
-
+                    }
+                    case 5:{
+                        Toast.makeText(BuyerHomeActivity.this, "Contact page is under development!", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    case 6:{
                         myId = PreferenceUtils.getId(BuyerHomeActivity.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -262,6 +267,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                 });
 
                         break;
+                    }
                 }
             }
         });
@@ -411,7 +417,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         String[] fullName = PreferenceUtils.getUsername(this).split(" ");
 
         if (fullName.length == 1) {
-            lastName = fullName[0].trim();
+            firstName = fullName[0].trim();
         }
 
         if (fullName.length == 2) {
@@ -425,7 +431,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             lastName = fullName[2].trim();
         }
 
-        buyer_name.setText(lastName);
+        buyer_name.setText(firstName);
 
         if (checkPermission()) {
 
@@ -520,41 +526,6 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                         in.putExtra("amount", amount);
                                         in.putExtra("totalCoins", coins);
                                         startActivity(in);
-
-                                        /*buyCoins = buyCoinsArrayList.get(position);
-                                        final String coin = buyCoins.getCoins();
-                                        String amount = buyCoins.getAmount();
-
-                                        final AlertDialog alert;
-
-                                        final AlertDialog.Builder dialog2 = new AlertDialog.Builder(BuyerHomeActivity.this);
-                                        dialog2.setTitle("Do you want to proceed?");
-                                        dialog2.setMessage("$" + amount + " would be deducted from your account.");
-
-                                        dialog2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-
-                                                int totalCoins = Integer.valueOf(coins) + Integer.valueOf(coin);
-
-                                                HashMap<String, Object> coinMap = new HashMap<String, Object>();
-                                                coinMap.put("coins", String.valueOf(totalCoins));
-
-                                                firestore.collection("users")
-                                                        .document(PreferenceUtils.getId(BuyerHomeActivity.this))
-                                                        .update(coinMap);
-
-                                            }
-                                        });
-
-                                        dialog2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        });
-
-                                        dialog2.show();*/
                                     }
                                 });
                                 alert.show();
@@ -569,6 +540,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(BuyerHomeActivity.this, AllSellerActivity.class);
+                in.putExtra("coins", coins);
                 startActivity(in);
                 Bungee.slideLeft(BuyerHomeActivity.this);
             }

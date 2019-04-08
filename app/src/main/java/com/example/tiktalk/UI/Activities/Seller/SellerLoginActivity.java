@@ -14,9 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
+import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -69,12 +72,13 @@ public class SellerLoginActivity extends AppCompatActivity {
     ProgressBar progressBar;
     ProgressDialog dialog;
 
-    Button loginBtn, cancelBtn;
+    Button loginBtn;
+    ImageButton cancelBtn;
     TextView signupBtn;
     EditText emailEditText;
     EditText passwordEditText;
     ImageView check;
-    LinearLayout email_layout, password_layout;
+    RelativeLayout email_layout, password_layout;
     Button googleSignInBtn;
     Button facebookSignInBtn;
 
@@ -180,10 +184,9 @@ public class SellerLoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                if (emailEditText.getText().toString().contains(".com")){
+                if (emailEditText.getText().toString().contains(".com")) {
                     check.setVisibility(View.VISIBLE);
-                }
-                else
+                } else
                     check.setVisibility(View.GONE);
             }
         });
@@ -214,6 +217,8 @@ public class SellerLoginActivity extends AppCompatActivity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent in = new Intent(SellerLoginActivity.this, BuyerLoginActivity.class);
+                startActivity(in);
                 finish();
             }
         });
@@ -278,12 +283,11 @@ public class SellerLoginActivity extends AppCompatActivity {
 
                                                     DocumentSnapshot dc = task.getResult();
 
-                                                    if (dc.getString("Type").equals("Buyer")){
+                                                    if (dc.getString("Type").equals("Buyer")) {
 
                                                         Toast.makeText(SellerLoginActivity.this, "You are already signed up as a Buyer!", Toast.LENGTH_SHORT).show();
                                                         dialog.dismiss();
-                                                    }
-                                                    else {
+                                                    } else {
 
                                                         HashMap<String, Object> online = new HashMap<String, Object>();
                                                         online.put("isOnline", "1");
@@ -342,8 +346,7 @@ public class SellerLoginActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
-        }
-        else {
+        } else {
 
             callbackManager.onActivityResult(requestCode, resultCode, data);
             dialog.setMessage("Signing in...");
@@ -421,11 +424,10 @@ public class SellerLoginActivity extends AppCompatActivity {
 
                                                         DocumentSnapshot dc = task.getResult();
 
-                                                        if (dc.getString("Type").equals("Buyer")){
+                                                        if (dc.getString("Type").equals("Buyer")) {
                                                             Toast.makeText(SellerLoginActivity.this, "You are already signed up as a Buyer!", Toast.LENGTH_SHORT).show();
                                                             dialog.dismiss();
-                                                        }
-                                                        else {
+                                                        } else {
 
                                                             HashMap<String, Object> online = new HashMap<String, Object>();
                                                             online.put("isOnline", "1");
@@ -478,8 +480,11 @@ public class SellerLoginActivity extends AppCompatActivity {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
+        email = email.trim();
+        password = password.trim();
 
         if (TextUtils.isEmpty(email)) {
+            emailEditText.setError("Required!");
             YoYo.with(Techniques.Shake)
                     .duration(700)
                     .repeat(1)
@@ -488,6 +493,7 @@ public class SellerLoginActivity extends AppCompatActivity {
         }
 
         if (TextUtils.isEmpty(password)) {
+            passwordEditText.setError("Required!");
             YoYo.with(Techniques.Shake)
                     .duration(700)
                     .repeat(1)
@@ -535,7 +541,7 @@ public class SellerLoginActivity extends AppCompatActivity {
 
                                                 dialog.dismiss();
 
-                                                if (user.IsActive.equals("1")){
+                                                if (user.IsActive.equals("1")) {
 
                                                     HashMap<String, Object> online = new HashMap<String, Object>();
                                                     online.put("isOnline", "1");
@@ -547,8 +553,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                     Intent intent = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                     startActivity(intent);
                                                     finish();
-                                                }
-                                                else {
+                                                } else {
                                                     Toast.makeText(SellerLoginActivity.this, "Your account is not approved yet.", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -556,10 +561,21 @@ public class SellerLoginActivity extends AppCompatActivity {
                                     });
 
 
-                        } else
+                        } else{
                             Toast.makeText(SellerLoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+
 
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        Intent in = new Intent(SellerLoginActivity.this, BuyerLoginActivity.class);
+        startActivity(in);
+        finish();
     }
 }

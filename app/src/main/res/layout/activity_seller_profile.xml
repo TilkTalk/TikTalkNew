@@ -9,148 +9,22 @@
     android:orientation="vertical"
     tools:context=".UI.Activities.Seller.SellerProfileActivity">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@android:color/white">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/my_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:titleTextColor="@android:color/white">
+        <Button
+            android:id="@+id/profile_cancel_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/back_white" />
 
-            <Button
-                android:id="@+id/profile_cancel_btn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/back_white" />
-
-        </android.support.v7.widget.Toolbar>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="Profile"
-            android:textColor="@android:color/white"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="35dp"
-            android:layout_height="5dp"
-            android:layout_marginLeft="16dp"
-            android:background="@drawable/view_bg" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical">
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/seller_profile_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/nine"
-            app:riv_border_color="#FFF"
-            app:riv_border_width="3dp"
-            app:riv_corner_radius="20dp"
-            app:riv_mutate_background="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="16dp"/>
-
-
-        <TextView
-            android:id="@+id/seller_profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:text="Mike Smith"
-            android:textColor="@color/textColor"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
-
-            <com.iarcuschin.simpleratingbar.SimpleRatingBar
-                android:id="@+id/test"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srb_starSize="18dp"
-                app:srb_numberOfStars="5"
-                app:srb_stepSize="0.1"
-                app:srb_borderColor="#FFD700"
-                app:srb_fillColor="#FFD700"
-                android:layout_gravity="center_vertical"/>
-
-            <!--<RatingBar
-                android:id="@+id/seller_profile_ratingBar"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:stepSize="0.1"
-                android:progressTint="@color/yellow"/>-->
-
-            <TextView
-                android:id="@+id/seller_profile_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5.0"
-                android:textSize="16sp"
-                android:layout_marginLeft="5dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" (295) "
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/profile_call_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/call" />
-
-            <Button
-                android:id="@+id/profile_chat_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/chat" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -158,226 +32,365 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="20dp"
-                app:cardCornerRadius="0dp">
+                android:layout_marginBottom="40dp"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/seller_profile_coinsPerMin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                    android:drawableLeft="@drawable/coins"
-                    android:drawablePadding="10dp"
-                    android:paddingLeft="10dp"
-                    android:text="7 coins per minute"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Profile"
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
-            </android.support.v7.widget.CardView>
+                <View
+                    android:layout_width="35dp"
+                    android:layout_height="5dp"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/view_bg" />
 
-            <android.support.v7.widget.CardView
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="20dp"
-                app:cardCornerRadius="0dp">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/seller_profile_image"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="16dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/nine"
+                    app:riv_border_color="#FFF"
+                    app:riv_border_width="3dp"
+                    app:riv_corner_radius="20dp"
+                    app:riv_mutate_background="true" />
+
+
+                <TextView
+                    android:id="@+id/seller_profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:text="Mike Smith"
+                    android:textColor="@color/textColor"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+
+                    <com.iarcuschin.simpleratingbar.SimpleRatingBar
+                        android:id="@+id/test"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        app:srb_borderColor="#FFBF00"
+                        app:srb_fillColor="#FFBF00"
+                        app:srb_numberOfStars="5"
+                        app:srb_starSize="18dp"
+                        app:srb_stepSize="0.1" />
+
+                    <!--<RatingBar
+                        android:id="@+id/seller_profile_ratingBar"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:stepSize="0.1"
+                        android:progressTint="@color/yellow"/>-->
+
+                    <TextView
+                        android:id="@+id/seller_profile_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:text="5.0"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:paddingLeft="10dp"
-                        android:text="About"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="25dp"
-                        android:paddingLeft="10dp"
-                        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ipsum magna, tincidunt id eleifend nec, faucibus sed odio." />
+                        android:text=" (295) "
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
 
-            <android.support.v7.widget.CardView
+                    <Button
+                        android:id="@+id/profile_call_btn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/call" />
+
+                    <Button
+                        android:id="@+id/profile_chat_btn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/chat" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="20dp"
-                app:cardCornerRadius="0dp">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="12dp"
-                        android:src="@drawable/eleven"
-                        app:civ_border_color="@color/colorAccent"
-                        app:civ_border_width="1dp" />
-
-                    <LinearLayout
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:orientation="vertical">
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="20dp"
+                        app:cardCornerRadius="0dp">
 
                         <TextView
+                            android:id="@+id/seller_profile_coinsPerMin"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ammie Anabella"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"
+                            android:drawableLeft="@drawable/coins"
+                            android:drawablePadding="10dp"
+                            android:paddingLeft="10dp"
+                            android:text="7 coins per minute"
                             android:textColor="@android:color/black"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                            android:textSize="16sp" />
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="20dp"
+                        app:cardCornerRadius="0dp">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="20dp"
-                            android:orientation="horizontal">
-
-                            <RatingBar
-                                style="?android:attr/ratingBarStyleSmall"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:isIndicator="true"
-                                android:numStars="5"
-                                android:stepSize="0.1" />
+                            android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="5.0" />
-
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="16dp"
-                            android:background="@android:color/darker_gray" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Awsome services. Highly recommended."
-                            android:textColor="@android:color/black" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginRight="20dp"
-                app:cardCornerRadius="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="12dp"
-                        android:src="@drawable/thisteen"
-                        app:civ_border_color="@color/colorAccent"
-                        app:civ_border_width="1dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="12dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Kate Williams"
-                            android:textColor="@android:color/black"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="20dp"
-                            android:orientation="horizontal">
-
-                            <RatingBar
-                                style="?android:attr/ratingBarStyleSmall"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:isIndicator="true"
-                                android:numStars="5"
-                                android:stepSize="0.1" />
+                                android:layout_marginTop="10dp"
+                                android:layout_marginBottom="5dp"
+                                android:paddingLeft="10dp"
+                                android:text="About"
+                                android:textColor="@android:color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="5.0" />
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="25dp"
+                                android:paddingLeft="10dp"
+                                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ipsum magna, tincidunt id eleifend nec, faucibus sed odio." />
 
                         </LinearLayout>
 
-                        <View
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="20dp"
+                        app:cardCornerRadius="0dp">
+
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="16dp"
-                            android:background="@android:color/darker_gray" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Awsome services. Highly recommended."
-                            android:textColor="@android:color/black" />
+                            android:orientation="horizontal">
 
-                    </LinearLayout>
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="12dp"
+                                android:src="@drawable/eleven"
+                                app:civ_border_color="@color/colorAccent"
+                                app:civ_border_width="1dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginBottom="12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Ammie Anabella"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="20dp"
+                                    android:orientation="horizontal">
+
+                                    <RatingBar
+                                        style="?android:attr/ratingBarStyleSmall"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:isIndicator="true"
+                                        android:numStars="5"
+                                        android:stepSize="0.1" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="5.0" />
+
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginBottom="16dp"
+                                    android:background="@android:color/darker_gray" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Awsome services. Highly recommended."
+                                    android:textColor="@android:color/black" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="20dp"
+                        app:cardCornerRadius="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="12dp"
+                                android:src="@drawable/thisteen"
+                                app:civ_border_color="@color/colorAccent"
+                                app:civ_border_width="1dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginBottom="12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Kate Williams"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="20dp"
+                                    android:orientation="horizontal">
+
+                                    <RatingBar
+                                        style="?android:attr/ratingBarStyleSmall"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_vertical"
+                                        android:isIndicator="true"
+                                        android:numStars="5"
+                                        android:stepSize="0.1" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="5.0" />
+
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:layout_marginBottom="16dp"
+                                    android:background="@android:color/darker_gray" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Awsome services. Highly recommended."
+                                    android:textColor="@android:color/black" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
 
                 </LinearLayout>
-
-            </android.support.v7.widget.CardView>
+            </ScrollView>
 
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

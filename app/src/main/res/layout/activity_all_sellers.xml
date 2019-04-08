@@ -20,13 +20,15 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/cancel_btn"
-                android:layout_width="20dp"
-                android:layout_height="15dp"
-                android:background="@drawable/back" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back"
+                android:background="@color/transparent"/>
 
             <Button
+                android:id="@+id/buycoins_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_gravity="right"

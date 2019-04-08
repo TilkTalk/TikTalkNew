@@ -86,7 +86,7 @@ public class BuyerLoginActivity extends BaseActivity {
     Button loginBtn;
     TextView partnerLoginBtn;
     TextView forgotPasswordBtn;
-    LinearLayout email_layout, password_layout;
+    RelativeLayout email_layout, password_layout;
 
     FirebaseFirestore firestore;
     FirebaseAuth auth;
@@ -140,8 +140,8 @@ public class BuyerLoginActivity extends BaseActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         signIn();
+
                     }
                 });
 
@@ -504,8 +504,11 @@ public class BuyerLoginActivity extends BaseActivity {
         String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
 
+        email = email.trim();
+        password = password.trim();
 
         if (TextUtils.isEmpty(email)) {
+            emailEditText.setError("Required!");
             YoYo.with(Techniques.Shake)
                     .duration(700)
                     .repeat(1)
@@ -514,6 +517,7 @@ public class BuyerLoginActivity extends BaseActivity {
         }
 
         if (TextUtils.isEmpty(password)) {
+            passwordEditText.setError("Required!");
             YoYo.with(Techniques.Shake)
                     .duration(700)
                     .repeat(1)

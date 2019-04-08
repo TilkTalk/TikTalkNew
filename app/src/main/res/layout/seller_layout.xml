@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="7dp"
-    android:layout_marginTop="5dp"
     android:layout_marginLeft="10dp"
+    android:layout_marginTop="5dp"
     android:layout_marginRight="10dp"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="7dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,8 +20,8 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            app:cardCornerRadius="10dp"
-            android:layout_margin="10dp">
+            android:layout_margin="10dp"
+            app:cardCornerRadius="10dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/seller_image"
@@ -36,86 +36,78 @@
 
         </android.support.v7.widget.CardView>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/seller_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="Mike Smith"
+            android:textColor="@color/textColor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
+            android:layout_marginStart="10dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/star"
+                    android:layout_gravity="center_vertical"/>
 
                 <TextView
-                    android:id="@+id/seller_name"
-                    android:layout_width="120dp"
+                    android:id="@+id/seller_rating"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="Mike Smith"
-                    android:textColor="@color/textColor"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_marginLeft="5dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFBF00"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="2dp"
-                        android:src="@drawable/ic_star" />
-
-                    <TextView
-                        android:id="@+id/seller_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:text="asad"
-                        android:textColor="#E5E500"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <!--<TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text=" (295) "
-                        android:textSize="12sp" />-->
-
-                </LinearLayout>
+                <!--<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" (295) "
+                    android:textSize="12sp" />-->
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="2"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_centerVertical="true">
 
-                <Button
+                <ImageButton
                     android:id="@+id/call_btn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/call" />
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/call"
+                    android:layout_marginEnd="25dp"/>
 
-                <Button
+                <ImageButton
                     android:id="@+id/chat_btn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:background="@drawable/chat" />
 
             </LinearLayout>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

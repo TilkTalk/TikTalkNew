@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -85,8 +86,8 @@ public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellers
 
         public TextView seller_name;
         public RoundedImageView seller_image;
-        public Button call_btn;
-        public Button chat_btn;
+        public ImageButton call_btn;
+        public ImageButton chat_btn;
         public TextView seller_rating;
 
         public ViewHolder(final View itemView) {
