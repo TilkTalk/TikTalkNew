@@ -69,7 +69,7 @@ public class PreferenceUtils {
         return true;
     }
 
-    public static boolean saveSellerData(String username, String email, String password, String id, String isActive, String type, String imageUrl, String isOnline, String value, String rating, String coins, Context context) {
+    public static boolean saveSellerData(String username, String email, String password, String id, String isActive, String type, String imageUrl, String isOnline, String value, String rating, String coins, String about, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString("username", username);
@@ -83,6 +83,7 @@ public class PreferenceUtils {
         prefsEditor.putString("$perMin", value);
         prefsEditor.putString("rating", rating);
         prefsEditor.putString("coinPerMin", coins);
+        prefsEditor.putString("about", about);
         prefsEditor.apply();
         return true;
     }
@@ -160,6 +161,11 @@ public class PreferenceUtils {
     public static String getCoins(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString("coins", null);
+    }
+
+    public static String getAbout(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("about", null);
     }
 
     public static boolean clearMemory(Context context){
@@ -241,6 +247,14 @@ public class PreferenceUtils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString("password", value);
+        prefsEditor.apply();
+        return true;
+    }
+
+    public static boolean setAbout(String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putString("about", value);
         prefsEditor.apply();
         return true;
     }

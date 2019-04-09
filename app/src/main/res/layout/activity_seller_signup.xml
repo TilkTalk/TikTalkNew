@@ -95,7 +95,8 @@
                 android:hint="Name"
                 android:inputType="textCapWords"
                 android:paddingLeft="60dp"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="14sp"/>
 
         </android.support.v7.widget.CardView>
 
@@ -127,7 +128,8 @@
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:paddingLeft="60dp"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textSize="14sp"/>
 
         </android.support.v7.widget.CardView>
 
@@ -160,7 +162,8 @@
                 android:inputType="text"
                 android:paddingLeft="60dp"
                 android:singleLine="true"
-                android:nextFocusDown="@id/signup_btn"/>
+                android:nextFocusDown="@id/signup_btn"
+                android:textSize="14sp"/>
 
         </android.support.v7.widget.CardView>
 
@@ -188,7 +191,8 @@
                 android:background="@drawable/login_btn_bg"
                 android:text="Sign Up"
                 android:textColor="@android:color/white"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:textSize="12sp"/>
 
             <com.facebook.login.widget.LoginButton
                 android:id="@+id/login_with_facebook"
@@ -230,7 +234,7 @@
                 android:layout_marginRight="8dp"
                 android:text="Already a user?"
                 android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/signin_textView"
@@ -239,7 +243,7 @@
                 android:clickable="true"
                 android:text="SIGN IN"
                 android:textColor="@color/themeColor"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

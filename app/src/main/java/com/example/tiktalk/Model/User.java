@@ -19,6 +19,7 @@ public class User implements Searchable {
     public String coinPerMin;
     public String coins;
     public String dollersEarned;
+    public String about;
 
     public User() {
     }
@@ -156,5 +157,13 @@ public class User implements Searchable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
 }

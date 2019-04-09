@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -79,8 +80,8 @@ public class BuyerLoginActivity extends BaseActivity {
 
     ImageView check;
     TextView signupBtn;
-    Button googleSignInBtn;
-    Button facebookSignInBtn;
+    ImageButton googleSignInBtn;
+    ImageButton facebookSignInBtn;
     EditText emailEditText;
     EditText passwordEditText;
     Button loginBtn;

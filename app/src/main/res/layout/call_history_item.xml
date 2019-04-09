@@ -13,8 +13,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/buyerimage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center_vertical"
         android:layout_margin="10dp"
         android:src="@drawable/nine"
@@ -36,14 +36,15 @@
             android:paddingLeft="10dp"
             android:text="Micheal Clark"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/calltime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="10dp"
-            android:text="Jan-2, 2019, 3:00 PM" />
+            android:text="Jan-2, 2019, 3:00 PM"
+            android:textSize="12sp"/>
 
     </LinearLayout>
 
@@ -61,14 +62,15 @@
             android:layout_gravity="center_horizontal"
             android:text="$81"
             android:textColor="@color/themeColor"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/callduration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="3:00:00" />
+            android:text="3:00:00"
+            android:textSize="12sp"/>
 
     </LinearLayout>
 

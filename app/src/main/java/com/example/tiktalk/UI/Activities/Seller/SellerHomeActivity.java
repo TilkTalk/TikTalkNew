@@ -102,8 +102,8 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
     ProgressBar progressBar;
     ProgressDialog dialog;
 
-    public String[] menuName = {"Dashboard", "Inbox", "Notifications", "Contact", "Logout"};
-    public int[] menuicons = {R.drawable.dashboard, R.drawable.inbox, R.drawable.notification, R.drawable.contact, R.drawable.logout};
+    public String[] menuName = {"Dashboard", "Inbox", "My Profile", "Notifications", "Contact", "Logout"};
+    public int[] menuicons = {R.drawable.dashboard, R.drawable.inbox, R.drawable.my_profile, R.drawable.notification, R.drawable.contact, R.drawable.logout};
 
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;
@@ -128,7 +128,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
     SharedPreferences mpref;
     SharedPreferences.Editor mEditor;
     String selectedValue = "Offline";
-    String text;
+    String text, rateperMin, isActive, type, coinPerMin, totalEarnings, email, id, imageUrl, isOnline, password, rating, token, updateDate, username, about;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,6 +208,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             public void onClick(View v) {
                 Intent in = new Intent(SellerHomeActivity.this, SellerSettingsActivity.class);
                 startActivity(in);
+                finish();
             }
         });
 
@@ -227,11 +228,12 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:
+                    case 1:{
                         Intent in = new Intent(SellerHomeActivity.this, SellerHomeActivity.class);
                         startActivity(in);
                         finish();
                         break;
+                    }
                     case 2:
                         Bundle bundle = new Bundle();
                         bundle.putString("seller","seller");
@@ -240,13 +242,26 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         onReplaceFragment(R.id.drawer_layout,  channelsList_fragment, true);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
-                    case 3:
+                    case 3:{
+                        Intent in = new Intent(SellerHomeActivity.this, SellerMyProfileActivity.class);
+                        in.putExtra("myId", id);
+                        in.putExtra("myName", username);
+                        in.putExtra("myImage", imageUrl);
+                        in.putExtra("myRating", rating);
+                        in.putExtra("coinPerMin", coinPerMin);
+                        in.putExtra("$PerMin", rateperMin);
+                        in.putExtra("about", about);
+                        startActivity(in);
+                        finish();
+                        break;
+                    }
+                    case 4:
                         onReplaceFragment(R.id.drawer_layout, new SellerNotificationFragment(), true);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
-                    case 4:
-                        break;
                     case 5:
+                        break;
+                    case 6:{
                         myId = PreferenceUtils.getId(SellerHomeActivity.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -275,6 +290,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                 });
 
                         break;
+                    }
                 }
             }
         });
@@ -317,8 +333,23 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                     @Override
                     public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
-                        String totalEarnings = documentSnapshot.getString("dollersEarned");
+                        rateperMin = documentSnapshot.getString("$perMin");
+                        isActive = documentSnapshot.getString("IsActive");
+                        type = documentSnapshot.getString("Type");
+                        coinPerMin = documentSnapshot.getString("coinPerMin");
+                        totalEarnings = documentSnapshot.getString("dollersEarned");
+                        email = documentSnapshot.getString("email");
+                        id = documentSnapshot.getString("id");
+                        imageUrl = documentSnapshot.getString("imageUrl");
+                        isOnline = documentSnapshot.getString("isOnline");
+                        password = documentSnapshot.getString("password");
+                        rating = documentSnapshot.getString("rating");
+                        token = documentSnapshot.getString("token");
+                        username = documentSnapshot.getString("username");
+                        about = documentSnapshot.getString("about");
                         total_earnings.setText("$" + totalEarnings + "0");
+
+                        PreferenceUtils.saveSellerData(username, email, password, id, isActive, type, imageUrl, isOnline, rateperMin, rating, coinPerMin, about, SellerHomeActivity.this);
                     }
                 });
 

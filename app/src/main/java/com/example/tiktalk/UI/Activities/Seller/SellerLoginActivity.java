@@ -96,6 +96,7 @@ public class SellerLoginActivity extends AppCompatActivity {
     String $perMin = "0";
     String coinPerMin = "0";
     String dollersEarned = "0";
+    String about = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -254,6 +255,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                 users.put("$perMin", $perMin);
                                 users.put("coinPerMin", coinPerMin);
                                 users.put("dollersEarned", dollersEarned);
+                                users.put("about", about);
 
                                 firestore.collection("users")
                                         .document(userDetails.getUid())
@@ -262,7 +264,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), SellerLoginActivity.this);
+                                                PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerLoginActivity.this);
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();
@@ -308,6 +310,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                         user.ratePerMin = dc.getString("$perMin");
                                                         user.coinPerMin = dc.getString("coinPerMin");
                                                         user.dollersEarned = dc.getString("dollersEarned");
+//                                                        user.about = dc.getString("about");
 
                                                         PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, SellerLoginActivity.this);
                                                         MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
@@ -534,8 +537,9 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                 user.rating = dc.getString("rating");
                                                 user.ratePerMin = dc.getString("$perMin");
                                                 user.coinPerMin = dc.getString("coinPerMin");
+                                                user.about = dc.getString("about");
 
-                                                PreferenceUtils.saveSellerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.ratePerMin, user.rating, user.coinPerMin, SellerLoginActivity.this);
+                                                PreferenceUtils.saveSellerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.ratePerMin, user.rating, user.coinPerMin, user.about, SellerLoginActivity.this);
 
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), currentUser);
 

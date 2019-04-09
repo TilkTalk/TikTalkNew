@@ -99,6 +99,7 @@ public class SellerSignupActivity extends BaseActivity {
     String $perMin = "0";
     String coinPerMin = "0";
     String dollersEarned = "0";
+    String about = "";
 
     String name,email,password;
 
@@ -355,6 +356,7 @@ public class SellerSignupActivity extends BaseActivity {
                                     users.put("$perMin", $perMin);
                                     users.put("coinPerMin", coinPerMin);
                                     users.put("dollersEarned", dollersEarned);
+                                    users.put("about", about);
 
                                     firestore.collection("users")
                                             .document(userDetails.getUid())
@@ -363,7 +365,7 @@ public class SellerSignupActivity extends BaseActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), SellerSignupActivity.this);
+                                                    PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerSignupActivity.this);
                                                     MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                     dialog.dismiss();
@@ -424,6 +426,7 @@ public class SellerSignupActivity extends BaseActivity {
                                 users.put("$perMin", $perMin);
                                 users.put("coinPerMin", coinPerMin);
                                 users.put("dollersEarned", dollersEarned);
+                                users.put("about", about);
 
                                 firestore.collection("users")
                                         .document(userDetails.getUid())
@@ -432,7 +435,7 @@ public class SellerSignupActivity extends BaseActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), SellerSignupActivity.this);
+                                                PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerSignupActivity.this);
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();

@@ -46,7 +46,7 @@
                 android:id="@+id/radio_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/radiobuttonbackground"
                 android:textColor="@drawable/radiobuttonbackground"
@@ -56,13 +56,13 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="15 mins"
-                android:textSize="10dp" />
+                android:textSize="8dp" />
 
             <RadioButton
                 android:id="@+id/radio_30"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/radiobuttonbackground"
                 android:textColor="@drawable/radiobuttonbackground"
@@ -72,13 +72,13 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="30 mins"
-                android:textSize="10dp" />
+                android:textSize="8dp" />
 
             <RadioButton
                 android:id="@+id/radio_45"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/radiobuttonbackground"
                 android:textColor="@drawable/radiobuttonbackground"
@@ -88,13 +88,13 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="45 mins"
-                android:textSize="10dp" />
+                android:textSize="8dp" />
 
             <RadioButton
                 android:id="@+id/radio_60"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/radiobuttonbackground"
                 android:textColor="@drawable/radiobuttonbackground"
@@ -104,13 +104,13 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="60 mins"
-                android:textSize="10dp" />
+                android:textSize="8dp" />
 
             <RadioButton
                 android:id="@+id/radio_offline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="6dp"
                 android:layout_weight="1"
                 android:background="@drawable/radiobuttonbackground"
                 android:textColor="@drawable/radiobuttonbackground"
@@ -120,7 +120,7 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="Offline"
-                android:textSize="10dp"
+                android:textSize="8dp"
                 android:checked="true"/>
 
         </RadioGroup>

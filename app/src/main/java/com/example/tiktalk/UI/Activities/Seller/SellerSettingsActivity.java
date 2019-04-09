@@ -14,6 +14,8 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -56,11 +58,14 @@ public class SellerSettingsActivity extends BaseActivity {
     ProgressDialog pDialog;
 
     private static int Image_Request_Code = 1;
-    Button finishSettingsBtn, changePhoto_btn;
+    Button changePhoto_btn;
+    ImageButton finishSettingsBtn;
     ImageView settings_image;
     TextView settings_email, settings_password;
     Spinner settings_spinner;
     Uri imageUri;
+    Button update_btn;
+    EditText about_edittext;
 
     FirebaseAuth auth;
     StorageReference storage;
@@ -68,7 +73,7 @@ public class SellerSettingsActivity extends BaseActivity {
     private FirebaseUser user;
 
     ArrayAdapter<String> adapter;
-    String newRates, email, password;
+    String newRates, email, password, about;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +102,8 @@ public class SellerSettingsActivity extends BaseActivity {
         settings_password = findViewById(R.id.settings_password);
         changePhoto_btn = findViewById(R.id.changePhoto_btn);
         settings_spinner = findViewById(R.id.settings_spinner);
+        update_btn = findViewById(R.id.update_btn);
+        about_edittext = findViewById(R.id.about_edittext);
 
         final List<String> list = new ArrayList<String>();
 
@@ -109,9 +116,11 @@ public class SellerSettingsActivity extends BaseActivity {
                         newRates = documentSnapshot.getString("$perMin");
                         email = documentSnapshot.getString("email");
                         password = documentSnapshot.getString("password");
+                        about = documentSnapshot.getString("about");
                         PreferenceUtils.setRatePerMin(newRates, SellerSettingsActivity.this);
                         PreferenceUtils.setEmail(email, SellerSettingsActivity.this);
                         PreferenceUtils.setPassword(password, SellerSettingsActivity.this);
+                        PreferenceUtils.setAbout(about, SellerSettingsActivity.this);
 
                     }
                 });
@@ -142,90 +151,51 @@ public class SellerSettingsActivity extends BaseActivity {
         Glide.with(this).load(PreferenceUtils.getImageUrl(this)).into(settings_image);
         settings_email.setText(PreferenceUtils.getEmail(this));
         settings_password.setText(PreferenceUtils.getPassword(this));
+        about_edittext.setText(PreferenceUtils.getAbout(this));
 
     }
 
     @Override
     public void setupListeners() {
 
+        update_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String val = settings_spinner.getSelectedItem().toString();
+                float result = Float.valueOf(val);
+                result = result * 10 + 1;
+
+                HashMap<String, Object> update = new HashMap<>();
+                update.put("email", settings_email.getText().toString());
+                update.put("password", settings_password.getText().toString());
+                update.put("$perMin", settings_spinner.getSelectedItem().toString());
+
+                update.put("coinPerMin", String.valueOf((int) result));
+                update.put("about", about_edittext.getText().toString());
+
+                uploadImage();
+
+                firestore.collection("users")
+                        .document(PreferenceUtils.getId(SellerSettingsActivity.this))
+                        .update(update)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
+                        startActivity(in);
+                        finish();
+                    }
+                });
+            }
+        });
+
         finishSettingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(SellerSettingsActivity.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Save Changes?")
-                        .setMessage("Are you sure you want to close this activity?")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                user = FirebaseAuth.getInstance().getCurrentUser();
-
-                                uploadImage();
-
-                                if(!PreferenceUtils.getEmail(SellerSettingsActivity.this).equals(settings_email.getText().toString())){
-
-                                    pDialog.setMessage("Loading...");
-                                    pDialog.show();
-
-                                    final HashMap<String, Object> changes = new HashMap<>();
-                                    changes.put("email", settings_email.getText().toString());
-
-                                    firestore.collection("users")
-                                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                                            .update(changes);
-
-                                    user.updateEmail(settings_email.getText().toString());
-
-                                    pDialog.dismiss();
-                                    finish();
-                                }
-
-                                if(!PreferenceUtils.getPassword(SellerSettingsActivity.this).equals(settings_password.getText().toString())){
-
-                                    pDialog.setMessage("Loading...");
-                                    pDialog.show();
-
-                                    final HashMap<String, Object> changes = new HashMap<>();
-                                    changes.put("password", settings_password.getText().toString());
-
-                                    firestore.collection("users")
-                                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                                            .update(changes);
-
-                                    user.updatePassword(settings_password.getText().toString());
-
-                                    pDialog.dismiss();
-                                    finish();
-
-                                }
-
-                                if(!PreferenceUtils.getRatePerMin(SellerSettingsActivity.this).equals(settings_spinner.getSelectedItem().toString())){
-
-                                    pDialog.setMessage("Loading...");
-                                    pDialog.show();
-
-                                    final HashMap<String, Object> changes = new HashMap<>();
-                                    changes.put("$perMin", settings_spinner.getSelectedItem().toString());
-
-                                    firestore.collection("users")
-                                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                                            .update(changes);
-
-                                    pDialog.dismiss();
-                                    finish();
-
-                                }
-                            }
-
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+                Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
+                startActivity(in);
+                finish();
             }
         });
 
@@ -269,15 +239,10 @@ public class SellerSettingsActivity extends BaseActivity {
                                                     .document(PreferenceUtils.getId(SellerSettingsActivity.this))
                                                     .update(map);
 
-                                            MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSettingsActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), currentUser);
+//                                            MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSettingsActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), currentUser);
 
-//                                            dialog.dismiss();
-                                            /*Intent intent = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
-                                            startActivity(intent);
-                                            Bungee.slideDown(SellerSettingsActivity.this);*/
                                             PreferenceUtils.saveImageUrl(uri.toString(), SellerSettingsActivity.this);
                                             pDialog.dismiss();
-                                            finish();
 
                                         }
                                     });
@@ -308,108 +273,9 @@ public class SellerSettingsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-
-        new AlertDialog.Builder(SellerSettingsActivity.this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Save Changes?")
-                .setMessage("Are you sure you want to close this activity?")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        user = FirebaseAuth.getInstance().getCurrentUser();
-
-                        uploadImage();
-
-                        if(!PreferenceUtils.getEmail(SellerSettingsActivity.this).equals(settings_email.getText().toString())){
-
-                            pDialog.setMessage("Loading...");
-                            pDialog.show();
-
-                            final HashMap<String, Object> changes = new HashMap<>();
-                            changes.put("email", settings_email.getText().toString());
-
-                            firestore.collection("users")
-                                    .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                                    .update(changes);
-
-                            user.updateEmail(settings_email.getText().toString());
-
-                            pDialog.dismiss();
-                            finish();
-                        }
-
-                        if(!PreferenceUtils.getPassword(SellerSettingsActivity.this).equals(settings_password.getText().toString())){
-
-                            pDialog.setMessage("Loading...");
-                            pDialog.show();
-
-                            final HashMap<String, Object> changes = new HashMap<>();
-                            changes.put("password", settings_password.getText().toString());
-
-                            firestore.collection("users")
-                                    .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                                    .update(changes);
-
-                            user.updatePassword(settings_password.getText().toString());
-
-                            pDialog.dismiss();
-                            finish();
-
-                        }
-
-                        if(!PreferenceUtils.getRatePerMin(SellerSettingsActivity.this).equals(settings_spinner.getSelectedItem().toString())){
-
-                            String coins = null;
-                            if (settings_spinner.getSelectedItem().toString().equals("0.2")){
-                                coins = "3";
-                            }
-
-                            if (settings_spinner.getSelectedItem().toString().equals("0.3")){
-                                coins = "4";
-                            }
-
-                            if (settings_spinner.getSelectedItem().toString().equals("0.4")){
-                                coins = "5";
-                            }
-
-                            if (settings_spinner.getSelectedItem().toString().equals("0.5")){
-                                coins = "6";
-                            }
-
-                            if (settings_spinner.getSelectedItem().toString().equals("0.6")){
-                                coins = "7";
-                            }
-
-                            if (settings_spinner.getSelectedItem().toString().equals("0.7")){
-                                coins = "8";
-                            }
-                            
-                            pDialog.setMessage("Loading...");
-                            pDialog.show();
-
-                            final HashMap<String, Object> changes = new HashMap<>();
-                            changes.put("$perMin", settings_spinner.getSelectedItem().toString());
-                            changes.put("coinPerMin", coins);
-
-                            firestore.collection("users")
-                                    .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                                    .update(changes);
-
-                            pDialog.dismiss();
-                            finish();
-
-                        }
-                    }
-
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
+        Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
+        startActivity(in);
+        finish();
     }
 
     private void showToast(String msg) {

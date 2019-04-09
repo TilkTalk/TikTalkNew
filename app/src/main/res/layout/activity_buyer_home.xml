@@ -24,27 +24,28 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/menu_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/menu" />
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:src="@drawable/menu"/>
 
             <Button
                 android:id="@+id/buycoins_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="35dp"
                 android:layout_gravity="right"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:background="@drawable/login_btn_bg"
-                android:drawableLeft="@drawable/buy_coins"
-                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/buy_coins"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="buy coins"
                 android:textColor="@android:color/white"
-                android:textSize="8sp"
-                android:elevation="3dp"/>
+                android:textSize="10sp"
+                android:elevation="3dp"
+                android:drawablePadding="5dp"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -107,7 +108,7 @@
                         android:drawablePadding="12dp"
                         android:hint="Search by names"
                         android:padding="10dp"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:elevation="0dp"/>
 
                     <TextView
@@ -142,17 +143,14 @@
                         android:layout_marginRight="20dp"
                         android:background="@drawable/linearlayout_bg"
                         android:orientation="horizontal"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:paddingRight="8dp"
-                        android:paddingLeft="8dp"
                         android:elevation="0dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Ready for a call" />
+                            android:text="Ready for a call"
+                            android:textSize="16sp"/>
 
                         <TextView
                             android:id="@+id/seeAll_btn"
@@ -161,7 +159,9 @@
                             android:clickable="true"
                             android:drawableRight="@drawable/see_all"
                             android:drawablePadding="10dp"
-                            android:text="SEE ALL" />
+                            android:text="SEE ALL"
+                            android:textSize="12sp"
+                            android:layout_gravity="center_vertical"/>
 
                     </LinearLayout>
 

@@ -59,6 +59,7 @@ public class UploadPhotoActivity extends BaseActivity {
     String $perMin = "0";
     String coinPerMin = "0";
     String dollersEarned = "0";
+    String about = "";
 
     Uri imageUri;
 
@@ -219,6 +220,7 @@ public class UploadPhotoActivity extends BaseActivity {
                                     users.put("rating", rating);
                                     users.put("coinPerMin", coins);
                                     users.put("dollersEarned", dollersEarned);
+                                    users.put("about", about);
 
                                     firestore.collection("users")
                                             .document(currentUser)
@@ -227,7 +229,7 @@ public class UploadPhotoActivity extends BaseActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveSellerData(String.valueOf(users.get("username")), String.valueOf(users.get("email")), String.valueOf(users.get("password")), String.valueOf(users.get("id")), String.valueOf(users.get("IsActive")), String.valueOf(users.get("Type")), String.valueOf(users.get("isOnline")), String.valueOf(users.get("$perMin")), String.valueOf(users.get("rating")), String.valueOf(users.get("coinPerMin")),UploadPhotoActivity.this);
+//                                                    PreferenceUtils.saveSellerData(String.valueOf(users.get("username")), String.valueOf(users.get("email")), String.valueOf(users.get("password")), String.valueOf(users.get("id")), String.valueOf(users.get("IsActive")), String.valueOf(users.get("Type")), String.valueOf(users.get("isOnline")), String.valueOf(users.get("$perMin")), String.valueOf(users.get("rating")), String.valueOf(users.get("coinPerMin")),UploadPhotoActivity.this);
                                                     uploadImage();
                                                 }
                                             });
@@ -259,7 +261,7 @@ public class UploadPhotoActivity extends BaseActivity {
                                             HashMap<String, Object> map = new HashMap<String, Object>();
                                             map.put("imageUrl", uri.toString());
 
-                                            PreferenceUtils.saveImageUrl(uri.toString(), UploadPhotoActivity.this);
+//                                            PreferenceUtils.saveImageUrl(uri.toString(), UploadPhotoActivity.this);
 
                                             firestore.collection("users")
                                                     .document(currentUser)

@@ -26,10 +26,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".UI.Activities.Seller.SellerHomeActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".UI.Activities.Buyer.BuyCoinsActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".UI.Activities.Seller.SellerMyProfileActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name=".UI.Activities.Seller.SellerHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyCoinsActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".SendBird.PhotoViewerActivity" />
         <activity android:name=".SendBird.MediaPlayerActivity" />
         <activity android:name=".SendBird.SendbirdChatActivity" />
@@ -40,7 +44,8 @@
             android:name=".Sinch.CallActivity"
             android:label="Make a Call"
             android:screenOrientation="portrait" />
-        <activity android:name=".UI.Activities.SplashScreen"
+        <activity
+            android:name=".UI.Activities.SplashScreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,63 +56,73 @@
         <activity
             android:name=".UI.Activities.Seller.SellerDashboardActivity"
             android:label="@string/title_activity_seller_dashboard"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UI.Activities.Buyer.BuyerHomeActivity"
             android:label="@string/title_activity_dashboard"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".UI.Activities.Buyer.BuyerLoginActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".UI.Activities.Seller.SellerLoginActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".UI.Activities.Buyer.BuyerSignupActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".UI.Activities.Buyer.BuyerLoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Seller.SellerLoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerSignupActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
             android:name=".UI.Activities.Seller.SellerSignupActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.Buyer.UploadPhotoActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.Seller.UploadPhotoActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.Buyer.BuyerProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.Seller.SellerProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.ResetPasswordActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Buyer.UploadPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.Seller.UploadPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.Seller.SellerProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".UI.Activities.NumberVerificationActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".UI.Activities.Buyer.BuyerSettingsActivity" />
-        <activity android:name=".UI.Activities.Seller.SellerSettingsActivity" />
+        <activity android:name=".UI.Activities.Seller.SellerSettingsActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity android:name=".UI.Activities.Buyer.BuyerChatActivity" />
         <activity android:name=".UI.Activities.AllSellerActivity" />
         <activity
             android:name=".UI.Activities.Buyer.BuyerRatingActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.Buyer.BuyerCallActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.Seller.SellerCallDetailsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Activities.WithdrawActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".UI.Fragments.Buyer.BuyerMyWalletFragment"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Fragments.Buyer.BuyerInboxFragment"
-        android:screenOrientation="portrait"/>
-        <activity android:name=".UI.Fragments.Buyer.BuyerNotificationFragment"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerCallActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.Seller.SellerCallDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Activities.WithdrawActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Fragments.Buyer.BuyerMyWalletFragment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Fragments.Buyer.BuyerInboxFragment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Fragments.Buyer.BuyerNotificationFragment"
+            android:screenOrientation="portrait" />
 
         <service android:name=".AppServices.MyFirebaseMessagingService">
             <intent-filter>
@@ -120,7 +135,7 @@
             </intent-filter>
         </service>
         <service android:name=".Sinch.SinchService" />
-        <service android:name=".AppServices.TimerService"></service>
+        <service android:name=".AppServices.TimerService" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

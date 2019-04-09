@@ -88,8 +88,8 @@ public class BuyerSignupActivity extends AppCompatActivity {
     String type = "Buyer";
     String isOnline = "1";
     String coins = "0";
-
     String name,email,password;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

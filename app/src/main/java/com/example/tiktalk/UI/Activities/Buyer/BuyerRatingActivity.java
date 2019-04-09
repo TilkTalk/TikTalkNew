@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.R;
+import com.example.tiktalk.Utils.PreferenceUtils;
 import com.github.ybq.android.spinkit.style.Wave;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,6 +37,7 @@ public class BuyerRatingActivity extends AppCompatActivity {
     ProgressDialog dialog;
 
     Button ratingSubmitBtn;
+    EditText rating_feedback;
     String name, imageUrl, callDuration, buyerId, sellerId, coins, coinPerMin;
     RoundedImageView seller_image;
     TextView seller_name, call_duration, coins_used;
@@ -49,7 +52,7 @@ public class BuyerRatingActivity extends AppCompatActivity {
     int size = 0;
     int totalRating = 0;
     float rating = 0;
-    String s;
+    String s, feedback;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +80,7 @@ public class BuyerRatingActivity extends AppCompatActivity {
         call_duration = findViewById(R.id.call_duration);
         seekBar = findViewById(R.id.seekBar);
         coins_used = findViewById(R.id.coins_used);
+        rating_feedback = findViewById(R.id.rating_feedback);
         star1 = findViewById(R.id.star1);
         star2 = findViewById(R.id.star2);
         star3 = findViewById(R.id.star3);
@@ -164,11 +168,16 @@ public class BuyerRatingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                feedback = rating_feedback.getText().toString();
+
                 final HashMap<String, Object> users = new HashMap<String, Object>();
-                users.put("UserId", buyerId);
-                users.put("Value", String.valueOf(seekBarValue));
+                users.put("userId", buyerId);
+                users.put("userName", PreferenceUtils.getUsername(BuyerRatingActivity.this));
+                users.put("userImage", PreferenceUtils.getImageUrl(BuyerRatingActivity.this));
+                users.put("value", String.format("%.1f", (float) seekBarValue));
                 users.put("id", buyerId);
                 users.put("sellerId", sellerId);
+                users.put("feedback", feedback);
                 users.put("updateDate", FieldValue.serverTimestamp());
 
                 dialog.setMessage("Submitting...");

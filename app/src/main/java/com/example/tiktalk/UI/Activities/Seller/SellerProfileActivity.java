@@ -4,24 +4,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.tiktalk.Adapters.SellerRatingAdapter;
 import com.example.tiktalk.BaseClasses.BaseActivity;
+import com.example.tiktalk.Model.SellerRating;
 import com.example.tiktalk.R;
 import com.example.tiktalk.SendBird.SendbirdChatActivity;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerCallActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelParams;
@@ -31,6 +41,8 @@ import com.sinch.android.rtc.calling.Call;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +57,17 @@ public class SellerProfileActivity extends BaseActivity {
     FirebaseFirestore firestore;
     ImageView seller_profile_image;
     TextView profileName, profileRating, profileCoinsPerMin;
-    RatingBar sellerRatingBar;
     SimpleRatingBar test;
-    Button CancelBtn;
-    Button profileChatBtn;
-    Button profileCallBtn;
+    ImageButton CancelBtn;
+    ImageButton profileChatBtn;
+    ImageButton profileCallBtn;
 
     String sellerId, sellerName, sellerImage, sellerRating, coinPerMin;
+
+    RecyclerView recyclerView;
+    LinearLayoutManager manager;
+    SellerRatingAdapter adapter;
+    ArrayList<SellerRating> selleRatingArrayList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +81,10 @@ public class SellerProfileActivity extends BaseActivity {
     public void initializeComponents() {
 
         firestore = FirebaseFirestore.getInstance();
+        selleRatingArrayList = new ArrayList<>();
+        recyclerView = findViewById(R.id.recycler_view);
+        manager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(manager);
 
         seller_profile_image = findViewById(R.id.seller_profile_image);
         profileName = findViewById(R.id.seller_profile_name);
@@ -89,6 +109,50 @@ public class SellerProfileActivity extends BaseActivity {
         profileCoinsPerMin.setText(coinPerMin + " coins per minute");
 //        sellerRatingBar.setRating(Float.parseFloat(sellerRating));
         test.setRating(Float.parseFloat(sellerRating));
+
+        firestore.collection("ratings")
+                .whereEqualTo("sellerId", sellerId)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+
+                        for (DocumentChange documentSnapshot : queryDocumentSnapshots.getDocumentChanges()) {
+
+                            SellerRating sr = new SellerRating(
+                                    documentSnapshot.getDocument().getString("userId"),
+                                    documentSnapshot.getDocument().getString("userName"),
+                                    documentSnapshot.getDocument().getString("userImage"),
+                                    documentSnapshot.getDocument().getString("value"),
+                                    documentSnapshot.getDocument().getString("id"),
+                                    documentSnapshot.getDocument().getString("sellerId"),
+                                    documentSnapshot.getDocument().getString("feedback"));
+
+                            if (documentSnapshot.getDocument().get("updateDate") != null) {
+
+                                long seconds = ((Timestamp) (Object) documentSnapshot.getDocument().get("updateDate")).getSeconds();
+                                long milliSeconds = seconds * 1000;
+                                sr.updateDate = new Date(milliSeconds);
+                                selleRatingArrayList.add(sr);
+                            }
+                        }
+
+                        if (selleRatingArrayList != null) {
+
+                            Comparator<SellerRating> c = new Comparator<SellerRating>() {
+
+                                @Override
+                                public int compare(SellerRating a, SellerRating b) {
+                                    return Long.compare(b.getUpdateDate().getTime(), a.getUpdateDate().getTime());
+                                }
+                            };
+                            Collections.sort(selleRatingArrayList, c);
+                        }
+
+                        adapter = new SellerRatingAdapter(selleRatingArrayList, SellerProfileActivity.this);
+                        recyclerView.setAdapter(adapter);
+//                        dialog.dismiss();
+                    }
+                });
 
     }
 

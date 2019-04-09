@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -112,7 +113,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     private GoogleSignInClient mGoogleSignInClient;
 
     TextView seeAllBtn, buyer_name;
-    Button menu_btn, buycoins_btn;
+    Button buycoins_btn;
+    ImageButton menu_btn;
     LinearLayout home_layout;
     EditText searchView;
     FirebaseFirestore firestore;

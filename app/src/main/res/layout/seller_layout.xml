@@ -4,9 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
-    android:layout_marginTop="5dp"
     android:layout_marginRight="10dp"
-    android:layout_marginBottom="16dp"
+    android:layout_marginBottom="12dp"
+    android:layout_marginTop="5dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="7dp">
 
@@ -17,16 +17,16 @@
 
         <android.support.v7.widget.CardView
             android:id="@+id/myCardView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_margin="10dp"
             app:cardCornerRadius="10dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/seller_image"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/five"
                 app:riv_border_color="#FFF"
@@ -44,7 +44,7 @@
             android:layout_marginBottom="5dp"
             android:text="Mike Smith"
             android:textColor="@color/textColor"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <RelativeLayout
@@ -60,18 +60,29 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@drawable/star"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical"/>-->
+
+                <com.iarcuschin.simpleratingbar.SimpleRatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    app:srb_borderColor="#FFBF00"
+                    app:srb_fillColor="#FFBF00"
+                    app:srb_numberOfStars="1"
+                    app:srb_starSize="12dp"
+                    app:srb_rating="1"/>
 
                 <TextView
                     android:id="@+id/seller_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="#FFBF00"/>
 
@@ -94,15 +105,15 @@
 
                 <ImageButton
                     android:id="@+id/call_btn"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/call"
                     android:layout_marginEnd="25dp"/>
 
                 <ImageButton
                     android:id="@+id/chat_btn"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/chat" />
 
             </LinearLayout>
