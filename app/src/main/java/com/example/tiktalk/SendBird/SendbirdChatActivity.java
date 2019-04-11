@@ -41,7 +41,8 @@ public class SendbirdChatActivity extends BaseActivity {
 
     FirebaseFirestore firestore;
 
-    String type;
+    String type, status;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +65,9 @@ public class SendbirdChatActivity extends BaseActivity {
             titleText = getIntent().getStringExtra("title");
             sellerId = getIntent().getStringExtra("members");
             coinPerMin = getIntent().getStringExtra("coinPerMin");
-            type=getIntent().getStringExtra("type");
+            type = getIntent().getStringExtra("type");
+            status = getIntent().getStringExtra("status");
+
 
         } else {
             AppUtils.Toast("Invalid Channel Url");
@@ -74,10 +77,11 @@ public class SendbirdChatActivity extends BaseActivity {
 
         if (type.equals("seller")) {
             voice.setVisibility(View.GONE);
-
         }
-        else
+
+        if (type.equals("buyer")){
             voice.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -95,6 +99,7 @@ public class SendbirdChatActivity extends BaseActivity {
         bundle.putString("image",cover);
         bundle.putString("id",sellerId);
         bundle.putString("channel",channelUrl);
+        bundle.putString("status",status);
 
         GroupChatFragment fragment = new GroupChatFragment();
         fragment.setArguments(bundle);

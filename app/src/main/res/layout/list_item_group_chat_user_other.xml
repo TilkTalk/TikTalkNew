@@ -30,11 +30,15 @@
         android:layout_below="@id/text_group_chat_date"
         android:orientation="horizontal">
 
-        <RelativeLayout
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardview_group_chat_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="8dp">
+            android:layout_marginStart="3dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/image_group_chat_profile"
@@ -46,15 +50,44 @@
                 app:riv_corner_radius="10dp"
                 app:riv_mutate_background="true" />
 
-            <ImageView
+        </android.support.v7.widget.CardView>
+
+        <!--<RelativeLayout
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="3dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="2dp">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/image_group_chat_profile"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@mipmap/user"
+                    app:riv_border_color="#FFF"
+                    app:riv_border_width="1dp"
+                    app:riv_corner_radius="10dp"
+                    app:riv_mutate_background="true" />
+
+            </android.support.v7.widget.CardView>
+
+            &lt;!&ndash;<ImageView
                 android:id="@+id/online_dot"
                 android:layout_width="9dp"
                 android:layout_height="9dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:background="@drawable/online_icon" />
+                android:background="@drawable/online_icon" />&ndash;&gt;
 
-        </RelativeLayout>
+        </RelativeLayout>-->
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/userImage"
@@ -72,118 +105,118 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            app:cardPreventCornerOverlap="false"
-            app:cardUseCompatPadding="true"
-            card_view:cardUseCompatPadding="true"
+            android:layout_marginBottom="5dp"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
-            card_view:cardElevation="4dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="true"
             card_view:cardCornerRadius="3dp"
-            android:layout_marginBottom="5dp">
-
-        <LinearLayout
-            android:id="@+id/group_chat_message_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:background="@drawable/linearlayout_bg">
-
-            <TextView
-                android:id="@+id/text_group_chat_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="260dp"
-                android:paddingRight="12dp"
-                android:text="Hi, how are you today?"
-                android:textColor="@color/groupChatTextOther"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/text_group_chat_edited"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="(edited)"
-                android:textColor="#828282"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="8dp" />
+            card_view:cardElevation="4dp"
+            card_view:cardUseCompatPadding="true">
 
             <LinearLayout
-                android:id="@+id/url_preview_container"
+                android:id="@+id/group_chat_message_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@android:color/darker_gray"
-                    android:maxWidth="260dp" />
+                android:background="@drawable/linearlayout_bg"
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <TextView
-                    android:id="@+id/text_url_preview_site_name"
+                    android:id="@+id/text_group_chat_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:maxWidth="260dp"
-                    android:maxLines="1"
-                    android:text="\@Reddit"
-                    android:textColor="@color/groupChatTextOther"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/text_url_preview_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxWidth="260dp"
-                    android:maxLines="1"
-                    android:text="Title will be here."
+                    android:paddingRight="12dp"
+                    android:text="Hi, how are you today?"
                     android:textColor="@color/groupChatTextOther"
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/text_url_preview_description"
+                    android:id="@+id/text_group_chat_edited"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxWidth="260dp"
-                    android:maxLines="3"
-                    android:paddingBottom="4dp"
-                    android:text="Description will be here. Blah Blah WWW Blah Wl Blah W WW WW ABCD EFG WW WW WW W Third Line. WWW Z XCVB QWER"
-                    android:textColor="@color/groupChatTextOther"
-                    android:textSize="12sp" />
+                    android:layout_gravity="right"
+                    android:text="(edited)"
+                    android:textColor="#828282"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/image_url_preview_main"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="148dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop" />
+                    android:layout_height="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/url_preview_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@android:color/darker_gray"
+                        android:maxWidth="260dp" />
+
+                    <TextView
+                        android:id="@+id/text_url_preview_site_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="260dp"
+                        android:maxLines="1"
+                        android:text="\@Reddit"
+                        android:textColor="@color/groupChatTextOther"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/text_url_preview_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="260dp"
+                        android:maxLines="1"
+                        android:text="Title will be here."
+                        android:textColor="@color/groupChatTextOther"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/text_url_preview_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxWidth="260dp"
+                        android:maxLines="3"
+                        android:paddingBottom="4dp"
+                        android:text="Description will be here. Blah Blah WWW Blah Wl Blah W WW WW ABCD EFG WW WW WW W Third Line. WWW Z XCVB QWER"
+                        android:textColor="@color/groupChatTextOther"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/image_url_preview_main"
+                        android:layout_width="match_parent"
+                        android:layout_height="148dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/text_group_chat_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="21:27"
+                    android:textColor="@color/themeColor"
+                    android:textSize="8sp" />
+
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/text_group_chat_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="21:27"
-                android:textColor="@color/themeColor"
-                android:textSize="8sp" />
-
-
-        </LinearLayout>
 
         </android.support.v7.widget.CardView>
 

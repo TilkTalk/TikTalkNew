@@ -55,6 +55,7 @@ import com.example.tiktalk.SendBird.SendBirdService;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.WithdrawActivity;
 import com.example.tiktalk.UI.Fragments.Buyer.BuyerInboxFragment;
+import com.example.tiktalk.UI.Fragments.Seller.SellerInboxFragment;
 import com.example.tiktalk.UI.Fragments.Seller.SellerNotificationFragment;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
@@ -139,9 +140,9 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        FacebookSdk.sdkInitialize(this);
         setContentView(R.layout.activity_seller_home);
-        SendBird.init(APP_ID, this.getApplicationContext());
+        SendBird.init(APP_ID, this);
         setupComponents();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -153,12 +154,15 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
         RoundedImageView buyer_image = findViewById(R.id.buyer_image);
         Glide.with(this).load(PreferenceUtils.getImageUrl(this)).into(buyer_image);
 
-        mpref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mpref = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mpref.edit();
-        text = mpref.getString("mins", "");
+//        text = mpref.getString("mins", "");
+//        text = mpref.getString("data", "");
 
-        /*try {
-            String str_value = mpref.getString("mins", "");
+        //onlineTime.setText(text);
+
+        try {
+            String str_value = mpref.getString("data", "");
             if (str_value.matches("")) {
                 onlineTime.setText("");
                 online_switch.setChecked(false);
@@ -166,7 +170,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             } else {
 
                 if (mpref.getBoolean("finish", false)) {
-                    //onlineTime.setText("Finished");
+                    onlineTime.setText("");
                     online_switch.setChecked(false);
                 } else {
 
@@ -176,13 +180,21 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             }
         } catch (Exception e) {
 
-        }*/
+        }
 
-        if (text.equals("")) {
+        /*if (text.equals("")) {
             online_switch.setChecked(false);
         } else {
             online_switch.setChecked(true);
-        }
+        }*/
+
+        /*online_switch.setChecked(false);
+
+        if (onlineTime.getVisibility() == View.GONE) {
+            online_switch.setChecked(false);
+        } else {
+            online_switch.setChecked(true);
+        }*/
 
 
     }
@@ -264,9 +276,16 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         break;
                     }
                     case 2:{
-                        Intent intent1 = new Intent(SellerHomeActivity.this, BuyerInboxFragment.class);
-                        intent1.putExtra("type", "seller");
-                        startActivity(intent1);
+                        Intent in = new Intent(SellerHomeActivity.this, SellerInboxFragment.class);
+                        in.putExtra("type", "seller");
+                        in.putExtra("myId", id);
+                        in.putExtra("myName", username);
+                        in.putExtra("myImage", imageUrl);
+                        in.putExtra("myRating", rating);
+                        in.putExtra("coinPerMin", coinPerMin);
+                        in.putExtra("$PerMin", rateperMin);
+                        in.putExtra("about", about);
+                        startActivity(in);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
@@ -280,15 +299,25 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         in.putExtra("$PerMin", rateperMin);
                         in.putExtra("about", about);
                         startActivity(in);
-                        finish();
-                        break;
-                    }
-                    case 4:
-                        onReplaceFragment(R.id.drawer_layout, new SellerNotificationFragment(), true);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
-                    case 5:
+                    }
+                    case 4:{
+                        Intent in = new Intent(SellerHomeActivity.this, SellerNotificationFragment.class);
+                        in.putExtra("myId", id);
+                        in.putExtra("myName", username);
+                        in.putExtra("myImage", imageUrl);
+                        in.putExtra("myRating", rating);
+                        in.putExtra("coinPerMin", coinPerMin);
+                        in.putExtra("$PerMin", rateperMin);
+                        in.putExtra("about", about);
+                        startActivity(in);
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
+                    }
+                    case 5:{
+                        break;
+                    }
                     case 6:{
                         myId = PreferenceUtils.getId(SellerHomeActivity.this);
 
@@ -489,7 +518,9 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    
+
+                    if (onlineTime.getVisibility() == View.GONE){
+
                         final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerHomeActivity.this);
                         final AlertDialog alert = dialog.create();
                         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -572,7 +603,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         //PreferenceUtils.clearMemory(getApplicationContext());
-                                                        disconnect();
+                                                        //disconnect();
 
                                                     } else {
                                                         showToast("Unable to logout!");
@@ -582,7 +613,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                 } else {
                                     mEditor.putString("data", date_time).commit();
                                     mEditor.putString("mins", selectedValue).commit();
-                                    Intent intent_service = new Intent(getApplicationContext(), TimerService.class);
+                                    Intent intent_service = new Intent(SellerHomeActivity.this, TimerService.class);
                                     startService(intent_service);
                                     online_switch.setChecked(true);
                                     onlineTime.setVisibility(View.VISIBLE);
@@ -626,7 +657,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
                         alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
                         alert.getWindow().setAttributes(layoutParams);
-
+                    }
 
                 } else {
                     Intent intent = new Intent(getApplicationContext(), TimerService.class);
@@ -652,7 +683,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         //PreferenceUtils.clearMemory(getApplicationContext());
-                                        disconnect();
+                                        //disconnect();
 
                                     } else {
                                         showToast("Unable to logout!");

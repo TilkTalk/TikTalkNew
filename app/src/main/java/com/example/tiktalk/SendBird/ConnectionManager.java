@@ -1,5 +1,6 @@
 package com.example.tiktalk.SendBird;
 
+import com.example.tiktalk.TikTalk;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sendbird.android.User;
@@ -51,7 +52,8 @@ public class ConnectionManager {
                 handler.onConnected(false);
             }
         } else if (SendBird.getConnectionState() == SendBird.ConnectionState.CLOSED) { // push notification or system kill
-            String userId = PreferenceUtils.getUserId();
+//            String userId = PreferenceUtils.getUserId();
+            String userId = com.example.tiktalk.Utils.PreferenceUtils.getId(TikTalk.getContext());
             SendBird.connect(userId, new SendBird.ConnectHandler() {
                 @Override
                 public void onConnected(User user, SendBirdException e) {

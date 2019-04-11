@@ -26,8 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".UI.Activities.Seller.SellerMyProfileActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name=".UI.Activities.Seller.SellerMyProfileActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".UI.Activities.Seller.SellerHomeActivity"
             android:screenOrientation="portrait" />
@@ -53,11 +54,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".UI.Activities.Seller.SellerDashboardActivity"
-            android:label="@string/title_activity_seller_dashboard"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UI.Activities.Buyer.BuyerHomeActivity"
             android:label="@string/title_activity_dashboard"
@@ -93,14 +89,16 @@
         <activity
             android:name=".UI.Activities.ResetPasswordActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".UI.Activities.NumberVerificationActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".UI.Activities.Buyer.BuyerSettingsActivity"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".UI.Activities.Seller.SellerSettingsActivity"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
+            android:name=".UI.Activities.Buyer.BuyerSettingsActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".UI.Activities.Seller.SellerSettingsActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".UI.Activities.Buyer.BuyerChatActivity" />
         <activity android:name=".UI.Activities.AllSellerActivity" />
         <activity
@@ -123,7 +121,13 @@
             android:name=".UI.Fragments.Buyer.BuyerInboxFragment"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".UI.Fragments.Seller.SellerInboxFragment"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".UI.Fragments.Buyer.BuyerNotificationFragment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UI.Fragments.Seller.SellerNotificationFragment"
             android:screenOrientation="portrait" />
 
         <service android:name=".AppServices.MyFirebaseMessagingService">

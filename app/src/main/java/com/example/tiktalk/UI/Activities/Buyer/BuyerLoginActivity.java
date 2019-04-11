@@ -69,7 +69,7 @@ import spencerstudios.com.bungeelib.Bungee;
 
 import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
-public class BuyerLoginActivity extends BaseActivity {
+public class BuyerLoginActivity extends AppCompatActivity {
 
     private static int RC_SIGN_IN = 123;
     private static String TAG = "BuyerLoginActivity";
@@ -107,7 +107,6 @@ public class BuyerLoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_buyer_login);
-        setupComponents();
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
@@ -239,16 +238,6 @@ public class BuyerLoginActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    public void initializeComponents() {
-
-    }
-
-    @Override
-    public void setupListeners() {
-
     }
 
     private void handleFacebookAccessToken(AccessToken token) {

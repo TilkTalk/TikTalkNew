@@ -436,6 +436,94 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         firestore.collection("users")
                 .whereEqualTo("isOnline", "1")
                 .whereEqualTo("Type", "Seller")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+
+                            switch (dc.getType()) {
+                                case ADDED: {
+                                    User ul = new User(
+                                            dc.getDocument().getString("username"),
+                                            dc.getDocument().getString("email"),
+                                            dc.getDocument().getString("password"),
+                                            dc.getDocument().getString("IsActive"),
+                                            dc.getDocument().getString("Type"),
+                                            dc.getDocument().getString("id"),
+                                            dc.getDocument().getString("imageUrl"),
+                                            dc.getDocument().getString("isOnline"),
+                                            dc.getDocument().getString("rating"),
+                                            dc.getDocument().getString("$perMin"),
+                                            dc.getDocument().getString("coinPerMin"),
+                                            dc.getDocument().getString("about"));
+                                    onlineArrayList.add(ul);
+                                    break;
+                                }
+                                case MODIFIED: {
+                                    User ul = new User(
+                                            dc.getDocument().getString("username"),
+                                            dc.getDocument().getString("email"),
+                                            dc.getDocument().getString("password"),
+                                            dc.getDocument().getString("IsActive"),
+                                            dc.getDocument().getString("Type"),
+                                            dc.getDocument().getString("id"),
+                                            dc.getDocument().getString("imageUrl"),
+                                            dc.getDocument().getString("isOnline"),
+                                            dc.getDocument().getString("rating"),
+                                            dc.getDocument().getString("$perMin"),
+                                            dc.getDocument().getString("coinPerMin"),
+                                            dc.getDocument().getString("about"));
+                                    int toUpdate = -1;
+                                    for (int i = 0; i < onlineArrayList.size(); i++) {
+                                        User userList = onlineArrayList.get(i);
+                                        if (ul.getId().matches(userList.getId()))
+                                            toUpdate = i;
+                                    }
+                                    if (toUpdate > -1)
+                                        onlineArrayList.remove(toUpdate);
+                                    onlineArrayList.add(0,ul);
+                                    break;
+                                }
+                                case REMOVED: {
+                                    User ul = new User(
+                                            dc.getDocument().getString("username"),
+                                            dc.getDocument().getString("email"),
+                                            dc.getDocument().getString("password"),
+                                            dc.getDocument().getString("IsActive"),
+                                            dc.getDocument().getString("Type"),
+                                            dc.getDocument().getString("id"),
+                                            dc.getDocument().getString("imageUrl"),
+                                            dc.getDocument().getString("isOnline"),
+                                            dc.getDocument().getString("rating"),
+                                            dc.getDocument().getString("$perMin"),
+                                            dc.getDocument().getString("coinPerMin"),
+                                            dc.getDocument().getString("about"));
+                                    onlineArrayList.remove(dc.getOldIndex());
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        Comparator<User> c = new Comparator<User>() {
+
+                            @Override
+                            public int compare(User a, User b) {
+                                return Float.compare(Float.valueOf(b.getRating()), Float.valueOf(a.getRating()));
+                            }
+                        };
+                        Collections.sort(sellerArrayList, c);
+                        adapternew = new OnlineSellersAdapter(onlineArrayList, BuyerHomeActivity.this);
+                        recyclerViewNew.setAdapter(adapternew);
+                        adapternew.setOnClickListener(BuyerHomeActivity.this);
+
+                    }
+                });
+
+        /*firestore.collection("users")
+                .whereEqualTo("isOnline", "1")
+                .whereEqualTo("Type", "Seller")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -473,7 +561,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         adapternew.setOnClickListener(BuyerHomeActivity.this);
 
                     }
-                });
+                });*/
 
         firestore.collection("users")
                 .document(PreferenceUtils.getId(this))
@@ -1050,7 +1138,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                     chatIntent.putExtra("cover", groupChannel.getCoverUrl());
                     chatIntent.putExtra("members", sellerId);
-                    chatIntent.putExtra("seller", "buyer");
+                    chatIntent.putExtra("type", "buyer");
 
                     startActivity(chatIntent);
                 }

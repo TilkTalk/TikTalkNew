@@ -1,8 +1,11 @@
 package com.example.tiktalk.SendBird;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.example.tiktalk.R;
+import com.example.tiktalk.TikTalk;
 import com.example.tiktalk.Utils.DateUtils;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.sendbird.android.AdminMessage;
@@ -738,6 +742,7 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private class OtherUserMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, editedText, /*nicknameText,*/ timeText, readReceiptText, dateText;
         ImageView profileImage, online_dot;
+        CardView cardview_group_chat_profile;
 
         ViewGroup urlPreviewContainer;
         TextView urlPreviewSiteNameText, urlPreviewTitleText, urlPreviewDescriptionText;
@@ -751,7 +756,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             timeText = (TextView) itemView.findViewById(R.id.text_group_chat_time);
 //            /*nicknameText*/ = (TextView) itemView.findViewById(R.id.text_group_chat_nickname);
             profileImage = (ImageView) itemView.findViewById(R.id.image_group_chat_profile);
-            online_dot = (ImageView) itemView.findViewById(R.id.online_dot);
+            cardview_group_chat_profile = itemView.findViewById(R.id.cardview_group_chat_profile);
+            //online_dot = (ImageView) itemView.findViewById(R.id.online_dot);
             readReceiptText = (TextView) itemView.findViewById(R.id.text_group_chat_read_receipt);
             dateText = (TextView) itemView.findViewById(R.id.text_group_chat_date);
 
@@ -787,12 +793,32 @@ public class GroupChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             // Hide profile image and nickname if the previous message was also sent by current sender.
             if (isContinuous) {
                 profileImage.setVisibility(View.INVISIBLE);
-                online_dot.setVisibility(View.INVISIBLE);
+                cardview_group_chat_profile.setVisibility(View.INVISIBLE);
+                //online_dot.setVisibility(View.INVISIBLE);
 //                /*nicknameText*/.setVisibility(View.GONE);
             } else {
                 profileImage.setVisibility(View.VISIBLE);
-                online_dot.setVisibility(View.VISIBLE);
+                cardview_group_chat_profile.setVisibility(View.VISIBLE);
                 ImageUtils.displayRoundImageFromUrl(context, message.getSender().getProfileUrl(), profileImage);
+
+               /* if (status.equals("online")){
+                    online_dot.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(R.drawable.online_icon).into(online_dot);
+                }
+                else {
+                    online_dot.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(R.drawable.online_icon_new).into(online_dot);
+                }*/
+
+                /*if (message.getSender().getConnectionStatus().toString().equals("OFFLINE")){
+                    online_dot.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(R.drawable.online_icon_new).into(online_dot);
+                }
+
+                if (message.getSender().getConnectionStatus().toString().equals("NON_AVAILABLE")){
+                    online_dot.setVisibility(View.VISIBLE);
+                    Glide.with(context).load(R.drawable.online_icon_new).into(online_dot);
+                }*/
 
 //                /*nicknameText*/.setVisibility(View.VISIBLE);
 //                /*nicknameText*/.setText(message.getSender().getNickname());

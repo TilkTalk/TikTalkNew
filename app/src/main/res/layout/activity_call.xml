@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/call_image_bg"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="200dp">
+            android:layout_marginBottom="170dp">
 
             <android.support.v7.widget.CardView
                 android:layout_width="100dp"
@@ -70,11 +70,12 @@
             android:orientation="vertical"
             android:layout_weight="1">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/declineButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/decline"
+                android:background="@color/transparent"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="8dp"/>
 
@@ -83,7 +84,8 @@
                 android:layout_height="wrap_content"
                 android:text="Decline"
                 android:textColor="@android:color/white"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"
+                android:textSize="12sp"/>
 
         </LinearLayout>
 
@@ -93,11 +95,12 @@
             android:orientation="vertical"
             android:layout_weight="1">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/answerButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/accept"
+                android:background="@color/transparent"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="8dp"/>
 
@@ -106,7 +109,8 @@
                 android:layout_height="wrap_content"
                 android:text="Accept"
                 android:textColor="@android:color/white"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"
+                android:textSize="12sp"/>
 
         </LinearLayout>
 

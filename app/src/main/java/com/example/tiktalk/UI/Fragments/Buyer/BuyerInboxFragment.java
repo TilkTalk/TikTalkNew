@@ -28,6 +28,7 @@ import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerHomeActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerSettingsActivity;
+import com.example.tiktalk.UI.Activities.Seller.SellerHomeActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
@@ -52,8 +53,6 @@ public class BuyerInboxFragment extends BaseActivity {
     ImageButton menu_btn, buycoins_btn;
     String myId, type;
 
-    ProgressBar progressBar;
-    ProgressDialog dialog;
     private GoogleSignInClient mGoogleSignInClient;
     ImageButton cancel_btn, settings_btn;
 

@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
+import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
@@ -410,7 +411,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                     MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                     dialog.dismiss();
-                                                    Intent in = new Intent(SellerLoginActivity.this, SellerDashboardActivity.class);
+                                                    Intent in = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                     startActivity(in);
                                                     finish();
                                                 }
@@ -457,7 +458,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                             MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                             dialog.dismiss();
-                                                            Intent intent = new Intent(SellerLoginActivity.this, SellerDashboardActivity.class);
+                                                            Intent intent = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                             startActivity(intent);
                                                             finish();
                                                         }

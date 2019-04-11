@@ -36,19 +36,20 @@ public class ChannelsList_Fragment extends BaseFragment {
     String member_name,member_pic,memberid;
     Button menu_btn;
     public DrawerLayout drawer_layout;
-    String seller;
+    String type, status;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
         Bundle bundle = getArguments();
-        if (bundle.containsKey("seller")) {
-            seller = bundle.getString("seller");
-        }
-        else {
-            seller = bundle.getString("buyer");
-        }
+        type = bundle.getString("type");
+//        if (bundle.containsKey("type")) {
+//            type = bundle.getString("seller");
+//        }
+//        else {
+//            type = bundle.getString("buyer");
+//        }
         }
 
     public ListView chat_user_list;
@@ -105,13 +106,21 @@ public class ChannelsList_Fragment extends BaseFragment {
                         member_name = member.getNickname();
                         member_pic = member.getProfileUrl();
                         memberid=member.getUserId();
+
+                        if (member.getConnectionStatus().toString().equals("ONLINE")){
+                            status = "online";
+                        }
+                        else {
+                            status = "offline";
+                        }
                     }
                 }
                 chatIntent.putExtra("title", member_name);
                 chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                 chatIntent.putExtra("cover", member_pic);
-                chatIntent.putExtra("members",memberid);
-                chatIntent.putExtra("seller",seller);
+                chatIntent.putExtra("members", memberid);
+                chatIntent.putExtra("type", type);
+                chatIntent.putExtra("status", status);
                 startActivity(chatIntent);
             }
         });

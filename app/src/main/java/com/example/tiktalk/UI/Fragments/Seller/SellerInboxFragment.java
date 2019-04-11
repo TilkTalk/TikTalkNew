@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -27,6 +28,7 @@ import com.example.tiktalk.R;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerHomeActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerLoginActivity;
+import com.example.tiktalk.UI.Activities.Seller.SellerMyProfileActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerSettingsActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
@@ -53,14 +55,12 @@ public class SellerInboxFragment extends BaseActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private static final String APP_ID = "4B0405B2-D5BD-49F5-B912-C9F7C009F374";
     Button menu_btn;
-    Button cancel_btn, settings_btn;
-    String myId;
+    ImageButton cancel_btn, settings_btn;
+    String myId, type;
+    String id, username, imageUrl, rating, coinPerMin, rateperMin, about;
 
-    ProgressBar progressBar;
-    ProgressDialog dialog;
-
-    public String[] menuName = {"Dashboard", "Inbox", "Notifications", "Contact", "Logout"};
-    public int[] menuicons = {R.drawable.dashboard, R.drawable.inbox, R.drawable.notification, R.drawable.contact, R.drawable.logout};
+    public String[] menuName = {"Dashboard", "Inbox", "My Profile", "Notifications", "Contact", "Logout"};
+    public int[] menuicons = {R.drawable.dashboard, R.drawable.inbox, R.drawable.my_profile, R.drawable.notification, R.drawable.contact, R.drawable.logout};
 
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;
@@ -87,18 +87,23 @@ public class SellerInboxFragment extends BaseActivity {
     @Override
     public void initializeComponents() {
 
+        type = getIntent().getStringExtra("type");
+        id = getIntent().getStringExtra("myId");
+        username = getIntent().getStringExtra("myName");
+        imageUrl = getIntent().getStringExtra("myImage");
+        rating = getIntent().getStringExtra("myRating");
+        coinPerMin = getIntent().getStringExtra("coinPerMin");
+        rateperMin = getIntent().getStringExtra("$PerMin");
+        about = getIntent().getStringExtra("about");
+
         Bundle bundle = new Bundle();
-        bundle.putString("seller","seller");
+        bundle.putString("type", type);
         ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
         channelsList_fragment.setArguments(bundle);
         onAddFragment(R.id.seller_inbox_container, channelsList_fragment, false);
 
         firestore = FirebaseFirestore.getInstance();
-        dialog = new ProgressDialog(this);
-        progressBar = findViewById(R.id.spin_kit);
-        Wave wave = new Wave();
-        progressBar.setIndeterminateDrawable(wave);
-        dialog.setIndeterminateDrawable(wave);
+
         menu_btn = findViewById(R.id.menu_btn);
 
         drawer_layout = findViewById(R.id.drawer_layout);
@@ -149,23 +154,41 @@ public class SellerInboxFragment extends BaseActivity {
                         Intent in = new Intent(SellerInboxFragment.this, SellerHomeActivity.class);
                         startActivity(in);
                         finish();
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 2:{
-                        Intent in = new Intent(SellerInboxFragment.this, SellerInboxFragment.class);
-                        startActivity(in);
-                        finish();
+                        Intent intent1 = new Intent(SellerInboxFragment.this, SellerInboxFragment.class);
+                        intent1.putExtra("type", "seller");
+                        startActivity(intent1);
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 3:{
-                        /*Intent in = new Intent(SellerInboxFragment.this, SellerInboxFragment.class);
+                        Intent in = new Intent(SellerInboxFragment.this, SellerMyProfileActivity.class);
+                        in.putExtra("myId", id);
+                        in.putExtra("myName", username);
+                        in.putExtra("myImage", imageUrl);
+                        in.putExtra("myRating", rating);
+                        in.putExtra("coinPerMin", coinPerMin);
+                        in.putExtra("$PerMin", rateperMin);
+                        in.putExtra("about", about);
                         startActivity(in);
-                        finish();*/
+                        finish();
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 4:
+                    case 4:{
+                        Intent in = new Intent(SellerInboxFragment.this, SellerNotificationFragment.class);
+                        startActivity(in);
+                        drawer_layout.closeDrawer(mDrawerList);
+                        finish();
                         break;
+                    }
                     case 5:{
+                        break;
+                    }
+                    case 6:{
                         myId = PreferenceUtils.getId(SellerInboxFragment.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -188,7 +211,6 @@ public class SellerInboxFragment extends BaseActivity {
                                             startActivity(intent);
                                             finish();
                                         } else {
-//                                            showToast("Unable to logout!");
                                             Toast.makeText(SellerInboxFragment.this, "Unable to logout!", Toast.LENGTH_SHORT).show();
                                         }
                                     }

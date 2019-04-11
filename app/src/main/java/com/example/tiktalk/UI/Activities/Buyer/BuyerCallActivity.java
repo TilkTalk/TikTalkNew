@@ -54,7 +54,7 @@ public class BuyerCallActivity extends BaseActivity {
     private TextView buyer_callName;
     private RoundedImageView buyer_callImage;
     private SlideToActView call_end;
-    private ToggleButton mic, video;
+    private ToggleButton mic;
     private ToggleButton loadSpeaker;
     private AudioManager audioManager;
 
@@ -189,11 +189,9 @@ public class BuyerCallActivity extends BaseActivity {
         call_end = findViewById(R.id.call_end);
         loadSpeaker = findViewById(R.id.loadSpeaker);
         mic = findViewById(R.id.mic);
-        video = findViewById(R.id.video);
 
         loadSpeaker.toggle();
         mic.toggle();
-        video.toggle();
     }
 
     @Override
@@ -242,17 +240,6 @@ public class BuyerCallActivity extends BaseActivity {
                     getSinchServiceInterface().getAudioController().mute();
                 }else{
                     getSinchServiceInterface().getAudioController().unmute();
-                }
-            }
-        });
-
-        video.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    
-                }else{
-
                 }
             }
         });

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +31,11 @@ import com.sinch.android.rtc.calling.CallClientListener;
 import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 import com.sinch.android.rtc.video.VideoCallListener;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.List;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class CallActivity extends BaseActivity {
 
@@ -39,7 +43,7 @@ public class CallActivity extends BaseActivity {
     private String mCallId, mCallName, mCallImage;
     private AudioPlayer mAudioPlayer;
 
-    ImageView answer, decline;
+    ImageButton answer, decline;
     TextView remoteUser;
     RoundedImageView reciverImage;
 
@@ -52,8 +56,20 @@ public class CallActivity extends BaseActivity {
         setupComponents();
 
         answer = findViewById(R.id.answerButton);
+        PushDownAnim.setPushDownAnimTo(answer)
+                .setScale(MODE_STATIC_DP, 2)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
         answer.setOnClickListener(mClickListener);
         decline = findViewById(R.id.declineButton);
+        PushDownAnim.setPushDownAnimTo(decline)
+                .setScale(MODE_STATIC_DP, 2)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
         decline.setOnClickListener(mClickListener);
         remoteUser = findViewById(R.id.remoteUser);
         reciverImage = findViewById(R.id.reciverImage);

@@ -328,7 +328,7 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                     chatIntent.putExtra("cover",groupChannel.getCoverUrl());
                     chatIntent.putExtra("members",sellerId);
-                    chatIntent.putExtra("seller","buyer");
+                    chatIntent.putExtra("type","buyer");
 
                     startActivity(chatIntent);
                 }

@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -39,6 +41,7 @@ import com.example.tiktalk.BaseClasses.BaseFragment;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.example.tiktalk.Sinch.SinchService;
+import com.example.tiktalk.TikTalk;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerCallActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.google.firebase.firestore.FieldValue;
@@ -104,7 +107,9 @@ public class GroupChatFragment  extends BaseFragment {
     private int mCurrentState = STATE_NORMAL;
     private BaseMessage mEditingMessage = null;
 
-    String sellerId, sellerName, sellerImage;
+    String sellerId, sellerName, sellerImage, status;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor mEditor;
 
 //    /**
 //     * To create an instance of this fragment, a Channel URL should be required.
@@ -127,8 +132,11 @@ public class GroupChatFragment  extends BaseFragment {
         sellerName=bundle.getString("name");
         sellerImage=bundle.getString("image");
         sellerId=bundle.getString("id");
+        status=bundle.getString("status");
 
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mEditor = sharedPreferences.edit();
+        mEditor.putString("status", status).apply();
 
         mIMM = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mFileProgressHandlerMap = new HashMap<>();

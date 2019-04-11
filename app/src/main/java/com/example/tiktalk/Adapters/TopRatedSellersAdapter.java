@@ -9,9 +9,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.andrognito.flashbar.Flashbar;
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
+import com.example.tiktalk.TikTalk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.thekhaeng.pushdownanim.PushDownAnim;
