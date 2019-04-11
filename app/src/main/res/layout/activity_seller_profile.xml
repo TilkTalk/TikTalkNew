@@ -223,10 +223,12 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/seller_profile_about"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="25dp"
-                        android:paddingLeft="10dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
                         android:textSize="14sp"
                         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ipsum magna, tincidunt id eleifend nec, faucibus sed odio." />
 

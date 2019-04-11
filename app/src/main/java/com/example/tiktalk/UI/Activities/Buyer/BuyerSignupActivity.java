@@ -60,6 +60,8 @@ import java.util.regex.Pattern;
 
 import spencerstudios.com.bungeelib.Bungee;
 
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
+
 public class BuyerSignupActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
@@ -210,6 +212,13 @@ public class BuyerSignupActivity extends AppCompatActivity {
             }
         });
 
+        PushDownAnim.setPushDownAnimTo(signUpBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,9 +252,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
             intent.putExtra("email", email);
             intent.putExtra("password", password);
             startActivity(intent);
-
-
-
+            finish();
     }
 
     public static boolean isEmailValid(String email) {

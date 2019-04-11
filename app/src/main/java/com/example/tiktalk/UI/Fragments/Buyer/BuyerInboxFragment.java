@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -48,13 +49,13 @@ import static com.example.tiktalk.TikTalk.getContext;
 public class BuyerInboxFragment extends BaseActivity {
 
     FirebaseFirestore firestore;
-    Button menu_btn, buycoins_btn;
-    String myId;
+    ImageButton menu_btn, buycoins_btn;
+    String myId, type;
 
     ProgressBar progressBar;
     ProgressDialog dialog;
     private GoogleSignInClient mGoogleSignInClient;
-    Button cancel_btn, settings_btn;
+    ImageButton cancel_btn, settings_btn;
 
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;
@@ -126,7 +127,7 @@ public class BuyerInboxFragment extends BaseActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:{
+                    case 1: {
                         Intent in = new Intent(BuyerInboxFragment.this, BuyerHomeActivity.class);
                         startActivity(in);
                         finish();
@@ -138,23 +139,23 @@ public class BuyerInboxFragment extends BaseActivity {
                         finish();
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         Intent intent1 = new Intent(BuyerInboxFragment.this, BuyerInboxFragment.class);
                         startActivity(intent1);
                         finish();
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         Intent in = new Intent(BuyerInboxFragment.this, BuyerNotificationFragment.class);
                         startActivity(in);
                         finish();
                         break;
                     }
-                    case 5:{
+                    case 5: {
                         Toast.makeText(BuyerInboxFragment.this, "Contact page is under development!", Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    case 6:{
+                    case 6: {
                         myId = PreferenceUtils.getId(BuyerInboxFragment.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -193,13 +194,13 @@ public class BuyerInboxFragment extends BaseActivity {
     @Override
     public void initializeComponents() {
 
+        type = getIntent().getStringExtra("type");
+
         Bundle bundle = new Bundle();
-        bundle.putString("buyer", "buyer");
+        bundle.putString("type", type);
         ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
         channelsList_fragment.setArguments(bundle);
         onAddFragment(R.id.activity_doctor, channelsList_fragment, false);
-//        ChannelsList_Fragment fragmentS1 = new ChannelsList_Fragment();
-//        onAddFragment(R.id.activity_doctor, fragmentS1,false);
 
         menu_btn = findViewById(R.id.menu_btn);
     }

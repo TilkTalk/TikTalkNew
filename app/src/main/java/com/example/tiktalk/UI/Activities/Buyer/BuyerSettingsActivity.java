@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,10 +43,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.HashMap;
 
 import spencerstudios.com.bungeelib.Bungee;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class BuyerSettingsActivity extends BaseActivity {
 
@@ -53,7 +57,9 @@ public class BuyerSettingsActivity extends BaseActivity {
     ProgressDialog pDialog;
 
     private static int Image_Request_Code = 1;
-    Button finishSettingsBtn, changePhoto_btn;
+    Button changePhoto_btn;
+    ImageButton finishSettingsBtn;
+    Button update_btn;
     ImageView settings_image;
     TextView settings_email, settings_password;
     Uri imageUri;
@@ -89,6 +95,7 @@ public class BuyerSettingsActivity extends BaseActivity {
         settings_email = findViewById(R.id.settings_email);
         settings_password = findViewById(R.id.settings_password);
         changePhoto_btn = findViewById(R.id.changePhoto_btn);
+        update_btn = findViewById(R.id.update_btn);
 
         Glide.with(this).load(PreferenceUtils.getImageUrl(this)).into(settings_image);
         settings_email.setText(PreferenceUtils.getEmail(this));
@@ -97,86 +104,90 @@ public class BuyerSettingsActivity extends BaseActivity {
 
     @Override
     public void setupListeners() {
+
+        PushDownAnim.setPushDownAnimTo(update_btn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
+        update_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user = FirebaseAuth.getInstance().getCurrentUser();
+
+                pDialog.setMessage("Loading...");
+                pDialog.show();
+
+                uploadImage();
+
+                if(!PreferenceUtils.getEmail(BuyerSettingsActivity.this).equals(settings_email.getText().toString()) &&
+                        !PreferenceUtils.getPassword(BuyerSettingsActivity.this).equals(settings_password.getText().toString())){
+
+                    final HashMap<String, Object> changes = new HashMap<>();
+                    changes.put("email", settings_email.getText().toString());
+                    changes.put("password", settings_password.getText().toString());
+
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
+                            .update(changes);
+
+                    user.updateEmail(settings_email.getText().toString());
+                    user.updatePassword(settings_password.getText().toString());
+
+                    pDialog.dismiss();
+                    finish();
+                }
+                else {
+
+                    if(!PreferenceUtils.getEmail(BuyerSettingsActivity.this).equals(settings_email.getText().toString())){
+
+                        final HashMap<String, Object> changes = new HashMap<>();
+                        changes.put("email", settings_email.getText().toString());
+
+                        firestore.collection("users")
+                                .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
+                                .update(changes);
+
+                        user.updateEmail(settings_email.getText().toString());
+
+                        pDialog.dismiss();
+                        finish();
+                    }
+                    else if(!PreferenceUtils.getPassword(BuyerSettingsActivity.this).equals(settings_password.getText().toString())){
+
+                        final HashMap<String, Object> changes = new HashMap<>();
+                        changes.put("password", settings_password.getText().toString());
+
+                        firestore.collection("users")
+                                .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
+                                .update(changes);
+
+                        user.updatePassword(settings_password.getText().toString());
+
+                        pDialog.dismiss();
+                        finish();
+
+                    }
+
+                    pDialog.dismiss();
+                    finish();
+                }
+            }
+        });
+
+        PushDownAnim.setPushDownAnimTo(finishSettingsBtn)
+                .setScale(MODE_STATIC_DP, 2)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         finishSettingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(BuyerSettingsActivity.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Save Changes?")
-                        .setMessage("Are you sure you want to close this activity?")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                user = FirebaseAuth.getInstance().getCurrentUser();
-
-                                pDialog.setMessage("Loading...");
-                                pDialog.show();
-
-                                uploadImage();
-
-                                if(!PreferenceUtils.getEmail(BuyerSettingsActivity.this).equals(settings_email.getText().toString()) &&
-                                        !PreferenceUtils.getPassword(BuyerSettingsActivity.this).equals(settings_password.getText().toString())){
-
-                                    final HashMap<String, Object> changes = new HashMap<>();
-                                    changes.put("email", settings_email.getText().toString());
-                                    changes.put("password", settings_password.getText().toString());
-
-                                    firestore.collection("users")
-                                            .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
-                                            .update(changes);
-
-                                    user.updateEmail(settings_email.getText().toString());
-                                    user.updatePassword(settings_password.getText().toString());
-
-                                    pDialog.dismiss();
-                                    finish();
-                                }
-                                else {
-
-                                    if(!PreferenceUtils.getEmail(BuyerSettingsActivity.this).equals(settings_email.getText().toString())){
-
-                                        final HashMap<String, Object> changes = new HashMap<>();
-                                        changes.put("email", settings_email.getText().toString());
-
-                                        firestore.collection("users")
-                                                .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
-                                                .update(changes);
-
-                                        user.updateEmail(settings_email.getText().toString());
-
-                                        pDialog.dismiss();
-                                        finish();
-                                    }
-                                    else if(!PreferenceUtils.getPassword(BuyerSettingsActivity.this).equals(settings_password.getText().toString())){
-
-                                        final HashMap<String, Object> changes = new HashMap<>();
-                                        changes.put("password", settings_password.getText().toString());
-
-                                        firestore.collection("users")
-                                                .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
-                                                .update(changes);
-
-                                        user.updatePassword(settings_password.getText().toString());
-
-                                        pDialog.dismiss();
-                                        finish();
-
-                                    }
-
-                                    pDialog.dismiss();
-                                    finish();
-                                }
-                            }
-
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+                finish();
             }
         });
 
@@ -222,6 +233,7 @@ public class BuyerSettingsActivity extends BaseActivity {
                                             Intent intent = new Intent(BuyerSettingsActivity.this, BuyerHomeActivity.class);
                                             startActivity(intent);
                                             Bungee.slideDown(BuyerSettingsActivity.this);
+                                            finish();
                                         }
                                     });
                         }
@@ -247,88 +259,6 @@ public class BuyerSettingsActivity extends BaseActivity {
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cr.getType(uri));
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Save Changes?")
-                .setMessage("Are you sure you want to close this activity?")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        user = FirebaseAuth.getInstance().getCurrentUser();
-
-                        pDialog.setMessage("Loading...");
-                        pDialog.show();
-
-                        uploadImage();
-
-                        if(!PreferenceUtils.getEmail(BuyerSettingsActivity.this).equals(settings_email.getText().toString()) &&
-                                !PreferenceUtils.getPassword(BuyerSettingsActivity.this).equals(settings_password.getText().toString())){
-
-                            final HashMap<String, Object> changes = new HashMap<>();
-                            changes.put("email", settings_email.getText().toString());
-                            changes.put("password", settings_password.getText().toString());
-
-                            firestore.collection("users")
-                                    .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
-                                    .update(changes);
-
-                            user.updateEmail(settings_email.getText().toString());
-                            user.updatePassword(settings_password.getText().toString());
-
-                            pDialog.dismiss();
-                            finish();
-                        }
-                        else {
-
-                            if(!PreferenceUtils.getEmail(BuyerSettingsActivity.this).equals(settings_email.getText().toString())){
-
-                                final HashMap<String, Object> changes = new HashMap<>();
-                                changes.put("email", settings_email.getText().toString());
-
-                                firestore.collection("users")
-                                        .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
-                                        .update(changes);
-
-                                user.updateEmail(settings_email.getText().toString());
-
-                                pDialog.dismiss();
-                                finish();
-                            }
-                            else if(!PreferenceUtils.getPassword(BuyerSettingsActivity.this).equals(settings_password.getText().toString())){
-
-                                final HashMap<String, Object> changes = new HashMap<>();
-                                changes.put("password", settings_password.getText().toString());
-
-                                firestore.collection("users")
-                                        .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
-                                        .update(changes);
-
-                                user.updatePassword(settings_password.getText().toString());
-
-                                pDialog.dismiss();
-                                finish();
-
-                            }
-
-                            pDialog.dismiss();
-                            finish();
-                        }
-                    }
-
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .show();
     }
 
     private void showToast(String msg) {

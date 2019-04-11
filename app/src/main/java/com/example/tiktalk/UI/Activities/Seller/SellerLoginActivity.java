@@ -91,7 +91,7 @@ public class SellerLoginActivity extends AppCompatActivity {
 
     String isActive = "1";
     String type = "Seller";
-    String isOnline = "1";
+    String isOnline = "0";
     String rating = "0";
     String $perMin = "0";
     String coinPerMin = "0";
@@ -220,6 +220,7 @@ public class SellerLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent in = new Intent(SellerLoginActivity.this, BuyerLoginActivity.class);
                 startActivity(in);
+                Bungee.slideRight(SellerLoginActivity.this);
                 finish();
             }
         });

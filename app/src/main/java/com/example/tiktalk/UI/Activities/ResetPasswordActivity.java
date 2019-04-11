@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.tiktalk.BaseClasses.BaseActivity;
@@ -17,12 +18,15 @@ import com.example.tiktalk.Utils.AppUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.thekhaeng.pushdownanim.PushDownAnim;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class ResetPasswordActivity extends BaseActivity {
 
     FirebaseAuth auth;
     Button sendPasswordBtn;
-    Button cancelBtn;
+    ImageButton cancelBtn;
     EditText forgotpassword_email;
 
     @Override
@@ -43,6 +47,14 @@ public class ResetPasswordActivity extends BaseActivity {
 
     @Override
     public void setupListeners() {
+
+        PushDownAnim.setPushDownAnimTo(sendPasswordBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         sendPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

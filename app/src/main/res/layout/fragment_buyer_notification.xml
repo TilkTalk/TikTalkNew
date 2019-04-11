@@ -22,11 +22,12 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/menu_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/menu" />
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:src="@drawable/menu"/>
 
         </android.support.v7.widget.Toolbar>
 

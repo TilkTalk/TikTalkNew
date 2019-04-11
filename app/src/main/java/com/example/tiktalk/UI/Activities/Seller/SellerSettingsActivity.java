@@ -44,6 +44,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import spencerstudios.com.bungeelib.Bungee;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class SellerSettingsActivity extends BaseActivity {
 
@@ -158,35 +161,68 @@ public class SellerSettingsActivity extends BaseActivity {
     @Override
     public void setupListeners() {
 
+        PushDownAnim.setPushDownAnimTo(update_btn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         update_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String val = settings_spinner.getSelectedItem().toString();
-                float result = Float.valueOf(val);
-                result = result * 10 + 1;
+                if (settings_spinner.getSelectedItem().toString().equals("free")){
 
-                HashMap<String, Object> update = new HashMap<>();
-                update.put("email", settings_email.getText().toString());
-                update.put("password", settings_password.getText().toString());
-                update.put("$perMin", settings_spinner.getSelectedItem().toString());
+                    HashMap<String, Object> update = new HashMap<>();
+                    update.put("email", settings_email.getText().toString());
+                    update.put("password", settings_password.getText().toString());
+                    update.put("$perMin", settings_spinner.getSelectedItem().toString());
+                    update.put("coinPerMin", settings_spinner.getSelectedItem().toString());
+                    update.put("about", about_edittext.getText().toString());
 
-                update.put("coinPerMin", String.valueOf((int) result));
-                update.put("about", about_edittext.getText().toString());
+                    uploadImage();
 
-                uploadImage();
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
+                            .update(update)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
+                                    startActivity(in);
+                                    finish();
+                                }
+                            });
 
-                firestore.collection("users")
-                        .document(PreferenceUtils.getId(SellerSettingsActivity.this))
-                        .update(update)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
-                        startActivity(in);
-                        finish();
-                    }
-                });
+                }else {
+
+                    String val = settings_spinner.getSelectedItem().toString();
+                    float result = Float.valueOf(val);
+                    result = result * 10 + 1;
+
+                    HashMap<String, Object> update = new HashMap<>();
+                    update.put("email", settings_email.getText().toString());
+                    update.put("password", settings_password.getText().toString());
+                    update.put("$perMin", settings_spinner.getSelectedItem().toString());
+                    update.put("coinPerMin", String.valueOf((int) result));
+                    update.put("about", about_edittext.getText().toString());
+
+                    uploadImage();
+
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
+                            .update(update)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
+                                    startActivity(in);
+                                    finish();
+                                }
+                            });
+                }
+
             }
         });
 

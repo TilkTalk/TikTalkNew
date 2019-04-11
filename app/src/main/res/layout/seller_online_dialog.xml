@@ -56,7 +56,8 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="15 mins"
-                android:textSize="8dp" />
+                android:textSize="8dp"
+                android:gravity="center_horizontal"/>
 
             <RadioButton
                 android:id="@+id/radio_30"
@@ -72,7 +73,8 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="30 mins"
-                android:textSize="8dp" />
+                android:textSize="8dp"
+                android:gravity="center_horizontal"/>
 
             <RadioButton
                 android:id="@+id/radio_45"
@@ -88,7 +90,8 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="45 mins"
-                android:textSize="8dp" />
+                android:textSize="8dp"
+                android:gravity="center_horizontal"/>
 
             <RadioButton
                 android:id="@+id/radio_60"
@@ -104,7 +107,8 @@
                 android:paddingRight="16dp"
                 android:paddingBottom="8dp"
                 android:text="60 mins"
-                android:textSize="8dp" />
+                android:textSize="8dp"
+                android:gravity="center_horizontal"/>
 
             <RadioButton
                 android:id="@+id/radio_offline"
@@ -121,7 +125,7 @@
                 android:paddingBottom="8dp"
                 android:text="Offline"
                 android:textSize="8dp"
-                android:checked="true"/>
+                android:gravity="center_horizontal"/>
 
         </RadioGroup>
 

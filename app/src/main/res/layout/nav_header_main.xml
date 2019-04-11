@@ -10,18 +10,20 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/cancel_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:background="@drawable/cancel" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:src="@drawable/cancel" />
 
-        <Button
+        <ImageButton
             android:id="@+id/settings_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@drawable/settings" />
+            android:background="@color/transparent"
+            android:src="@drawable/settings"/>
 
     </RelativeLayout>
 
@@ -30,10 +32,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:text="Menu"
         android:textColor="@android:color/white"
-        android:textSize="36sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
 </LinearLayout>

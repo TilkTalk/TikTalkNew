@@ -70,7 +70,12 @@ public class SellerCallDetailsActivity extends AppCompatActivity {
 
         displayCallDuration();
 
-        rateCalculation();
+        if (PreferenceUtils.getRatePerMin(this).equals("free")){
+            amount_earned.setText("$0 USD");
+        }
+        else {
+            rateCalculation();
+        }
 
         getDollerEarned();
 

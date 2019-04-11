@@ -64,7 +64,7 @@ public class SendbirdChatActivity extends BaseActivity {
             titleText = getIntent().getStringExtra("title");
             sellerId = getIntent().getStringExtra("members");
             coinPerMin = getIntent().getStringExtra("coinPerMin");
-            type=getIntent().getStringExtra("seller");
+            type=getIntent().getStringExtra("type");
 
         } else {
             AppUtils.Toast("Invalid Channel Url");

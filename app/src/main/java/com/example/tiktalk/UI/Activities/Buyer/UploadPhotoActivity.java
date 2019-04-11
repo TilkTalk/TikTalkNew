@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -30,10 +31,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.HashMap;
 
 import spencerstudios.com.bungeelib.Bungee;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class UploadPhotoActivity extends AppCompatActivity {
 
@@ -42,7 +46,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
     ImageView signUpImage;
     Button doneBtn;
     Button uploadPhotoBtn;
-    Button cancel_btn;
+    ImageButton cancel_btn;
 
     String name;
     String email;
@@ -102,6 +106,13 @@ public class UploadPhotoActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        PushDownAnim.setPushDownAnimTo(doneBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,6 +189,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
                                             Intent intent = new Intent(UploadPhotoActivity.this, BuyerHomeActivity.class);
                                             startActivity(intent);
                                             Bungee.slideDown(UploadPhotoActivity.this);
+                                            finish();
                                         }
                                     });
                             showToast("Image uploaded!");

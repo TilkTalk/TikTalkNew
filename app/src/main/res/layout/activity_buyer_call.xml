@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginTop="60dp"
         android:text="Mike Smith"
         android:textColor="@android:color/white"
@@ -25,21 +25,21 @@
         android:layout_height="wrap_content"
         android:background="@drawable/call_image_bg"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="60dp">
+        android:layout_marginBottom="40dp">
 
         <android.support.v7.widget.CardView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_centerInParent="true"
-            android:elevation="10dp"
+            android:elevation="4dp"
             app:cardCornerRadius="25dp"
-            android:layout_margin="20dp">
+            android:layout_margin="10dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/buyer_callImage"
                 android:src="@drawable/nine"
                 android:scaleType="centerCrop"
-                app:riv_corner_radius="20dp"
+                app:riv_corner_radius="25dp"
                 app:riv_border_width="3dp"
                 app:riv_border_color="#FFF"
                 app:riv_mutate_background="true"
@@ -54,51 +54,58 @@
 
 
     <LinearLayout
-        android:layout_width="250dp"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
 
-        <ToggleButton
+        <!--<ImageButton
             android:id="@+id/loadSpeaker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/speaker"
+            android:background="@color/transparent"/>-->
+
+        <ToggleButton
+            android:id="@+id/loadSpeaker"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
             android:layout_weight="1"
             android:background="@drawable/speaker"
             android:textOn=""
             android:textOff=""
             android:text=""
-            android:layout_margin="8dp"/>
+            android:layout_margin="5dp" />
         <View
-            android:layout_width="50dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/themeColor"/>
         <ToggleButton
             android:id="@+id/mic"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_weight="1"
             android:background="@drawable/microphone"
             android:textOn=""
             android:textOff=""
             android:text=""
-            android:layout_margin="8dp"/>
+            android:layout_margin="5dp"/>
         <View
-            android:layout_width="50dp"
+            android:layout_width="70dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/themeColor"/>
         <ToggleButton
             android:id="@+id/video"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_weight="1"
             android:background="@drawable/video_call"
             android:textOn=""
             android:textOff=""
             android:text=""
-            android:layout_margin="8dp"/>
+            android:layout_margin="5dp"/>
 
     </LinearLayout>
 
@@ -110,17 +117,18 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="60dp"
         android:textColor="@android:color/white"
-        android:textSize="20sp" />
+        android:textSize="16sp" />
 
     <com.ncorti.slidetoact.SlideToActView
         android:id="@+id/call_end"
-        android:layout_width="250dp"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         app:text="Slide to End"
         app:outer_color="#71B0FF"
-        app:slider_height="60dp"
+        app:slider_height="50dp"
         android:layout_gravity="center_horizontal"
-        app:area_margin="2dp"
-        app:text_size="14sp"/>
+        app:area_margin="1dp"
+        app:text_size="12sp"
+        app:slider_icon="@drawable/ic_call" />
 
 </LinearLayout>

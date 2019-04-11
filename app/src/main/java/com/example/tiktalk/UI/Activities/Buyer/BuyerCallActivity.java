@@ -1,13 +1,13 @@
 package com.example.tiktalk.UI.Activities.Buyer;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -18,9 +18,6 @@ import com.example.tiktalk.R;
 import com.example.tiktalk.Sinch.AudioPlayer;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.Seller.SellerCallDetailsActivity;
-import com.example.tiktalk.UI.Activities.Seller.SellerDashboardActivity;
-import com.example.tiktalk.UI.Fragments.Buyer.BuyerHome;
-import com.example.tiktalk.UI.Fragments.Seller.SellerHomeFragment;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.ncorti.slidetoact.SlideToActView;
@@ -29,7 +26,6 @@ import com.sinch.android.rtc.calling.CallEndCause;
 import com.sinch.android.rtc.calling.CallListener;
 import com.sinch.android.rtc.calling.CallState;
 
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,7 +54,9 @@ public class BuyerCallActivity extends BaseActivity {
     private TextView buyer_callName;
     private RoundedImageView buyer_callImage;
     private SlideToActView call_end;
-    private ToggleButton loadSpeaker, mic, video;
+    private ToggleButton mic, video;
+    private ToggleButton loadSpeaker;
+    private AudioManager audioManager;
 
     private class UpdateCallDurationTask extends TimerTask {
 
@@ -91,6 +89,8 @@ public class BuyerCallActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buyer_call);
         setupComponents();
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         mAudioPlayer = new AudioPlayer(this);
         call_time = (TextView) findViewById(R.id.call_time);
@@ -208,7 +208,23 @@ public class BuyerCallActivity extends BaseActivity {
             }
         });
 
-        loadSpeaker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        loadSpeaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                audioManager.setMode(AudioManager.MODE_IN_CALL);
+                if (audioManager.isSpeakerphoneOn()){
+                    getSinchServiceInterface().getAudioController().disableSpeaker();
+                }
+                else {
+                    getSinchServiceInterface().getAudioController().enableSpeaker();
+                }
+
+
+            }
+        });
+
+        /*loadSpeaker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -217,7 +233,7 @@ public class BuyerCallActivity extends BaseActivity {
                     getSinchServiceInterface().getAudioController().disableSpeaker();
                 }
             }
-        });
+        });*/
 
         mic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

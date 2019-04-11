@@ -37,6 +37,7 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelParams;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.calling.Call;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,18 +52,19 @@ import java.util.Locale;
 import spencerstudios.com.bungeelib.Bungee;
 
 import static com.example.tiktalk.TikTalk.getContext;
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class SellerProfileActivity extends BaseActivity {
 
     FirebaseFirestore firestore;
     ImageView seller_profile_image;
-    TextView profileName, profileRating, profileCoinsPerMin;
+    TextView profileName, profileRating, profileCoinsPerMin, seller_profile_about;
     SimpleRatingBar test;
     ImageButton CancelBtn;
     ImageButton profileChatBtn;
     ImageButton profileCallBtn;
 
-    String sellerId, sellerName, sellerImage, sellerRating, coinPerMin;
+    String sellerId, sellerName, sellerImage, sellerRating, coinPerMin, about;
 
     RecyclerView recyclerView;
     LinearLayoutManager manager;
@@ -92,6 +94,7 @@ public class SellerProfileActivity extends BaseActivity {
         profileCoinsPerMin = findViewById(R.id.seller_profile_coinsPerMin);
 //        sellerRatingBar = findViewById(R.id.seller_profile_ratingBar);
         test = findViewById(R.id.test);
+        seller_profile_about = findViewById(R.id.seller_profile_about);
 
         CancelBtn = findViewById(R.id.profile_cancel_btn);
         profileChatBtn = findViewById(R.id.profile_chat_btn);
@@ -102,11 +105,13 @@ public class SellerProfileActivity extends BaseActivity {
         sellerImage = getIntent().getStringExtra("sellerImage");
         sellerRating = getIntent().getStringExtra("sellerRating");
         coinPerMin = getIntent().getStringExtra("coinPerMin");
+        about = getIntent().getStringExtra("about");
 
         profileName.setText(sellerName);
         Glide.with(this).load(sellerImage).into(seller_profile_image);
         profileRating.setText(sellerRating);
         profileCoinsPerMin.setText(coinPerMin + " coins per minute");
+        seller_profile_about.setText(about);
 //        sellerRatingBar.setRating(Float.parseFloat(sellerRating));
         test.setRating(Float.parseFloat(sellerRating));
 
@@ -159,12 +164,27 @@ public class SellerProfileActivity extends BaseActivity {
     @Override
     public void setupListeners() {
 
+        PushDownAnim.setPushDownAnimTo(CancelBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bungee.slideRight(SellerProfileActivity.this);
                 finish();
             }
         });
+
+        PushDownAnim.setPushDownAnimTo(profileCallBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         profileCallBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,6 +193,13 @@ public class SellerProfileActivity extends BaseActivity {
                 directCall();
             }
         });
+
+        PushDownAnim.setPushDownAnimTo(profileChatBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         profileChatBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,8 +296,7 @@ public class SellerProfileActivity extends BaseActivity {
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                     chatIntent.putExtra("cover",groupChannel.getCoverUrl());
                     chatIntent.putExtra("members",sellerId);
-                    chatIntent.putExtra("seller","buyer");
-
+                    chatIntent.putExtra("type","buyer");
                     startActivity(chatIntent);
                 }
             }

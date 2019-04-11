@@ -42,6 +42,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andrognito.flashbar.Flashbar;
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.CallHistoryAdapter;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
@@ -53,6 +54,7 @@ import com.example.tiktalk.R;
 import com.example.tiktalk.SendBird.SendBirdService;
 import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.WithdrawActivity;
+import com.example.tiktalk.UI.Fragments.Buyer.BuyerInboxFragment;
 import com.example.tiktalk.UI.Fragments.Seller.SellerNotificationFragment;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
@@ -76,6 +78,9 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.SinchError;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,7 +121,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
     LinearLayout home_layout;
     Switch online_switch;
-    Button cancel_btn, settings_btn;
+    ImageButton cancel_btn, settings_btn;
     Button menu_btn;
     String myId;
     TextView onlineTime;
@@ -129,6 +134,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
     SharedPreferences.Editor mEditor;
     String selectedValue = "Offline";
     String text, rateperMin, isActive, type, coinPerMin, totalEarnings, email, id, imageUrl, isOnline, password, rating, token, updateDate, username, about;
+    String firstName, middleName, lastName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,11 +157,34 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
         mEditor = mpref.edit();
         text = mpref.getString("mins", "");
 
+        /*try {
+            String str_value = mpref.getString("mins", "");
+            if (str_value.matches("")) {
+                onlineTime.setText("");
+                online_switch.setChecked(false);
+
+            } else {
+
+                if (mpref.getBoolean("finish", false)) {
+                    //onlineTime.setText("Finished");
+                    online_switch.setChecked(false);
+                } else {
+
+                    onlineTime.setText(str_value);
+                    online_switch.setChecked(true);
+                }
+            }
+        } catch (Exception e) {
+
+        }*/
+
         if (text.equals("")) {
             online_switch.setChecked(false);
         } else {
             online_switch.setChecked(true);
         }
+
+
     }
 
     @Override
@@ -234,14 +263,13 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         finish();
                         break;
                     }
-                    case 2:
-                        Bundle bundle = new Bundle();
-                        bundle.putString("seller","seller");
-                        ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
-                        channelsList_fragment.setArguments(bundle);
-                        onReplaceFragment(R.id.drawer_layout,  channelsList_fragment, true);
+                    case 2:{
+                        Intent intent1 = new Intent(SellerHomeActivity.this, BuyerInboxFragment.class);
+                        intent1.putExtra("type", "seller");
+                        startActivity(intent1);
                         drawer_layout.closeDrawer(mDrawerList);
                         break;
+                    }
                     case 3:{
                         Intent in = new Intent(SellerHomeActivity.this, SellerMyProfileActivity.class);
                         in.putExtra("myId", id);
@@ -295,7 +323,24 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             }
         });
 
-        seller_name.setText(PreferenceUtils.getUsername(this));
+        String[] fullName = PreferenceUtils.getUsername(this).split(" ");
+
+        if (fullName.length == 1) {
+            firstName = fullName[0].trim();
+        }
+
+        if (fullName.length == 2) {
+            firstName = fullName[0].trim();
+            lastName = fullName[1].trim();
+        }
+
+        if (fullName.length == 3) {
+            firstName = fullName[0].trim();
+            middleName = fullName[1].trim();
+            lastName = fullName[2].trim();
+        }
+
+        seller_name.setText(firstName);
 
         if (checkPermission()) {
 
@@ -347,9 +392,45 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         token = documentSnapshot.getString("token");
                         username = documentSnapshot.getString("username");
                         about = documentSnapshot.getString("about");
-                        total_earnings.setText("$" + totalEarnings + "0");
+
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        double number = Double.parseDouble(totalEarnings);
+                        String val = df.format(number);
+
+                        total_earnings.setText("$" + val);
 
                         PreferenceUtils.saveSellerData(username, email, password, id, isActive, type, imageUrl, isOnline, rateperMin, rating, coinPerMin, about, SellerHomeActivity.this);
+
+                        if (rateperMin.equals("free")){
+
+                            Flashbar flashbar = new Flashbar.Builder(SellerHomeActivity.this)
+                                    .gravity(Flashbar.Gravity.BOTTOM)
+                                    .title("Alert!")
+                                    .message("Your teriff is set to free. You won't earn on calls.")
+                                    .backgroundColorRes(R.color.colorPrimaryDark)
+                                    .showOverlay()
+                                    .positiveActionText("Set rate")
+                                    .negativeActionText("Not now")
+                                    .positiveActionTextColorRes(R.color.white)
+                                    .negativeActionTextColorRes(R.color.white)
+                                    .positiveActionTapListener(new Flashbar.OnActionTapListener() {
+                                        @Override
+                                        public void onActionTapped(@NotNull final Flashbar flashbar) {
+                                            Intent in = new Intent(SellerHomeActivity.this, SellerSettingsActivity.class);
+                                            startActivity(in);
+                                            finish();
+                                        }
+                                    })
+                                    .negativeActionTapListener(new Flashbar.OnActionTapListener() {
+                                        @Override
+                                        public void onActionTapped(@NotNull Flashbar flashbar) {
+                                            flashbar.dismiss();
+                                        }
+                                    })
+                                    .build();
+                            flashbar.show();
+
+                        }
                     }
                 });
 
@@ -408,8 +489,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-
-                    if (text.equals("")) {
+                    
                         final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerHomeActivity.this);
                         final AlertDialog alert = dialog.create();
                         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -423,33 +503,44 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
                         ImageButton ok_btn = attachFileLayout.findViewById(R.id.ok_btn);
                         RadioGroup radio_grp = attachFileLayout.findViewById(R.id.radio_grp);
+                        final RadioButton radio15 = attachFileLayout.findViewById(R.id.radio_15);
+                        final RadioButton radio30 = attachFileLayout.findViewById(R.id.radio_30);
+                        final RadioButton radio45 = attachFileLayout.findViewById(R.id.radio_45);
+                        final RadioButton radio60 = attachFileLayout.findViewById(R.id.radio_60);
+                        final RadioButton radiooffline = attachFileLayout.findViewById(R.id.radio_offline);
 
                         radio_grp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                             public void onCheckedChanged(RadioGroup group, int checkedId) {
                                 switch (checkedId) {
                                     case R.id.radio_15: {
-                                        selectedValue = "15";
+                                        selectedValue = "1";
+                                        radio15.setChecked(true);
                                         break;
                                     }
 
                                     case R.id.radio_30: {
                                         selectedValue = "30";
+                                        radio30.setChecked(true);
                                         break;
                                     }
 
                                     case R.id.radio_45: {
                                         selectedValue = "45";
+                                        radio45.setChecked(true);
                                         break;
                                     }
 
                                     case R.id.radio_60: {
                                         selectedValue = "60";
+                                        radio60.setChecked(true);
                                         break;
                                     }
 
-                                    case R.id.radio_offline:
+                                    case R.id.radio_offline: {
                                         selectedValue = "Offline";
+                                        radiooffline.setChecked(true);
                                         break;
+                                    }
                                 }
                             }
                         });
@@ -467,6 +558,27 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                     onlineTime.setText("");
                                     onlineTime.setVisibility(View.GONE);
                                     online_switch.setChecked(false);
+
+                                    myId = PreferenceUtils.getId(SellerHomeActivity.this);
+
+                                    HashMap<String, Object> map = new HashMap<String, Object>();
+                                    map.put("isOnline", "0");
+
+                                    firestore.collection("users")
+                                            .document(myId)
+                                            .update(map)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        //PreferenceUtils.clearMemory(getApplicationContext());
+                                                        disconnect();
+
+                                                    } else {
+                                                        showToast("Unable to logout!");
+                                                    }
+                                                }
+                                            });
                                 } else {
                                     mEditor.putString("data", date_time).commit();
                                     mEditor.putString("mins", selectedValue).commit();
@@ -474,6 +586,15 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                     startService(intent_service);
                                     online_switch.setChecked(true);
                                     onlineTime.setVisibility(View.VISIBLE);
+
+                                    myId = PreferenceUtils.getId(SellerHomeActivity.this);
+
+                                    HashMap<String, Object> map = new HashMap<String, Object>();
+                                    map.put("isOnline", "1");
+
+                                    firestore.collection("users")
+                                            .document(myId)
+                                            .update(map);
                                 }
                                 alert.dismiss();
                             }
@@ -505,7 +626,7 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
                         alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
                         alert.getWindow().setAttributes(layoutParams);
-                    }
+
 
                 } else {
                     Intent intent = new Intent(getApplicationContext(), TimerService.class);
@@ -516,6 +637,28 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                     onlineTime.setText("");
                     onlineTime.setVisibility(View.GONE);
                     online_switch.setChecked(false);
+                    selectedValue = "Offline";
+
+                    myId = PreferenceUtils.getId(SellerHomeActivity.this);
+
+                    HashMap<String, Object> map = new HashMap<String, Object>();
+                    map.put("isOnline", "0");
+
+                    firestore.collection("users")
+                            .document(myId)
+                            .update(map)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //PreferenceUtils.clearMemory(getApplicationContext());
+                                        disconnect();
+
+                                    } else {
+                                        showToast("Unable to logout!");
+                                    }
+                                }
+                            });
                 }
 
 
@@ -529,6 +672,12 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
         public void onReceive(Context context, Intent intent) {
             String str_time = intent.getStringExtra("time");
             onlineTime.setText(str_time);
+
+            if (onlineTime.getText().toString().equals("0:0:1")){
+                onlineTime.setVisibility(View.GONE);
+                online_switch.setChecked(false);
+
+            }
 
         }
     };

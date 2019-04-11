@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="15dp"
-    android:paddingBottom="20dp">
+    android:paddingBottom="15dp">
 
         <ImageView
             android:id="@+id/sideMenuColor"
@@ -13,14 +13,14 @@
 
         <ImageView
             android:id="@+id/icon_nav"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:src="@mipmap/ic_launcher"
             android:layout_marginLeft="20dp"
             android:layout_gravity="center_vertical"/>
 
         <TextView
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:textColor="#fff"
             android:id="@+id/text_nav"
             android:layout_width="wrap_content"

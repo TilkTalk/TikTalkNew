@@ -34,7 +34,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Partner's "
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/partnerSignup_Btn"
@@ -43,7 +44,8 @@
                     android:clickable="true"
                     android:text="SIGNUP"
                     android:textColor="@android:color/white"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="12sp"/>
 
             </LinearLayout>
 

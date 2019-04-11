@@ -92,11 +92,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".UI.Activities.ResetPasswordActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".UI.Activities.NumberVerificationActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".UI.Activities.Buyer.BuyerSettingsActivity" />
+        <activity android:name=".UI.Activities.Buyer.BuyerSettingsActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".UI.Activities.Seller.SellerSettingsActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity android:name=".UI.Activities.Buyer.BuyerChatActivity" />

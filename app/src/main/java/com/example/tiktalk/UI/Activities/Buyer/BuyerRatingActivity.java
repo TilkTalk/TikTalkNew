@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.R;
@@ -25,10 +24,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.HashMap;
 
 import spencerstudios.com.bungeelib.Bungee;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class BuyerRatingActivity extends AppCompatActivity {
 
@@ -91,7 +93,14 @@ public class BuyerRatingActivity extends AppCompatActivity {
         Glide.with(this).load(imageUrl).into(seller_image);
 
         displayCallDuration();
-        coinsCalculation();
+
+        if (coinPerMin.equals("free")){
+            coins_used.setText("0 coins");
+            remainingCoins = Integer.valueOf(coins);
+        }
+        else {
+            coinsCalculation();
+        }
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -100,31 +109,31 @@ public class BuyerRatingActivity extends AppCompatActivity {
                 //Toast.makeText(BuyerRatingActivity.this, String.valueOf(seekBarValue), Toast.LENGTH_SHORT).show();
                 if (seekBarValue == 1) {
                     star1.setImageResource(R.drawable.star_blue);
-                    star2.setImageResource(R.drawable.star_gray);
-                    star3.setImageResource(R.drawable.star_gray);
-                    star4.setImageResource(R.drawable.star_gray);
-                    star5.setImageResource(R.drawable.star_gray);
+                    star2.setImageResource(R.drawable.star_gray_new);
+                    star3.setImageResource(R.drawable.star_gray_new);
+                    star4.setImageResource(R.drawable.star_gray_new);
+                    star5.setImageResource(R.drawable.star_gray_new);
                 }
                 if (seekBarValue == 2) {
                     star1.setImageResource(R.drawable.star_blue);
                     star2.setImageResource(R.drawable.star_blue);
-                    star3.setImageResource(R.drawable.star_gray);
-                    star4.setImageResource(R.drawable.star_gray);
-                    star5.setImageResource(R.drawable.star_gray);
+                    star3.setImageResource(R.drawable.star_gray_new);
+                    star4.setImageResource(R.drawable.star_gray_new);
+                    star5.setImageResource(R.drawable.star_gray_new);
                 }
                 if (seekBarValue == 3) {
                     star1.setImageResource(R.drawable.star_blue);
                     star2.setImageResource(R.drawable.star_blue);
                     star3.setImageResource(R.drawable.star_blue);
-                    star4.setImageResource(R.drawable.star_gray);
-                    star5.setImageResource(R.drawable.star_gray);
+                    star4.setImageResource(R.drawable.star_gray_new);
+                    star5.setImageResource(R.drawable.star_gray_new);
                 }
                 if (seekBarValue == 4) {
                     star1.setImageResource(R.drawable.star_blue);
                     star2.setImageResource(R.drawable.star_blue);
                     star3.setImageResource(R.drawable.star_blue);
                     star4.setImageResource(R.drawable.star_blue);
-                    star5.setImageResource(R.drawable.star_gray);
+                    star5.setImageResource(R.drawable.star_gray_new);
                 }
                 if (seekBarValue == 5) {
                     star1.setImageResource(R.drawable.star_blue);
@@ -163,6 +172,12 @@ public class BuyerRatingActivity extends AppCompatActivity {
                     }
                 });
 
+        PushDownAnim.setPushDownAnimTo(ratingSubmitBtn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         ratingSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override

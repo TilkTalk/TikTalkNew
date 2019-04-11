@@ -8,8 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -21,13 +20,14 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/finish_settings_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/cancel" />
+                android:background="@color/transparent"
+                android:src="@drawable/cancel" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -56,130 +56,151 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp">
+            <RelativeLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="20dp">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/profile_cardview"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="20dp">
-
-                <ImageView
-                    android:id="@+id/settings_image"
+                <android.support.v7.widget.CardView
+                    android:id="@+id/profile_cardview"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/nine" />
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="30dp">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/settings_image"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_gravity="center_horizontal"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/nine"
+                        app:riv_border_color="#FFF"
+                        app:riv_border_width="3dp"
+                        app:riv_corner_radius="30dp"
+                        app:riv_mutate_background="true" />
+
+                </android.support.v7.widget.CardView>
+
+                <Button
+                    android:id="@+id/changePhoto_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/upload_photo" />
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="0dp">
+
+                <EditText
+                    android:id="@+id/settings_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/view_bg"
+                    android:enabled="false"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="50dp"
+                    android:singleLine="true"
+                    android:text="michealclark@gmail.com"
+                    android:textSize="14sp" />
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/signup_email_cardview"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="0dp">
+
+                <EditText
+                    android:id="@+id/settings_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/view_bg"
+                    android:paddingStart="50dp"
+                    android:singleLine="true"
+                    android:text="********"
+                    android:textSize="14sp" />
+
+            </android.support.v7.widget.CardView>
+
+            <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/spin_kit"
+                style="@style/SpinKitView.Large.Wave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:SpinKit_Color="@color/colorAccent" />
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/view_bg"
+                        android:text="Push Notification"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingRight="10dp" />
+
+                </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
             <Button
-                android:id="@+id/changePhoto_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/upload_photo" />
+                android:id="@+id/update_btn"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/login_btn_bg"
+                android:text="Update"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="0dp">
-
-            <EditText
-                android:id="@+id/settings_email"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/view_bg"
-                android:drawableRight="@drawable/edit"
-                android:inputType="textEmailAddress"
-                android:paddingLeft="50dp"
-                android:paddingRight="20dp"
-                android:singleLine="true"
-                android:text="michealclark@gmail.com" />
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/signup_email_cardview"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="0dp">
-
-            <EditText
-                android:id="@+id/settings_password"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/view_bg"
-                android:drawableRight="@drawable/edit"
-                android:paddingLeft="50dp"
-                android:paddingRight="20dp"
-                android:singleLine="true"
-                android:text="********" />
-
-        </android.support.v7.widget.CardView>
-
-        <com.github.ybq.android.spinkit.SpinKitView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/spin_kit"
-            style="@style/SpinKitView.Large.Wave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:SpinKit_Color="@color/colorAccent" />
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginRight="60dp"
-            android:layout_marginBottom="40dp"
-            app:cardCornerRadius="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/view_bg"
-                    android:text="Push Notification"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
-
-                <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingRight="10dp" />
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

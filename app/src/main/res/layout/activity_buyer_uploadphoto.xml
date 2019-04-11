@@ -21,11 +21,12 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/uploadPhoto_cancel_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/cancel" />
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:src="@drawable/cancel"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -123,17 +124,17 @@
             android:layout_marginBottom="10dp"
             android:text="Upload Photo"
             android:textColor="@android:color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="280dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="70dp"
             android:text="@string/uploadphototext"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/done_btn"

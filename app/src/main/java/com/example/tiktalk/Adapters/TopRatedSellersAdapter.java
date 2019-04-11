@@ -14,8 +14,11 @@ import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.ArrayList;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellersAdapter.ViewHolder> {
 
@@ -75,6 +78,13 @@ public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellers
         holder.seller_rating.setText(String.valueOf(sellerListItems.get(position).getRating()));
         Glide.with(context).load(sellerListItems.get(position).getImageUrl()).into(holder.seller_image);
 
+        if (sellerListItems.get(position).getIsOnline().equals("1")){
+            holder.call_btn.setEnabled(true);
+        }
+        else {
+            holder.call_btn.setEnabled(false);
+        }
+
     }
 
     @Override
@@ -99,6 +109,13 @@ public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellers
             chat_btn = itemView.findViewById(R.id.chat_btn);
             seller_rating = itemView.findViewById(R.id.seller_rating);
 
+            PushDownAnim.setPushDownAnimTo(call_btn)
+                    .setScale(MODE_STATIC_DP, 2)
+                    .setDurationPush(0)
+                    .setDurationRelease(300)
+                    .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                    .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
             call_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -114,6 +131,13 @@ public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellers
                 }
             });
 
+            PushDownAnim.setPushDownAnimTo(chat_btn)
+                    .setScale(MODE_STATIC_DP, 2)
+                    .setDurationPush(0)
+                    .setDurationRelease(300)
+                    .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                    .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
             chat_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -128,6 +152,13 @@ public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellers
                     }
                 }
             });
+
+            PushDownAnim.setPushDownAnimTo(seller_image)
+                    .setScale(MODE_STATIC_DP, 2)
+                    .setDurationPush(0)
+                    .setDurationRelease(300)
+                    .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                    .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
             seller_image.setOnClickListener(new View.OnClickListener() {
                 @Override

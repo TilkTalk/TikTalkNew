@@ -5,11 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     app:cardCornerRadius="5dp"
-    app:cardElevation="20dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
-    android:layout_marginLeft="2dp"
-    android:layout_marginRight="2dp"
+    app:cardElevation="3dp"
+    android:layout_margin="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
@@ -19,8 +16,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/last_call_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="10dp"
             android:src="@drawable/six"
@@ -42,7 +39,7 @@
                 android:paddingLeft="10dp"
                 android:text="Jack Williams"
                 android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/last_call_time"
@@ -65,7 +62,8 @@
             android:drawableRight="@drawable/coins"
             android:drawablePadding="8dp"
             android:text="50"
-            android:textColor="@color/themeColor" />
+            android:textColor="@color/themeColor"
+            android:textSize="12sp"/>
 
     </LinearLayout>
 

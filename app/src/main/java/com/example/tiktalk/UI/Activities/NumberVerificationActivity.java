@@ -18,6 +18,9 @@ import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.R;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
 import com.example.tiktalk.UI.Activities.Seller.UploadPhotoActivity;
+import com.thekhaeng.pushdownanim.PushDownAnim;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class NumberVerificationActivity extends BaseActivity {
 
@@ -121,6 +124,13 @@ public class NumberVerificationActivity extends BaseActivity {
                 finish();
             }
         });
+
+        PushDownAnim.setPushDownAnimTo(ok_btn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         ok_btn.setOnClickListener(new View.OnClickListener() {
             @Override

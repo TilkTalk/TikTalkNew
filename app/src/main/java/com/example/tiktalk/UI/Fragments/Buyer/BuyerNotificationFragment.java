@@ -2,6 +2,7 @@ package com.example.tiktalk.UI.Fragments.Buyer;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -65,10 +67,10 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
     NotificationsAdapter adapter;
     ArrayList<Notifications> notificationArrayList;
 
-    Button menu_btn;
+    ImageButton menu_btn;
     String myId;
     private GoogleSignInClient mGoogleSignInClient;
-    Button cancel_btn, settings_btn;
+    ImageButton cancel_btn, settings_btn;
 
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;

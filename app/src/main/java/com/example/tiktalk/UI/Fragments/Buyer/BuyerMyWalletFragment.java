@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -64,13 +65,13 @@ public class BuyerMyWalletFragment extends BaseActivity {
     LinearLayoutManager manager;
     LastCallsAdapter adapter;
     ArrayList<Calls> callsArrayList;
-    Button menu_btn;
+    ImageButton menu_btn;
     String myId;
 
     ProgressBar progressBar;
     ProgressDialog dialog;
     private GoogleSignInClient mGoogleSignInClient;
-    Button cancel_btn, settings_btn;
+    ImageButton cancel_btn, settings_btn;
 
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;

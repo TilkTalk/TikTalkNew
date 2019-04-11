@@ -1,14 +1,11 @@
 package com.example.tiktalk.UI.Activities.Buyer;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,23 +14,23 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andrognito.flashbar.Flashbar;
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.BuyCoinsAdapter;
 import com.example.tiktalk.Adapters.ContactSearchDialogCompat;
@@ -41,7 +38,6 @@ import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
 import com.example.tiktalk.Adapters.OnlineSellersAdapter;
 import com.example.tiktalk.Adapters.TopRatedSellersAdapter;
 import com.example.tiktalk.BaseClasses.BaseActivity;
-import com.example.tiktalk.MessageModule.ChannelsList_Fragment;
 import com.example.tiktalk.Model.CoinsCategory;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
@@ -64,6 +60,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
@@ -79,12 +76,9 @@ import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.SinchError;
 import com.sinch.android.rtc.calling.Call;
-import com.stripe.android.Stripe;
-import com.stripe.android.TokenCallback;
-import com.stripe.android.model.Card;
-import com.stripe.android.model.Token;
-import com.stripe.android.view.CardMultilineWidget;
-import com.stripe.model.Charge;
+import com.thekhaeng.pushdownanim.PushDownAnim;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -98,13 +92,13 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
-import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import spencerstudios.com.bungeelib.Bungee;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAdapter.OnCallClickListener, TopRatedSellersAdapter.OnChatClickListener, TopRatedSellersAdapter.OnImageClickListener, OnlineSellersAdapter.OnItemClickListener, SinchService.StartFailedListener {
 
@@ -118,7 +112,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     LinearLayout home_layout;
     EditText searchView;
     FirebaseFirestore firestore;
-    Button cancel_btn, settings_btn;
+    ImageButton cancel_btn, settings_btn;
 
     RecyclerView recyclerView, recyclerViewNew;
     LinearLayoutManager manager;
@@ -136,7 +130,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     User user;
     CoinsCategory buyCoins;
 
-    String sellerId, SellerName, SellerImage, sellerName, coinPerMin, SellerRating;
+    String sellerId, SellerName, SellerImage, sellerName, coinPerMin, SellerRating, about, isOnline;
     BuyCoinsAdapter adaper;
 
     String coins, firstName, middleName, lastName, myId;
@@ -177,6 +171,13 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         cancel_btn = viewinflate.findViewById(R.id.cancel_btn);
         settings_btn = viewinflate.findViewById(R.id.settings_btn);
 
+        PushDownAnim.setPushDownAnimTo(cancel_btn)
+                .setScale(MODE_STATIC_DP, 2)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,11 +185,19 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             }
         });
 
+        PushDownAnim.setPushDownAnimTo(settings_btn)
+                .setScale(MODE_STATIC_DP, 2)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         settings_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(BuyerHomeActivity.this, BuyerSettingsActivity.class);
                 startActivity(in);
+                Bungee.slideLeft(BuyerHomeActivity.this);
             }
         });
 
@@ -211,35 +220,36 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:{
+                    case 1: {
                         Intent in = new Intent(BuyerHomeActivity.this, BuyerHomeActivity.class);
                         startActivity(in);
                         finish();
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         Intent intent = new Intent(BuyerHomeActivity.this, BuyerMyWalletFragment.class);
                         startActivity(intent);
-                        finish();
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         Intent intent1 = new Intent(BuyerHomeActivity.this, BuyerInboxFragment.class);
+                        intent1.putExtra("type", "buyer");
                         startActivity(intent1);
-                        finish();
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         Intent in = new Intent(BuyerHomeActivity.this, BuyerNotificationFragment.class);
                         startActivity(in);
-                        finish();
+                        drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 5:{
+                    case 5: {
                         Toast.makeText(BuyerHomeActivity.this, "Contact page is under development!", Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    case 6:{
+                    case 6: {
                         myId = PreferenceUtils.getId(BuyerHomeActivity.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -251,7 +261,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
+                                        if (task.isSuccessful()) {
                                             PreferenceUtils.clearMemory(getApplicationContext());
                                             disconnect();
                                             FirebaseAuth.getInstance().signOut();
@@ -261,8 +271,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             Intent intent = new Intent(BuyerHomeActivity.this, BuyerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
-                                        }
-                                        else {
+                                        } else {
                                             showToast("Unable to logout!");
                                         }
                                     }
@@ -294,6 +303,94 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         dialog.show();
 
         firestore.collection("users")
+                .whereEqualTo("Type", "Seller")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+
+                            switch (dc.getType()) {
+                                case ADDED: {
+                                    User ul = new User(
+                                            dc.getDocument().getString("username"),
+                                            dc.getDocument().getString("email"),
+                                            dc.getDocument().getString("password"),
+                                            dc.getDocument().getString("IsActive"),
+                                            dc.getDocument().getString("Type"),
+                                            dc.getDocument().getString("id"),
+                                            dc.getDocument().getString("imageUrl"),
+                                            dc.getDocument().getString("isOnline"),
+                                            dc.getDocument().getString("rating"),
+                                            dc.getDocument().getString("$perMin"),
+                                            dc.getDocument().getString("coinPerMin"),
+                                            dc.getDocument().getString("about"));
+                                    sellerArrayList.add(ul);
+                                    break;
+                                }
+                                case MODIFIED: {
+                                    User ul = new User(
+                                            dc.getDocument().getString("username"),
+                                            dc.getDocument().getString("email"),
+                                            dc.getDocument().getString("password"),
+                                            dc.getDocument().getString("IsActive"),
+                                            dc.getDocument().getString("Type"),
+                                            dc.getDocument().getString("id"),
+                                            dc.getDocument().getString("imageUrl"),
+                                            dc.getDocument().getString("isOnline"),
+                                            dc.getDocument().getString("rating"),
+                                            dc.getDocument().getString("$perMin"),
+                                            dc.getDocument().getString("coinPerMin"),
+                                            dc.getDocument().getString("about"));
+                                    int toUpdate = -1;
+                                    for (int i = 0; i < sellerArrayList.size(); i++) {
+                                        User userList = sellerArrayList.get(i);
+                                        if (ul.getId().matches(userList.getId()))
+                                            toUpdate = i;
+                                    }
+                                    if (toUpdate > -1)
+                                        sellerArrayList.remove(toUpdate);
+                                    sellerArrayList.add(0,ul);
+                                    break;
+                                }
+                                case REMOVED: {
+                                    User ul = new User(
+                                            dc.getDocument().getString("username"),
+                                            dc.getDocument().getString("email"),
+                                            dc.getDocument().getString("password"),
+                                            dc.getDocument().getString("IsActive"),
+                                            dc.getDocument().getString("Type"),
+                                            dc.getDocument().getString("id"),
+                                            dc.getDocument().getString("imageUrl"),
+                                            dc.getDocument().getString("isOnline"),
+                                            dc.getDocument().getString("rating"),
+                                            dc.getDocument().getString("$perMin"),
+                                            dc.getDocument().getString("coinPerMin"),
+                                            dc.getDocument().getString("about"));
+                                    sellerArrayList.remove(dc.getOldIndex());
+                                    break;
+                                }
+                            }
+                        }
+
+                        Comparator<User> c = new Comparator<User>() {
+
+                            @Override
+                            public int compare(User a, User b) {
+                                return Float.compare(Float.valueOf(b.getRating()), Float.valueOf(a.getRating()));
+                            }
+                        };
+                        Collections.sort(sellerArrayList, c);
+                        adapter = new TopRatedSellersAdapter(sellerArrayList, BuyerHomeActivity.this);
+                        recyclerView.setAdapter(adapter);
+                        dialog.dismiss();
+                        adapter.setOnCallClickListener(BuyerHomeActivity.this);
+                        adapter.setOnChatClickListener(BuyerHomeActivity.this);
+                        adapter.setOnImageClickListener(BuyerHomeActivity.this);
+                    }
+                });
+
+        /*firestore.collection("users")
                 .whereEqualTo("Type", "Seller")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -334,7 +431,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         adapter.setOnImageClickListener(BuyerHomeActivity.this);
 
                     }
-                });
+                });*/
 
         firestore.collection("users")
                 .whereEqualTo("isOnline", "1")
@@ -357,7 +454,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                     documentSnapshot.getString("isOnline"),
                                     documentSnapshot.getString("rating"),
                                     documentSnapshot.getString("$perMin"),
-                                    documentSnapshot.getString("coinPerMin"));
+                                    documentSnapshot.getString("coinPerMin"),
+                                    documentSnapshot.getString("about"));
                             onlineArrayList.add(ul);
 
                         }
@@ -385,6 +483,88 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
 
                         coins = documentSnapshot.getString("coins");
                         PreferenceUtils.saveBuyerData(documentSnapshot.getString("username"), documentSnapshot.getString("email"), documentSnapshot.getString("password"), documentSnapshot.getString("id"), documentSnapshot.getString("IsActive"), documentSnapshot.getString("Type"), documentSnapshot.getString("imageUrl"), documentSnapshot.getString("isOnline"), documentSnapshot.getString("coins"), BuyerHomeActivity.this);
+
+                        if (coins.equals("0")) {
+
+                            Flashbar flashbar = new Flashbar.Builder(BuyerHomeActivity.this)
+                                    .gravity(Flashbar.Gravity.BOTTOM)
+                                    .title("Buy Coins!")
+                                    .message("You don't have coins in your wallet. Please purchase coins to call.")
+                                    .backgroundColorRes(R.color.colorPrimaryDark)
+                                    .showOverlay()
+                                    .positiveActionText("Purchase")
+                                    .negativeActionText("Not now")
+                                    .positiveActionTextColorRes(R.color.white)
+                                    .negativeActionTextColorRes(R.color.white)
+                                    .positiveActionTapListener(new Flashbar.OnActionTapListener() {
+                                        @Override
+                                        public void onActionTapped(@NotNull final Flashbar flashbar) {
+                                            final AlertDialog.Builder dialog = new AlertDialog.Builder(BuyerHomeActivity.this);
+                                            final AlertDialog alert = dialog.create();
+                                            LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                                            final View attachFileLayout = inflater.inflate(R.layout.buy_coins_layout, null);
+                                            attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                            alert.setView(attachFileLayout);
+
+                                            final RecyclerView recycler_view = attachFileLayout.findViewById(R.id.recycler_view);
+                                            LinearLayoutManager manager = new LinearLayoutManager(attachFileLayout.getContext());
+                                            final ArrayList<CoinsCategory> buyCoinsArrayList = new ArrayList<>();
+                                            recycler_view.setLayoutManager(manager);
+
+                                            firestore.collection("coins")
+                                                    .get()
+                                                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                                                            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                                                                CoinsCategory cc = new CoinsCategory(
+                                                                        documentSnapshot.getString("coins"),
+                                                                        documentSnapshot.getString("amount"));
+                                                                buyCoinsArrayList.add(cc);
+                                                            }
+                                                            Comparator<CoinsCategory> c = new Comparator<CoinsCategory>() {
+
+                                                                @Override
+                                                                public int compare(CoinsCategory a, CoinsCategory b) {
+                                                                    return Integer.compare(Integer.valueOf(a.getCoins()), Integer.valueOf(b.getCoins()));
+                                                                }
+                                                            };
+                                                            Collections.sort(buyCoinsArrayList, c);
+                                                            adaper = new BuyCoinsAdapter(buyCoinsArrayList, attachFileLayout.getContext());
+                                                            recycler_view.setAdapter(adaper);
+                                                            adaper.setOnClickListener(new BuyCoinsAdapter.OnItemClickListener() {
+                                                                @Override
+                                                                public void onClick(int position) {
+
+                                                                    buyCoins = buyCoinsArrayList.get(position);
+                                                                    final String coin = buyCoins.getCoins();
+                                                                    String amount = buyCoins.getAmount();
+
+                                                                    Intent in = new Intent(BuyerHomeActivity.this, BuyCoinsActivity.class);
+                                                                    in.putExtra("coin", coin);
+                                                                    in.putExtra("amount", amount);
+                                                                    in.putExtra("totalCoins", coins);
+                                                                    startActivity(in);
+                                                                }
+                                                            });
+                                                            alert.show();
+                                                            flashbar.dismiss();
+                                                        }
+                                                    });
+
+                                        }
+                                    })
+                                    .negativeActionTapListener(new Flashbar.OnActionTapListener() {
+                                        @Override
+                                        public void onActionTapped(@NotNull Flashbar flashbar) {
+                                            flashbar.dismiss();
+                                        }
+                                    })
+                                    .build();
+                            flashbar.show();
+                        }
 
                     }
                 });
@@ -445,8 +625,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             @Override
             public void onClick(View v) {
 
-                new ContactSearchDialogCompat<>(BuyerHomeActivity.this, "Search...",
-                        "What are you looking for...?", null, sellerArrayList,
+                ContactSearchDialogCompat contactSearchDialogCompat = new ContactSearchDialogCompat<>(BuyerHomeActivity.this, "",
+                        "Search by name...", null, sellerArrayList,
                         new SearchResultListener<User>() {
                             @Override
                             public void onSelected(BaseSearchDialogCompat dialog, User item, int position) {
@@ -460,7 +640,35 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                 startActivity(in);
                             }
                         }
-                ).show();
+                );
+
+                Window window = contactSearchDialogCompat.getWindow();
+                WindowManager.LayoutParams wlp = window.getAttributes();
+
+                wlp.gravity = Gravity.BOTTOM;
+                wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+                window.setAttributes(wlp);
+                window.getAttributes().windowAnimations = R.style.DialogAnimation_2; //style id
+
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                contactSearchDialogCompat.getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int displayWidth = displayMetrics.widthPixels;
+                int displayHeight = displayMetrics.heightPixels;
+
+                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+
+                layoutParams.copyFrom(contactSearchDialogCompat.getWindow().getAttributes());
+
+                int dialogWindowWidth = (int) (displayWidth * 0.9f);
+                int dialogWindowHeight = (int) (displayHeight * 0.9f);
+
+                layoutParams.width = dialogWindowWidth;
+                layoutParams.height = dialogWindowHeight;
+
+                contactSearchDialogCompat.getWindow().setBackgroundDrawableResource(android.R.color.white);
+                contactSearchDialogCompat.getWindow().setAttributes(layoutParams);
+
+                contactSearchDialogCompat.show();
             }
         });
 
@@ -469,12 +677,26 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     @Override
     public void setupListeners() {
 
+        PushDownAnim.setPushDownAnimTo(menu_btn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         menu_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawer_layout.openDrawer(mDrawerList);
             }
         });
+
+        PushDownAnim.setPushDownAnimTo(buycoins_btn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         buycoins_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -556,8 +778,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case RequestPermissionCode:
                 if (grantResults.length > 0) {
@@ -610,39 +831,9 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         sellerName = user.getUsername();
         coinPerMin = user.getCoinPerMin();
         SellerImage = user.getImageUrl();
+        isOnline = user.isOnline;
 
-        int callMins = Integer.valueOf(coins) / Integer.valueOf(coinPerMin);
-        int displayHours = callMins / 60;
-        int displayMins = callMins % 60;
-        int displaySecs = 0;
-        String callEndTime = null;
-
-        if (displayHours == 0){
-            String diplayTime = displayMins + ":00";
-
-            try {
-                Date d = simpleCallTime.parse(diplayTime);
-                callEndTime = String.valueOf(CallTime.format(d));
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (displayHours > 0){
-            String diplayTime = displayHours + ":" + displayMins + ":00";
-
-            try {
-                Date d = simpleTime.parse(diplayTime);
-                callEndTime = String.valueOf(time.format(d));
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        if (Integer.valueOf(PreferenceUtils.getCoins(this)) > Integer.valueOf(coinPerMin)){
+        if (coinPerMin.equals("free")) {
             Call call = getSinchServiceInterface().calluser(sellerId);
             String callId = call.getCallId();
             Intent callScreen = new Intent(this, BuyerCallActivity.class);
@@ -657,8 +848,6 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
             callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
             callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
 
-            callScreen.putExtra("callMins", String.valueOf(callMins));
-            callScreen.putExtra("callEndTime", callEndTime);
             startActivity(callScreen);
 
             final HashMap<String, Object> callDetails = new HashMap<String, Object>();
@@ -670,9 +859,70 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
 
             firestore.collection("calls")
                     .add(callDetails);
-        }
-        else {
-            showToast("You don't have enough coins in your wallet.");
+        } else {
+
+            int callMins = Integer.valueOf(coins) / Integer.valueOf(coinPerMin);
+            int displayHours = callMins / 60;
+            int displayMins = callMins % 60;
+            int displaySecs = 0;
+            String callEndTime = null;
+
+            if (displayHours == 0) {
+                String diplayTime = displayMins + ":00";
+
+                try {
+                    Date d = simpleCallTime.parse(diplayTime);
+                    callEndTime = String.valueOf(CallTime.format(d));
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (displayHours > 0) {
+                String diplayTime = displayHours + ":" + displayMins + ":00";
+
+                try {
+                    Date d = simpleTime.parse(diplayTime);
+                    callEndTime = String.valueOf(time.format(d));
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            if (Integer.valueOf(PreferenceUtils.getCoins(this)) > Integer.valueOf(coinPerMin)) {
+                Call call = getSinchServiceInterface().calluser(sellerId);
+                String callId = call.getCallId();
+                Intent callScreen = new Intent(this, BuyerCallActivity.class);
+                callScreen.putExtra(SinchService.CALL_ID, callId);
+                callScreen.putExtra("toid", sellerId);
+                callScreen.putExtra("name", sellerName);
+                callScreen.putExtra("imageUrl", SellerImage);
+                callScreen.putExtra("coinPerMin", coinPerMin);
+
+                callScreen.putExtra("fromid", PreferenceUtils.getId(this));
+                callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(this));
+                callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
+                callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
+
+                callScreen.putExtra("callMins", String.valueOf(callMins));
+                callScreen.putExtra("callEndTime", callEndTime);
+                startActivity(callScreen);
+
+                final HashMap<String, Object> callDetails = new HashMap<String, Object>();
+                callDetails.put("buyerId", PreferenceUtils.getId(this));
+                callDetails.put("buyerName", PreferenceUtils.getUsername(this));
+                callDetails.put("buyerImage", PreferenceUtils.getImageUrl(this));
+                callDetails.put("callTime", FieldValue.serverTimestamp());
+                callDetails.put("status", "missed");
+
+                firestore.collection("calls")
+                        .add(callDetails);
+            } else {
+                showToast("You don't have enough coins in your wallet.");
+            }
         }
 
     }
@@ -691,8 +941,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
 
         user = sellerArrayList.get(position);
         sellerId = user.id;
-        SellerName=user.username;
-        SellerImage=user.imageUrl;
+        SellerName = user.username;
+        SellerImage = user.imageUrl;
         coinPerMin = user.coinPerMin;
 
         directMessage();
@@ -717,6 +967,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         SellerImage = user.imageUrl;
         SellerRating = user.rating;
         coinPerMin = user.coinPerMin;
+        about = user.about;
 
         Intent in = new Intent(this, SellerProfileActivity.class);
         in.putExtra("sellerId", sellerId);
@@ -724,7 +975,9 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         in.putExtra("sellerImage", SellerImage);
         in.putExtra("sellerRating", SellerRating);
         in.putExtra("coinPerMin", coinPerMin);
+        in.putExtra("about", about);
         startActivity(in);
+        Bungee.slideLeft(BuyerHomeActivity.this);
     }
 
     @Override
@@ -797,7 +1050,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                     chatIntent.putExtra("channelUrl", groupChannel.getUrl());
                     chatIntent.putExtra("cover", groupChannel.getCoverUrl());
                     chatIntent.putExtra("members", sellerId);
-                    chatIntent.putExtra("seller","buyer");
+                    chatIntent.putExtra("seller", "buyer");
 
                     startActivity(chatIntent);
                 }

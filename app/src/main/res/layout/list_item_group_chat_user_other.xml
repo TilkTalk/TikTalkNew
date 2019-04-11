@@ -31,15 +31,15 @@
         android:orientation="horizontal">
 
         <RelativeLayout
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_gravity="bottom"
             android:layout_marginBottom="8dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/image_group_chat_profile"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:src="@mipmap/user"
                 app:riv_border_color="#FFF"
                 app:riv_border_width="1dp"
@@ -48,8 +48,8 @@
 
             <ImageView
                 android:id="@+id/online_dot"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/online_icon" />
@@ -97,7 +97,7 @@
                 android:paddingRight="12dp"
                 android:text="Hi, how are you today?"
                 android:textColor="@color/groupChatTextOther"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/text_group_chat_edited"
@@ -148,7 +148,7 @@
                     android:maxLines="1"
                     android:text="Title will be here."
                     android:textColor="@color/groupChatTextOther"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/text_url_preview_description"

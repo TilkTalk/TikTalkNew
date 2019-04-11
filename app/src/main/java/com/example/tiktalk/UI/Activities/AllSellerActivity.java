@@ -136,7 +136,8 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
                                     documentSnapshot.getString("isOnline"),
                                     documentSnapshot.getString("rating"),
                                     documentSnapshot.getString("$perMin"),
-                                    documentSnapshot.getString("coinPerMin"));
+                                    documentSnapshot.getString("coinPerMin"),
+                                    documentSnapshot.getString("about"));
                             callArrayList.add(ul);
 
                         }

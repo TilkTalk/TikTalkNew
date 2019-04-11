@@ -24,7 +24,7 @@ public class User implements Searchable {
     public User() {
     }
 
-    public User(String username, String email, String password, String IsActive, String Type, String id, String imageUrl, String isOnline, String rating, String ratePerMin, String coinPerMin) {
+    public User(String username, String email, String password, String IsActive, String Type, String id, String imageUrl, String isOnline, String rating, String ratePerMin, String coinPerMin, String about) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -36,6 +36,7 @@ public class User implements Searchable {
         this.rating = rating;
         this.ratePerMin = ratePerMin;
         this.coinPerMin = coinPerMin;
+        this.about = about;
     }
 
     public User(String username, String email, String password, String isActive, String type, String id, String imageUrl, String isOnline, String coins) {

@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andrognito.flashbar.Flashbar;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
@@ -183,7 +184,6 @@ public class BuyerLoginActivity extends BaseActivity {
                 Intent intent = new Intent(BuyerLoginActivity.this, BuyerSignupActivity.class);
                 startActivity(intent);
                 Bungee.slideUp(BuyerLoginActivity.this);
-                finish();
             }
         });
 
@@ -227,6 +227,7 @@ public class BuyerLoginActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(BuyerLoginActivity.this, SellerLoginActivity.class);
                 startActivity(intent);
+                Bungee.slideLeft(BuyerLoginActivity.this);
                 finish();
             }
         });
@@ -353,8 +354,15 @@ public class BuyerLoginActivity extends BaseActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(BuyerLoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(BuyerLoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Flashbar flashbar = new Flashbar.Builder(BuyerLoginActivity.this)
+                                    .gravity(Flashbar.Gravity.BOTTOM)
+                                    .duration(1000)
+                                    .message("Authentication Failed.")
+                                    .backgroundColorRes(R.color.colorPrimaryDark)
+                                    .showOverlay()
+                                    .build();
+                            flashbar.show();
                         }
                     }
                 });
@@ -490,7 +498,15 @@ public class BuyerLoginActivity extends BaseActivity {
                                 Log.d(TAG, "signInWithCredential:success");
                             } else {
                                 Log.w(TAG, "signInWithCredential:failure", task.getException());
-                                Toast.makeText(BuyerLoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(BuyerLoginActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+                                Flashbar flashbar = new Flashbar.Builder(BuyerLoginActivity.this)
+                                        .gravity(Flashbar.Gravity.BOTTOM)
+                                        .duration(1000)
+                                        .message("Authentication Failed.")
+                                        .backgroundColorRes(R.color.colorPrimaryDark)
+                                        .showOverlay()
+                                        .build();
+                                flashbar.show();
                             }
                         }
                     });
@@ -565,6 +581,7 @@ public class BuyerLoginActivity extends BaseActivity {
                                                 dialog.dismiss();
                                                 Intent intent = new Intent(BuyerLoginActivity.this, BuyerHomeActivity.class);
                                                 startActivity(intent);
+                                                Bungee.slideRight(BuyerLoginActivity.this);
                                                 finish();
                                             }
                                         }
@@ -572,8 +589,16 @@ public class BuyerLoginActivity extends BaseActivity {
 
 
                         } else{
-                            Toast.makeText(BuyerLoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
+                            Flashbar flashbar = new Flashbar.Builder(BuyerLoginActivity.this)
+                                    .gravity(Flashbar.Gravity.BOTTOM)
+                                    .duration(1000)
+                                    .message("Username or password incorrect!")
+                                    .backgroundColorRes(R.color.colorPrimaryDark)
+                                    .showOverlay()
+                                    .build();
+                            flashbar.show();
+//                            Toast.makeText(BuyerLoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                         }
 
 

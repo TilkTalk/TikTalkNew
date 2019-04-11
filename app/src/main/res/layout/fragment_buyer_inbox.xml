@@ -23,7 +23,7 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/menu_btn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"

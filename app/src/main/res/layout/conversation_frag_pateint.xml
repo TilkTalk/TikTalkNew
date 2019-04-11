@@ -117,7 +117,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:minHeight="48dp"
+        android:minHeight="45dp"
         android:orientation="horizontal"
         android:background="@color/white">
 
@@ -141,7 +141,8 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:hint="Type your message..."
-            android:maxLines="6" />
+            android:maxLines="6"
+            android:textSize="14sp"/>
 
         <ImageButton
             android:id="@+id/button_group_chat_send"
