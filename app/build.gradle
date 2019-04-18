@@ -60,6 +60,8 @@ dependencies {
     implementation 'com.sdsmdg.harjot:materialshadows:1.2.5'
     implementation 'com.chootdev:timezago:1.1.8'
     implementation 'com.github.curioustechizen.android-ago:library:1.4.0'
+    implementation 'com.basgeekball:awesome-validation:4.2'
+    implementation 'com.robinhood.spark:spark:1.2.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:4.14.1'
     //    SINCH

@@ -32,6 +32,7 @@ import com.example.tiktalk.Sinch.SinchService;
 import com.example.tiktalk.UI.Activities.Buyer.BuyCoinsActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerCallActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
+import com.example.tiktalk.UI.Activities.Buyer.BuyerHomeActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerProfileActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.github.ybq.android.spinkit.style.Wave;
@@ -44,6 +45,7 @@ import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelParams;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.calling.Call;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +57,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import spencerstudios.com.bungeelib.Bungee;
+
 import static com.example.tiktalk.TikTalk.getContext;
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class AllSellerActivity extends BaseActivity implements CallSellersAdapter.OnCallClickListener, CallSellersAdapter.OnChatClickListener, CallSellersAdapter.OnImageClickListener{
 
@@ -108,6 +113,9 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent in = new Intent(AllSellerActivity.this, BuyerHomeActivity.class);
+                startActivity(in);
+                Bungee.slideRight(AllSellerActivity.this);
                 finish();
             }
         });
@@ -137,7 +145,8 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
                                     documentSnapshot.getString("rating"),
                                     documentSnapshot.getString("$perMin"),
                                     documentSnapshot.getString("coinPerMin"),
-                                    documentSnapshot.getString("about"));
+                                    documentSnapshot.getString("about"),
+                                    documentSnapshot.getString("notifications"));
                             callArrayList.add(ul);
 
                         }
@@ -150,6 +159,13 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
 
                     }
                 });
+
+        PushDownAnim.setPushDownAnimTo(buycoins_btn)
+                .setScale(MODE_STATIC_DP, 3)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
         buycoins_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,6 +238,9 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
 
     @Override
     public void onChatClick(int position) {
+
+        dialog.setMessage("Please wait...");
+        dialog.show();
         directMessage(position);
     }
 
@@ -293,6 +312,8 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
             callScreen.putExtra("callMins", String.valueOf(callMins));
             callScreen.putExtra("callEndTime", callEndTime);
             startActivity(callScreen);
+            Bungee.slideLeft(AllSellerActivity.this);
+            finish();
 
             final HashMap<String, Object> callDetails = new HashMap<String, Object>();
             callDetails.put("buyerId", PreferenceUtils.getId(AllSellerActivity.this));
@@ -330,7 +351,10 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
                     chatIntent.putExtra("members",sellerId);
                     chatIntent.putExtra("type","buyer");
 
+                    dialog.dismiss();
                     startActivity(chatIntent);
+                    Bungee.slideLeft(AllSellerActivity.this);
+                    finish();
                 }
             }
         };
@@ -358,6 +382,8 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
         String SellerImage = user.imageUrl;
         String SellerRating = user.rating;
         String coinPerMin = user.coinPerMin;
+        String about = user.about;
+        String isOnline = user.isOnline;
 
         Intent in = new Intent(AllSellerActivity.this, SellerProfileActivity.class);
         in.putExtra("sellerId", sellerId);
@@ -365,11 +391,22 @@ public class AllSellerActivity extends BaseActivity implements CallSellersAdapte
         in.putExtra("sellerImage", SellerImage);
         in.putExtra("sellerRating", SellerRating);
         in.putExtra("coinPerMin", coinPerMin);
+        in.putExtra("about", about);
+        in.putExtra("isOnline", isOnline);
         startActivity(in);
+        Bungee.slideLeft(AllSellerActivity.this);
+        finish();
     }
 
     public void showToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(AllSellerActivity.this, BuyerHomeActivity.class);
+        startActivity(in);
+        Bungee.slideRight(AllSellerActivity.this);
+        finish();
+    }
 }

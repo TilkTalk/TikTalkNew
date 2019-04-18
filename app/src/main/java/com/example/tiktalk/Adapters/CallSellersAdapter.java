@@ -15,10 +15,12 @@ import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.ViewHolder> {
 
@@ -110,6 +112,13 @@ public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.
             chat_btn = itemView.findViewById(R.id.chat_btn);
             swipe_layout = itemView.findViewById(R.id.swipe_layout);
 
+            PushDownAnim.setPushDownAnimTo(call_btn)
+                    .setScale(MODE_STATIC_DP, 2)
+                    .setDurationPush(0)
+                    .setDurationRelease(300)
+                    .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                    .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
             call_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -124,6 +133,13 @@ public class CallSellersAdapter extends RecyclerView.Adapter<CallSellersAdapter.
                     }
                 }
             });
+
+            PushDownAnim.setPushDownAnimTo(chat_btn)
+                    .setScale(MODE_STATIC_DP, 2)
+                    .setDurationPush(0)
+                    .setDurationRelease(300)
+                    .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                    .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
 
             chat_btn.setOnClickListener(new View.OnClickListener() {
                 @Override

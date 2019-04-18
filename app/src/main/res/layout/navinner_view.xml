@@ -1,32 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:paddingTop="15dp"
     android:paddingBottom="15dp">
 
-        <ImageView
-            android:id="@+id/sideMenuColor"
-            android:layout_width="2dp"
-            android:layout_height="match_parent" />
+    <ImageView
+        android:id="@+id/sideMenuColor"
+        android:layout_width="2dp"
+        android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/icon_nav"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_marginLeft="20dp"
-            android:layout_gravity="center_vertical"/>
+    <ImageView
+        android:id="@+id/icon_nav"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="20dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/text_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="Home"
+        android:textColor="#fff"
+        android:textSize="14sp" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/notification_cardView"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="7.5dp"
+        android:layout_marginStart="50dp">
 
         <TextView
-            android:textSize="14sp"
-            android:textColor="#fff"
-            android:id="@+id/text_nav"
+            android:id="@+id/notification_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Home"
-            android:layout_marginLeft="20dp"/>
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:text="1"
+            android:textColor="@color/themeColor"
+            android:textStyle="bold"
+            android:textSize="10dp"/>
+
+    </android.support.v7.widget.CardView>
 
 
 </LinearLayout>

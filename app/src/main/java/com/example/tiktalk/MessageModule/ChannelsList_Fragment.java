@@ -36,7 +36,7 @@ public class ChannelsList_Fragment extends BaseFragment {
     String member_name,member_pic,memberid;
     Button menu_btn;
     public DrawerLayout drawer_layout;
-    String type, status;
+    String type, status, id, username, imageUrl, rating, coinPerMin, rateperMin, about;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +44,13 @@ public class ChannelsList_Fragment extends BaseFragment {
 
         Bundle bundle = getArguments();
         type = bundle.getString("type");
+        id = bundle.getString("myId");
+        username = bundle.getString("myName");
+        imageUrl = bundle.getString("myImage");
+        rating = bundle.getString("myRating");
+        coinPerMin = bundle.getString("coinPerMin");
+        rateperMin = bundle.getString("$PerMin");
+        about = bundle.getString("about");
 //        if (bundle.containsKey("type")) {
 //            type = bundle.getString("seller");
 //        }
@@ -121,6 +128,14 @@ public class ChannelsList_Fragment extends BaseFragment {
                 chatIntent.putExtra("members", memberid);
                 chatIntent.putExtra("type", type);
                 chatIntent.putExtra("status", status);
+
+                chatIntent.putExtra("myId", id);
+                chatIntent.putExtra("myName", username);
+                chatIntent.putExtra("myImage", imageUrl);
+                chatIntent.putExtra("myRating", rating);
+                chatIntent.putExtra("coinPerMin", coinPerMin);
+                chatIntent.putExtra("$PerMin", rateperMin);
+                chatIntent.putExtra("about", about);
                 startActivity(chatIntent);
             }
         });

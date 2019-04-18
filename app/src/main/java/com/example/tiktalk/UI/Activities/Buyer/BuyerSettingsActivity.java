@@ -18,9 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +65,7 @@ public class BuyerSettingsActivity extends BaseActivity {
     ImageView settings_image;
     TextView settings_email, settings_password;
     Uri imageUri;
+    Switch notification_switch;
 
     FirebaseAuth auth;
     StorageReference storage;
@@ -96,10 +99,18 @@ public class BuyerSettingsActivity extends BaseActivity {
         settings_password = findViewById(R.id.settings_password);
         changePhoto_btn = findViewById(R.id.changePhoto_btn);
         update_btn = findViewById(R.id.update_btn);
+        notification_switch = findViewById(R.id.notification_switch);
 
         Glide.with(this).load(PreferenceUtils.getImageUrl(this)).into(settings_image);
         settings_email.setText(PreferenceUtils.getEmail(this));
         settings_password.setText(PreferenceUtils.getPassword(this));
+
+        if (PreferenceUtils.getNotifications(this).equals("1")){
+            notification_switch.setChecked(true);
+        }
+        else {
+            notification_switch.setChecked(false);
+        }
     }
 
     @Override
@@ -198,6 +209,29 @@ public class BuyerSettingsActivity extends BaseActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Please select Image!"), Image_Request_Code);
+            }
+        });
+
+        notification_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("notifications", "1");
+
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
+                            .update(map);
+                }
+                else {
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("notifications", "0");
+
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(BuyerSettingsActivity.this))
+                            .update(map);
+                }
             }
         });
     }

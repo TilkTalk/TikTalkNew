@@ -6,9 +6,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +41,7 @@ import com.example.tiktalk.Adapters.ContactSearchDialogCompat;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
 import com.example.tiktalk.Adapters.OnlineSellersAdapter;
 import com.example.tiktalk.Adapters.TopRatedSellersAdapter;
+import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.Model.CoinsCategory;
 import com.example.tiktalk.Model.User;
@@ -105,6 +110,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     ProgressBar progressBar;
     ProgressDialog dialog;
     private GoogleSignInClient mGoogleSignInClient;
+    boolean doubleBackToExitPressedOnce = false;
 
     TextView seeAllBtn, buyer_name;
     Button buycoins_btn;
@@ -121,7 +127,6 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
     OnlineSellersAdapter adapternew;
     ArrayList<User> sellerArrayList;
     ArrayList<User> onlineArrayList;
-    private List<GroupChannel> groupChannerls;
 
     public static final int RequestPermissionCode = 1;
 
@@ -150,6 +155,22 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         setContentView(R.layout.activity_buyer_home);
         SendBird.init(APP_ID, this.getApplicationContext());
         setupComponents();
+
+        dialog = new ProgressDialog(this);
+        progressBar = findViewById(R.id.spin_kit);
+        Wave wave = new Wave();
+        progressBar.setIndeterminateDrawable(wave);
+        dialog.setIndeterminateDrawable(wave);
+
+        firestore = FirebaseFirestore.getInstance();
+        sellerArrayList = new ArrayList<>();
+        onlineArrayList = new ArrayList<>();
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerViewNew = findViewById(R.id.recycler_view_new);
+        manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        managerNew = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(manager);
+        recyclerViewNew.setLayoutManager(managerNew);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
@@ -210,10 +231,13 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 super.onDrawerSlide(drawerView, slideOffset);
                 drawer_layout.bringChildToFront(drawerView);
                 drawer_layout.requestLayout();
+//                Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+//                drawerView.startAnimation(animFadeIn);
             }
 
         };
         drawer_layout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -223,26 +247,34 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                     case 1: {
                         Intent in = new Intent(BuyerHomeActivity.this, BuyerHomeActivity.class);
                         startActivity(in);
+                        Bungee.zoom(BuyerHomeActivity.this);
                         finish();
                         break;
                     }
                     case 2: {
                         Intent intent = new Intent(BuyerHomeActivity.this, BuyerMyWalletFragment.class);
+                        intent.putExtra("coins", coins);
                         startActivity(intent);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(BuyerHomeActivity.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 3: {
                         Intent intent1 = new Intent(BuyerHomeActivity.this, BuyerInboxFragment.class);
                         intent1.putExtra("type", "buyer");
                         startActivity(intent1);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(BuyerHomeActivity.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 4: {
                         Intent in = new Intent(BuyerHomeActivity.this, BuyerNotificationFragment.class);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(BuyerHomeActivity.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 5: {
@@ -250,6 +282,10 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         break;
                     }
                     case 6: {
+
+                        dialog.setMessage("Please wait...");
+                        dialog.show();
+
                         myId = PreferenceUtils.getId(BuyerHomeActivity.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -262,12 +298,14 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+                                            MyFirebaseInstanceIDService.deleteRegistrationFromServer(BuyerHomeActivity.this.getClass().getSimpleName(), myId);
                                             PreferenceUtils.clearMemory(getApplicationContext());
                                             disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
 
+                                            dialog.dismiss();
                                             Intent intent = new Intent(BuyerHomeActivity.this, BuyerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
@@ -282,22 +320,6 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 }
             }
         });
-
-        dialog = new ProgressDialog(this);
-        progressBar = findViewById(R.id.spin_kit);
-        Wave wave = new Wave();
-        progressBar.setIndeterminateDrawable(wave);
-        dialog.setIndeterminateDrawable(wave);
-
-        firestore = FirebaseFirestore.getInstance();
-        sellerArrayList = new ArrayList<>();
-        onlineArrayList = new ArrayList<>();
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerViewNew = findViewById(R.id.recycler_view_new);
-        manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        managerNew = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(manager);
-        recyclerViewNew.setLayoutManager(managerNew);
 
         dialog.setMessage("Loading...");
         dialog.show();
@@ -324,7 +346,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             dc.getDocument().getString("rating"),
                                             dc.getDocument().getString("$perMin"),
                                             dc.getDocument().getString("coinPerMin"),
-                                            dc.getDocument().getString("about"));
+                                            dc.getDocument().getString("about"),
+                                            dc.getDocument().getString("notifications"));
                                     sellerArrayList.add(ul);
                                     break;
                                 }
@@ -341,7 +364,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             dc.getDocument().getString("rating"),
                                             dc.getDocument().getString("$perMin"),
                                             dc.getDocument().getString("coinPerMin"),
-                                            dc.getDocument().getString("about"));
+                                            dc.getDocument().getString("about"),
+                                            dc.getDocument().getString("notifications"));
                                     int toUpdate = -1;
                                     for (int i = 0; i < sellerArrayList.size(); i++) {
                                         User userList = sellerArrayList.get(i);
@@ -366,7 +390,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             dc.getDocument().getString("rating"),
                                             dc.getDocument().getString("$perMin"),
                                             dc.getDocument().getString("coinPerMin"),
-                                            dc.getDocument().getString("about"));
+                                            dc.getDocument().getString("about"),
+                                            dc.getDocument().getString("notifications"));
                                     sellerArrayList.remove(dc.getOldIndex());
                                     break;
                                 }
@@ -389,49 +414,6 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                         adapter.setOnImageClickListener(BuyerHomeActivity.this);
                     }
                 });
-
-        /*firestore.collection("users")
-                .whereEqualTo("Type", "Seller")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-
-                            User ul = new User(
-                                    documentSnapshot.getString("username"),
-                                    documentSnapshot.getString("email"),
-                                    documentSnapshot.getString("password"),
-                                    documentSnapshot.getString("IsActive"),
-                                    documentSnapshot.getString("Type"),
-                                    documentSnapshot.getString("id"),
-                                    documentSnapshot.getString("imageUrl"),
-                                    documentSnapshot.getString("isOnline"),
-                                    documentSnapshot.getString("rating"),
-                                    documentSnapshot.getString("$perMin"),
-                                    documentSnapshot.getString("coinPerMin"));
-                            sellerArrayList.add(ul);
-
-                        }
-
-                        Comparator<User> c = new Comparator<User>() {
-
-                            @Override
-                            public int compare(User a, User b) {
-                                return Float.compare(Float.valueOf(b.getRating()), Float.valueOf(a.getRating()));
-                            }
-                        };
-                        Collections.sort(sellerArrayList, c);
-                        adapter = new TopRatedSellersAdapter(sellerArrayList, BuyerHomeActivity.this);
-                        recyclerView.setAdapter(adapter);
-                        dialog.dismiss();
-                        adapter.setOnCallClickListener(BuyerHomeActivity.this);
-                        adapter.setOnChatClickListener(BuyerHomeActivity.this);
-                        adapter.setOnImageClickListener(BuyerHomeActivity.this);
-
-                    }
-                });*/
 
         firestore.collection("users")
                 .whereEqualTo("isOnline", "1")
@@ -456,7 +438,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             dc.getDocument().getString("rating"),
                                             dc.getDocument().getString("$perMin"),
                                             dc.getDocument().getString("coinPerMin"),
-                                            dc.getDocument().getString("about"));
+                                            dc.getDocument().getString("about"),
+                                            dc.getDocument().getString("notifications"));
                                     onlineArrayList.add(ul);
                                     break;
                                 }
@@ -473,7 +456,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             dc.getDocument().getString("rating"),
                                             dc.getDocument().getString("$perMin"),
                                             dc.getDocument().getString("coinPerMin"),
-                                            dc.getDocument().getString("about"));
+                                            dc.getDocument().getString("about"),
+                                            dc.getDocument().getString("notifications"));
                                     int toUpdate = -1;
                                     for (int i = 0; i < onlineArrayList.size(); i++) {
                                         User userList = onlineArrayList.get(i);
@@ -498,7 +482,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                             dc.getDocument().getString("rating"),
                                             dc.getDocument().getString("$perMin"),
                                             dc.getDocument().getString("coinPerMin"),
-                                            dc.getDocument().getString("about"));
+                                            dc.getDocument().getString("about"),
+                                            dc.getDocument().getString("notifications"));
                                     onlineArrayList.remove(dc.getOldIndex());
                                     break;
                                 }
@@ -513,55 +498,13 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                 return Float.compare(Float.valueOf(b.getRating()), Float.valueOf(a.getRating()));
                             }
                         };
-                        Collections.sort(sellerArrayList, c);
+                        Collections.sort(onlineArrayList, c);
                         adapternew = new OnlineSellersAdapter(onlineArrayList, BuyerHomeActivity.this);
                         recyclerViewNew.setAdapter(adapternew);
                         adapternew.setOnClickListener(BuyerHomeActivity.this);
 
                     }
                 });
-
-        /*firestore.collection("users")
-                .whereEqualTo("isOnline", "1")
-                .whereEqualTo("Type", "Seller")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-
-                            User ul = new User(
-                                    documentSnapshot.getString("username"),
-                                    documentSnapshot.getString("email"),
-                                    documentSnapshot.getString("password"),
-                                    documentSnapshot.getString("IsActive"),
-                                    documentSnapshot.getString("Type"),
-                                    documentSnapshot.getString("id"),
-                                    documentSnapshot.getString("imageUrl"),
-                                    documentSnapshot.getString("isOnline"),
-                                    documentSnapshot.getString("rating"),
-                                    documentSnapshot.getString("$perMin"),
-                                    documentSnapshot.getString("coinPerMin"),
-                                    documentSnapshot.getString("about"));
-                            onlineArrayList.add(ul);
-
-                        }
-
-                        Comparator<User> c = new Comparator<User>() {
-
-                            @Override
-                            public int compare(User a, User b) {
-                                return Float.compare(Float.valueOf(b.getRating()), Float.valueOf(a.getRating()));
-                            }
-                        };
-                        Collections.sort(sellerArrayList, c);
-                        adapternew = new OnlineSellersAdapter(onlineArrayList, BuyerHomeActivity.this);
-                        recyclerViewNew.setAdapter(adapternew);
-                        adapternew.setOnClickListener(BuyerHomeActivity.this);
-
-                    }
-                });*/
 
         firestore.collection("users")
                 .document(PreferenceUtils.getId(this))
@@ -570,7 +513,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                     public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
 
                         coins = documentSnapshot.getString("coins");
-                        PreferenceUtils.saveBuyerData(documentSnapshot.getString("username"), documentSnapshot.getString("email"), documentSnapshot.getString("password"), documentSnapshot.getString("id"), documentSnapshot.getString("IsActive"), documentSnapshot.getString("Type"), documentSnapshot.getString("imageUrl"), documentSnapshot.getString("isOnline"), documentSnapshot.getString("coins"), BuyerHomeActivity.this);
+                        PreferenceUtils.saveBuyerData(documentSnapshot.getString("username"), documentSnapshot.getString("email"), documentSnapshot.getString("password"), documentSnapshot.getString("id"), documentSnapshot.getString("IsActive"), documentSnapshot.getString("Type"), documentSnapshot.getString("imageUrl"), documentSnapshot.getString("isOnline"), documentSnapshot.getString("coins"), documentSnapshot.getString("notifications"), BuyerHomeActivity.this);
 
                         if (coins.equals("0")) {
 
@@ -658,21 +601,6 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 });
     }
 
-    protected void get_group_channels() {
-        GroupChannelListQuery channelListQuery = GroupChannel.createMyGroupChannelListQuery();
-        channelListQuery.setIncludeEmpty(true);
-        channelListQuery.setLimit(100);
-        channelListQuery.next(new GroupChannelListQuery.GroupChannelListQueryResultHandler() {
-            @Override
-            public void onResult(List<GroupChannel> list, SendBirdException e) {
-                if (e != null) {
-                    return;
-                }
-                groupChannerls = list;
-            }
-        });
-    }
-
     @Override
     public void initializeComponents() {
 
@@ -725,6 +653,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                                 in.putExtra("sellerImage", item.imageUrl);
                                 in.putExtra("sellerRating", item.rating);
                                 in.putExtra("coinPerMin", item.coinPerMin);
+                                in.putExtra("isOnline", item.isOnline);
+                                in.putExtra("about", item.about);
                                 startActivity(in);
                             }
                         }
@@ -855,6 +785,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 in.putExtra("coins", coins);
                 startActivity(in);
                 Bungee.slideLeft(BuyerHomeActivity.this);
+                finish();
             }
         });
 
@@ -921,66 +852,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         SellerImage = user.getImageUrl();
         isOnline = user.isOnline;
 
-        if (coinPerMin.equals("free")) {
-            Call call = getSinchServiceInterface().calluser(sellerId);
-            String callId = call.getCallId();
-            Intent callScreen = new Intent(this, BuyerCallActivity.class);
-            callScreen.putExtra(SinchService.CALL_ID, callId);
-            callScreen.putExtra("toid", sellerId);
-            callScreen.putExtra("name", sellerName);
-            callScreen.putExtra("imageUrl", SellerImage);
-            callScreen.putExtra("coinPerMin", coinPerMin);
-
-            callScreen.putExtra("fromid", PreferenceUtils.getId(this));
-            callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(this));
-            callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
-            callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
-
-            startActivity(callScreen);
-
-            final HashMap<String, Object> callDetails = new HashMap<String, Object>();
-            callDetails.put("buyerId", PreferenceUtils.getId(this));
-            callDetails.put("buyerName", PreferenceUtils.getUsername(this));
-            callDetails.put("buyerImage", PreferenceUtils.getImageUrl(this));
-            callDetails.put("callTime", FieldValue.serverTimestamp());
-            callDetails.put("status", "missed");
-
-            firestore.collection("calls")
-                    .add(callDetails);
-        } else {
-
-            int callMins = Integer.valueOf(coins) / Integer.valueOf(coinPerMin);
-            int displayHours = callMins / 60;
-            int displayMins = callMins % 60;
-            int displaySecs = 0;
-            String callEndTime = null;
-
-            if (displayHours == 0) {
-                String diplayTime = displayMins + ":00";
-
-                try {
-                    Date d = simpleCallTime.parse(diplayTime);
-                    callEndTime = String.valueOf(CallTime.format(d));
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (displayHours > 0) {
-                String diplayTime = displayHours + ":" + displayMins + ":00";
-
-                try {
-                    Date d = simpleTime.parse(diplayTime);
-                    callEndTime = String.valueOf(time.format(d));
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-            if (Integer.valueOf(PreferenceUtils.getCoins(this)) > Integer.valueOf(coinPerMin)) {
+        if (isOnline.equals("1")){
+            if (coinPerMin.equals("free")) {
                 Call call = getSinchServiceInterface().calluser(sellerId);
                 String callId = call.getCallId();
                 Intent callScreen = new Intent(this, BuyerCallActivity.class);
@@ -995,9 +868,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
                 callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
 
-                callScreen.putExtra("callMins", String.valueOf(callMins));
-                callScreen.putExtra("callEndTime", callEndTime);
                 startActivity(callScreen);
+                Bungee.slideLeft(this);
 
                 final HashMap<String, Object> callDetails = new HashMap<String, Object>();
                 callDetails.put("buyerId", PreferenceUtils.getId(this));
@@ -1009,14 +881,100 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 firestore.collection("calls")
                         .add(callDetails);
             } else {
-                showToast("You don't have enough coins in your wallet.");
+
+                int callMins = Integer.valueOf(coins) / Integer.valueOf(coinPerMin);
+                int displayHours = callMins / 60;
+                int displayMins = callMins % 60;
+                int displaySecs = 0;
+                String callEndTime = null;
+
+                if (displayHours == 0) {
+                    String diplayTime = displayMins + ":00";
+
+                    try {
+                        Date d = simpleCallTime.parse(diplayTime);
+                        callEndTime = String.valueOf(CallTime.format(d));
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (displayHours > 0) {
+                    String diplayTime = displayHours + ":" + displayMins + ":00";
+
+                    try {
+                        Date d = simpleTime.parse(diplayTime);
+                        callEndTime = String.valueOf(time.format(d));
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+                if (Integer.valueOf(PreferenceUtils.getCoins(this)) > Integer.valueOf(coinPerMin)) {
+                    Call call = getSinchServiceInterface().calluser(sellerId);
+                    String callId = call.getCallId();
+                    Intent callScreen = new Intent(this, BuyerCallActivity.class);
+                    callScreen.putExtra(SinchService.CALL_ID, callId);
+                    callScreen.putExtra("toid", sellerId);
+                    callScreen.putExtra("name", sellerName);
+                    callScreen.putExtra("imageUrl", SellerImage);
+                    callScreen.putExtra("coinPerMin", coinPerMin);
+
+                    callScreen.putExtra("fromid", PreferenceUtils.getId(this));
+                    callScreen.putExtra("BuyerName", PreferenceUtils.getUsername(this));
+                    callScreen.putExtra("BuyerImage", PreferenceUtils.getImageUrl(this));
+                    callScreen.putExtra("coins", PreferenceUtils.getCoins(this));
+
+                    callScreen.putExtra("callMins", String.valueOf(callMins));
+                    callScreen.putExtra("callEndTime", callEndTime);
+                    startActivity(callScreen);
+                    Bungee.slideLeft(this);
+
+                    final HashMap<String, Object> callDetails = new HashMap<String, Object>();
+                    callDetails.put("buyerId", PreferenceUtils.getId(this));
+                    callDetails.put("buyerName", PreferenceUtils.getUsername(this));
+                    callDetails.put("buyerImage", PreferenceUtils.getImageUrl(this));
+                    callDetails.put("callTime", FieldValue.serverTimestamp());
+                    callDetails.put("status", "missed");
+
+                    firestore.collection("calls")
+                            .add(callDetails);
+                } else {
+//                showToast("You don't have enough coins in your wallet.");
+                    Flashbar flashbar = new Flashbar.Builder(BuyerHomeActivity.this)
+                            .gravity(Flashbar.Gravity.BOTTOM)
+                            .duration(1000)
+                            .message("You don't have enough coins in your wallet.")
+                            .backgroundColorRes(R.color.colorPrimaryDark)
+                            .showOverlay()
+                            .build();
+                    flashbar.show();
+                }
             }
         }
+        else {
+            Flashbar flashbar = new Flashbar.Builder(BuyerHomeActivity.this)
+                    .gravity(Flashbar.Gravity.BOTTOM)
+                    .duration(1000)
+                    .message("This user is not online right now.")
+                    .backgroundColorRes(R.color.colorPrimaryDark)
+                    .showOverlay()
+                    .build();
+            flashbar.show();
+        }
+
+
 
     }
 
     @Override
     public void onChatClick(int position) {
+
+        dialog.setMessage("Please wait...");
+        dialog.show();
 
         Comparator<User> c = new Comparator<User>() {
 
@@ -1056,6 +1014,7 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         SellerRating = user.rating;
         coinPerMin = user.coinPerMin;
         about = user.about;
+        isOnline = user.isOnline;
 
         Intent in = new Intent(this, SellerProfileActivity.class);
         in.putExtra("sellerId", sellerId);
@@ -1064,8 +1023,10 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         in.putExtra("sellerRating", SellerRating);
         in.putExtra("coinPerMin", coinPerMin);
         in.putExtra("about", about);
+        in.putExtra("isOnline", isOnline);
         startActivity(in);
         Bungee.slideLeft(BuyerHomeActivity.this);
+        finish();
     }
 
     @Override
@@ -1077,6 +1038,8 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         String SellerImage = user.imageUrl;
         String SellerRating = user.rating;
         String coinPerMin = user.coinPerMin;
+        String about = user.about;
+        String isOnline = user.isOnline;
 
         Intent in = new Intent(this, SellerProfileActivity.class);
         in.putExtra("sellerId", sellerId);
@@ -1084,7 +1047,11 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
         in.putExtra("sellerImage", SellerImage);
         in.putExtra("sellerRating", SellerRating);
         in.putExtra("coinPerMin", coinPerMin);
+        in.putExtra("about", about);
+        in.putExtra("isOnline", isOnline);
         startActivity(in);
+        Bungee.slideLeft(BuyerHomeActivity.this);
+        finish();
 
     }
 
@@ -1140,7 +1107,9 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                     chatIntent.putExtra("members", sellerId);
                     chatIntent.putExtra("type", "buyer");
 
+                    dialog.dismiss();
                     startActivity(chatIntent);
+                    Bungee.slideLeft(BuyerHomeActivity.this);
                 }
             }
         };
@@ -1183,6 +1152,35 @@ public class BuyerHomeActivity extends BaseActivity implements TopRatedSellersAd
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START);
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Flashbar flashbar = new Flashbar.Builder(BuyerHomeActivity.this)
+                    .gravity(Flashbar.Gravity.BOTTOM)
+                    .duration(2000)
+                    .message("Click back again to exit!")
+                    .backgroundColorRes(R.color.colorPrimaryDark)
+                    .build();
+            flashbar.show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
     }
 
 }

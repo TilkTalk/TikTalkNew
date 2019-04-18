@@ -52,5 +52,16 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
                 .update(map);
 
     }
+
+    public static void deleteRegistrationFromServer(final String TAG, String UserID) {
+
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("token", "");
+
+        firestore.collection("users")
+                .document(UserID)
+                .update(map);
+
+    }
 }
 

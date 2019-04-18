@@ -52,8 +52,7 @@ public class ConnectionManager {
                 handler.onConnected(false);
             }
         } else if (SendBird.getConnectionState() == SendBird.ConnectionState.CLOSED) { // push notification or system kill
-//            String userId = PreferenceUtils.getUserId();
-            String userId = com.example.tiktalk.Utils.PreferenceUtils.getId(TikTalk.getContext());
+            String userId = PreferenceUtils.getUserId();
             SendBird.connect(userId, new SendBird.ConnectHandler() {
                 @Override
                 public void onConnected(User user, SendBirdException e) {

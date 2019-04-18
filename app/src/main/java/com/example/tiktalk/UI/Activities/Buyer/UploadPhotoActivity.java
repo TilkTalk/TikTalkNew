@@ -62,6 +62,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
     String type = "Buyer";
     String isOnline = "1";
     String coins = "0";
+    String notifications = "0";
     String imageUrl;
     ProgressDialog dialog;
     ProgressBar progressBar;
@@ -138,6 +139,7 @@ public class UploadPhotoActivity extends AppCompatActivity {
                                     users.put("Type", type);
                                     users.put("isOnline", isOnline);
                                     users.put("coins", coins);
+                                    users.put("notifications", notifications);
 
                                     firestore.collection("users")
                                             .document(currentUser)

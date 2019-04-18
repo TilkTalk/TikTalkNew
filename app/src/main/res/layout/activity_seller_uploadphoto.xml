@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2.5"
+        android:layout_weight="2"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -21,11 +21,12 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:titleTextColor="@android:color/white">
 
-            <Button
+            <ImageButton
                 android:id="@+id/cancel_btn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/cancel" />
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:src="@drawable/cancel"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -115,17 +116,17 @@
             android:layout_marginBottom="10dp"
             android:text="Upload Photo"
             android:textColor="@android:color/black"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="280dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="50dp"
             android:text="@string/uploadphototext"
             android:textAlignment="center"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -143,27 +144,16 @@
 
         </android.support.v7.widget.CardView>
 
-        <RelativeLayout
+        <Button
+            android:id="@+id/seller_done_btn"
             android:layout_width="140dp"
-            android:layout_height="75dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/login_btn"
-            android:layout_gravity="center_horizontal">
-
-            <Button
-                android:id="@+id/seller_done_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="4dp"
-                android:background="@color/transparent"
-                android:text="done"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/login_btn_bg"
+            android:text="done"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
 
     </LinearLayout>
 

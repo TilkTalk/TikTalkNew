@@ -946,13 +946,23 @@ public class GroupChatFragment  extends BaseFragment {
 
     public void saveNotification() {
 
-        HashMap<String, Object> notify = new HashMap<>();
+        /*HashMap<String, Object> notify = new HashMap<>();
         notify.put("sender", PreferenceUtils.getId(getActivity()));
         notify.put("receiver", sellerId);
         notify.put("name", sellerName);
         notify.put("image", sellerImage);
         notify.put("message", mMessageEditText.getText().toString());
         notify.put("messageTime", FieldValue.serverTimestamp());
+        notify.put("status", "unread");*/
+
+        HashMap<String, Object> notify = new HashMap<>();
+        notify.put("sender", PreferenceUtils.getId(getActivity()));
+        notify.put("receiver", sellerId);
+        notify.put("name", PreferenceUtils.getUsername(getActivity()));
+        notify.put("image", PreferenceUtils.getImageUrl(getActivity()));
+        notify.put("message", mMessageEditText.getText().toString());
+        notify.put("messageTime", FieldValue.serverTimestamp());
+        notify.put("status", "unread");
 
         firestore.collection("notifications")
                 .add(notify);

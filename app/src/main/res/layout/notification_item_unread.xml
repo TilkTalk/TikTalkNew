@@ -5,14 +5,15 @@
     android:id="@+id/notification_cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="6dp"
+    android:orientation="horizontal"
+    app:cardCornerRadius="10dp"
     app:cardElevation="7dp"
     android:layout_margin="10dp">
 
     <LinearLayout
-        android:id="@+id/notification_layout"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/notification_image"
@@ -38,7 +39,7 @@
                 android:layout_gravity="bottom"
                 android:paddingLeft="10dp"
                 android:text="Mike Smith"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp" />
 
             <TextView
@@ -48,7 +49,7 @@
                 android:layout_gravity="bottom"
                 android:paddingLeft="10dp"
                 android:text="just sent you a message."
-                android:textColor="@color/themeColor"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
 
 

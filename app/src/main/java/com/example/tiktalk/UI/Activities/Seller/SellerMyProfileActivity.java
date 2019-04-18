@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
+import spencerstudios.com.bungeelib.Bungee;
+
 public class SellerMyProfileActivity extends BaseActivity {
 
     FirebaseFirestore firestore;
@@ -46,6 +48,7 @@ public class SellerMyProfileActivity extends BaseActivity {
     LinearLayoutManager manager;
     SellerRatingAdapter adapter;
     ArrayList<SellerRating> selleRatingArrayList;
+    ArrayList<String> firstArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +65,15 @@ public class SellerMyProfileActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recycler_view);
         manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
-//        recyclerView.setNestedScrollingEnabled(false);
+        firstArrayList = new ArrayList<>();
 
         seller_profile_image = findViewById(R.id.seller_profile_image);
         profileName = findViewById(R.id.seller_profile_name);
         profileRating = findViewById(R.id.seller_profile_rating);
-        profileCoinsPerMin = findViewById(R.id.seller_profile_coinsPerMin);
+//        profileCoinsPerMin = findViewById(R.id.seller_profile_coinsPerMin);
         test = findViewById(R.id.test);
         CancelBtn = findViewById(R.id.profile_cancel_btn);
-        about_edittext = findViewById(R.id.about_edittext);
+//        about_edittext = findViewById(R.id.about_edittext);
 
         myId = getIntent().getStringExtra("myId");
         myName = getIntent().getStringExtra("myName");
@@ -83,9 +86,12 @@ public class SellerMyProfileActivity extends BaseActivity {
         profileName.setText(myName);
         Glide.with(this).load(myImage).into(seller_profile_image);
         profileRating.setText(myRating);
-        profileCoinsPerMin.setText(coinPerMin + " coins per minute");
-        about_edittext.setText(about);
+//        profileCoinsPerMin.setText(coinPerMin + " coins per minute");
+//        about_edittext.setText(about);
         test.setRating(Float.parseFloat(myRating));
+
+        firstArrayList.add(coinPerMin);
+        firstArrayList.add(about);
 
         firestore.collection("ratings")
                 .whereEqualTo("sellerId", myId)
@@ -93,41 +99,64 @@ public class SellerMyProfileActivity extends BaseActivity {
                     @Override
                     public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
-                        for (DocumentChange documentSnapshot : queryDocumentSnapshots.getDocumentChanges()) {
+                        if (queryDocumentSnapshots.getDocuments().size() == 0) {
 
                             SellerRating sr = new SellerRating(
-                                    documentSnapshot.getDocument().getString("userId"),
-                                    documentSnapshot.getDocument().getString("userName"),
-                                    documentSnapshot.getDocument().getString("userImage"),
-                                    documentSnapshot.getDocument().getString("value"),
-                                    documentSnapshot.getDocument().getString("id"),
-                                    documentSnapshot.getDocument().getString("sellerId"),
-                                    documentSnapshot.getDocument().getString("feedback"));
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    coinPerMin,
+                                    about);
+                            selleRatingArrayList.add(sr);
 
-                            if (documentSnapshot.getDocument().get("updateDate") != null) {
+                            adapter = new SellerRatingAdapter(selleRatingArrayList, SellerMyProfileActivity.this);
+                            recyclerView.setAdapter(adapter);
 
-                                long seconds = ((Timestamp) (Object) documentSnapshot.getDocument().get("updateDate")).getSeconds();
-                                long milliSeconds = seconds * 1000;
-                                sr.updateDate = new Date(milliSeconds);
-                                selleRatingArrayList.add(sr);
-                            }
-                        }
+                        } else {
 
-                        if (selleRatingArrayList != null) {
+                            for (DocumentChange documentSnapshot : queryDocumentSnapshots.getDocumentChanges()) {
 
-                            Comparator<SellerRating> c = new Comparator<SellerRating>() {
+                                SellerRating sr = new SellerRating(
+                                        documentSnapshot.getDocument().getString("userId"),
+                                        documentSnapshot.getDocument().getString("userName"),
+                                        documentSnapshot.getDocument().getString("userImage"),
+                                        documentSnapshot.getDocument().getString("value"),
+                                        documentSnapshot.getDocument().getString("id"),
+                                        documentSnapshot.getDocument().getString("sellerId"),
+                                        documentSnapshot.getDocument().getString("feedback"),
+                                        coinPerMin,
+                                        about);
 
-                                @Override
-                                public int compare(SellerRating a, SellerRating b) {
-                                    return Long.compare(b.getUpdateDate().getTime(), a.getUpdateDate().getTime());
+                                if (documentSnapshot.getDocument().get("updateDate") != null) {
+
+                                    long seconds = ((Timestamp) (Object) documentSnapshot.getDocument().get("updateDate")).getSeconds();
+                                    long milliSeconds = seconds * 1000;
+                                    sr.updateDate = new Date(milliSeconds);
+                                    selleRatingArrayList.add(sr);
                                 }
-                            };
-                            Collections.sort(selleRatingArrayList, c);
+                            }
+
+                            if (selleRatingArrayList != null) {
+
+                                Comparator<SellerRating> c = new Comparator<SellerRating>() {
+
+                                    @Override
+                                    public int compare(SellerRating a, SellerRating b) {
+                                        return Long.compare(b.getUpdateDate().getTime(), a.getUpdateDate().getTime());
+                                    }
+                                };
+                                Collections.sort(selleRatingArrayList, c);
+                            }
+
+                            adapter = new SellerRatingAdapter(selleRatingArrayList, SellerMyProfileActivity.this);
+                            recyclerView.setAdapter(adapter);
+//                        dialog.dismiss();
                         }
 
-                        adapter = new SellerRatingAdapter(selleRatingArrayList, SellerMyProfileActivity.this);
-                        recyclerView.setAdapter(adapter);
-//                        dialog.dismiss();
                     }
                 });
 
@@ -141,9 +170,17 @@ public class SellerMyProfileActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent in = new Intent(SellerMyProfileActivity.this, SellerHomeActivity.class);
                 startActivity(in);
+                Bungee.zoom(SellerMyProfileActivity.this);
                 finish();
             }
         });
+    }
 
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(SellerMyProfileActivity.this, SellerHomeActivity.class);
+        startActivity(in);
+        Bungee.zoom(SellerMyProfileActivity.this);
+        finish();
     }
 }

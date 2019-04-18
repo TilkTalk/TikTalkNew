@@ -1,5 +1,6 @@
 package com.example.tiktalk.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -80,12 +81,12 @@ public class TopRatedSellersAdapter extends RecyclerView.Adapter<TopRatedSellers
         holder.seller_rating.setText(String.valueOf(sellerListItems.get(position).getRating()));
         Glide.with(context).load(sellerListItems.get(position).getImageUrl()).into(holder.seller_image);
 
-        if (sellerListItems.get(position).getIsOnline().equals("1")){
+        /*if (sellerListItems.get(position).getIsOnline().equals("1")){
             holder.call_btn.setEnabled(true);
         }
         else {
             holder.call_btn.setEnabled(false);
-        }
+        }*/
 
     }
 

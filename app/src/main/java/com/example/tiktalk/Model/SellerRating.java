@@ -17,10 +17,18 @@ public class SellerRating {
     public String sellerId;
     public String feedback;
 
+    public String coin;
+    public String about;
+
     public SellerRating() {
     }
 
-    public SellerRating(String userId, String userName, String userImage, String value, String id, String sellerId, String feedback) {
+    public SellerRating(String coin, String about) {
+        this.coin = coin;
+        this.about = about;
+    }
+
+    public SellerRating(String userId, String userName, String userImage, String value, String id, String sellerId, String feedback, String coin, String about) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -28,6 +36,8 @@ public class SellerRating {
         this.id = id;
         this.sellerId = sellerId;
         this.feedback = feedback;
+        this.coin = coin;
+        this.about = about;
     }
 
     public Date getUpdateDate() {
@@ -92,5 +102,21 @@ public class SellerRating {
 
     public void setFeedback(String feedback) {
         this.feedback = feedback;
+    }
+
+    public String getCoin() {
+        return coin;
+    }
+
+    public void setCoin(String coin) {
+        this.coin = coin;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
 }

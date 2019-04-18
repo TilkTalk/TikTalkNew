@@ -20,11 +20,12 @@ public class User implements Searchable {
     public String coins;
     public String dollersEarned;
     public String about;
+    public String notifications;
 
     public User() {
     }
 
-    public User(String username, String email, String password, String IsActive, String Type, String id, String imageUrl, String isOnline, String rating, String ratePerMin, String coinPerMin, String about) {
+    public User(String username, String email, String password, String IsActive, String Type, String id, String imageUrl, String isOnline, String rating, String ratePerMin, String coinPerMin, String about, String notifications) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -37,9 +38,10 @@ public class User implements Searchable {
         this.ratePerMin = ratePerMin;
         this.coinPerMin = coinPerMin;
         this.about = about;
+        this.notifications = notifications;
     }
 
-    public User(String username, String email, String password, String isActive, String type, String id, String imageUrl, String isOnline, String coins) {
+    public User(String username, String email, String password, String isActive, String type, String id, String imageUrl, String isOnline, String coins, String notifications) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -49,6 +51,7 @@ public class User implements Searchable {
         this.imageUrl = imageUrl;
         this.isOnline = isOnline;
         this.coins = coins;
+        this.notifications = notifications;
     }
 
     @Override
@@ -166,5 +169,13 @@ public class User implements Searchable {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public String getNotification() {
+        return notifications;
+    }
+
+    public void setNotification(String notification) {
+        this.notifications = notification;
     }
 }

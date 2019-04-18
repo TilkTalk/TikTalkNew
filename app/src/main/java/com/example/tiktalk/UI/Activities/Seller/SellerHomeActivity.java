@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -28,6 +29,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -46,6 +50,7 @@ import com.andrognito.flashbar.Flashbar;
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.CallHistoryAdapter;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
+import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.AppServices.TimerService;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.MessageModule.ChannelsList_Fragment;
@@ -74,10 +79,15 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.robinhood.spark.SparkAdapter;
+import com.robinhood.spark.SparkView;
+import com.robinhood.spark.animation.LineSparkAnimator;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 import com.sinch.android.rtc.SinchError;
+import com.thekhaeng.pushdownanim.PushDownAnim;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -90,12 +100,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Random;
 import java.util.TimerTask;
+
+import javax.annotation.Nullable;
 
 import spencerstudios.com.bungeelib.Bungee;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
 public class SellerHomeActivity extends BaseActivity implements SinchService.StartFailedListener {
 
@@ -104,6 +118,9 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
     public static final int RequestPermissionCode = 1;
     private GoogleSignInClient mGoogleSignInClient;
     private static final String APP_ID = "4B0405B2-D5BD-49F5-B912-C9F7C009F374";
+    boolean doubleBackToExitPressedOnce = false;
+    private SparkView sparkView;
+    private RandomizedAdapter randomAdapter;
 
     ProgressBar progressBar;
     ProgressDialog dialog;
@@ -134,8 +151,9 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
     SharedPreferences mpref;
     SharedPreferences.Editor mEditor;
     String selectedValue = "Offline";
-    String text, rateperMin, isActive, type, coinPerMin, totalEarnings, email, id, imageUrl, isOnline, password, rating, token, updateDate, username, about;
+    String text, rateperMin, isActive, type, coinPerMin, totalEarnings, email, id, imageUrl, isOnline, password, rating, token, updateDate, username, about, notifications;
     String firstName, middleName, lastName;
+    int notificationCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,47 +174,15 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
         mpref = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mpref.edit();
-//        text = mpref.getString("mins", "");
-//        text = mpref.getString("data", "");
+        text = mpref.getString("mins", "");
 
-        //onlineTime.setText(text);
-
-        try {
-            String str_value = mpref.getString("data", "");
-            if (str_value.matches("")) {
-                onlineTime.setText("");
-                online_switch.setChecked(false);
-
-            } else {
-
-                if (mpref.getBoolean("finish", false)) {
-                    onlineTime.setText("");
-                    online_switch.setChecked(false);
-                } else {
-
-                    onlineTime.setText(str_value);
-                    online_switch.setChecked(true);
-                }
-            }
-        } catch (Exception e) {
-
+        if (text.equals("")) {
+            online_switch.setChecked(false);
+            onlineTime.setVisibility(View.GONE);
+        } else {
+            online_switch.setChecked(true);
+            onlineTime.setVisibility(View.VISIBLE);
         }
-
-        /*if (text.equals("")) {
-            online_switch.setChecked(false);
-        } else {
-            online_switch.setChecked(true);
-        }*/
-
-        /*online_switch.setChecked(false);
-
-        if (onlineTime.getVisibility() == View.GONE) {
-            online_switch.setChecked(false);
-        } else {
-            online_switch.setChecked(true);
-        }*/
-
-
     }
 
     @Override
@@ -222,6 +208,11 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
         menu_btn = findViewById(R.id.menu_btn);
         online_switch = findViewById(R.id.online_switch);
         onlineTime = (TextView) findViewById(R.id.online_time);
+        sparkView = findViewById(R.id.sparkview);
+        randomAdapter = new RandomizedAdapter();
+        sparkView.setAdapter(randomAdapter);
+//        sparkView.setFillType(SparkView.FillType.DOWN);
+        sparkView.setLineWidth(7f);
 
         home_layout = findViewById(R.id.home_layout);
         drawer_layout = findViewById(R.id.drawer_layout);
@@ -244,11 +235,19 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             }
         });
 
+        PushDownAnim.setPushDownAnimTo(settings_btn)
+                .setScale(MODE_STATIC_DP, 2)
+                .setDurationPush(0)
+                .setDurationRelease(300)
+                .setInterpolatorPush(PushDownAnim.DEFAULT_INTERPOLATOR)
+                .setInterpolatorRelease(PushDownAnim.DEFAULT_INTERPOLATOR);
+
         settings_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent in = new Intent(SellerHomeActivity.this, SellerSettingsActivity.class);
                 startActivity(in);
+                Bungee.slideLeft(SellerHomeActivity.this);
                 finish();
             }
         });
@@ -259,6 +258,9 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                 super.onDrawerSlide(drawerView, slideOffset);
                 drawer_layout.bringChildToFront(drawerView);
                 drawer_layout.requestLayout();
+//                Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+//                drawerView.startAnimation(animFadeIn);
+//                drawer_layout.openDrawer(drawerView);
             }
 
         };
@@ -269,13 +271,14 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:{
+                    case 1: {
                         Intent in = new Intent(SellerHomeActivity.this, SellerHomeActivity.class);
                         startActivity(in);
+                        Bungee.zoom(SellerHomeActivity.this);
                         finish();
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         Intent in = new Intent(SellerHomeActivity.this, SellerInboxFragment.class);
                         in.putExtra("type", "seller");
                         in.putExtra("myId", id);
@@ -286,10 +289,12 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         in.putExtra("$PerMin", rateperMin);
                         in.putExtra("about", about);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerHomeActivity.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         Intent in = new Intent(SellerHomeActivity.this, SellerMyProfileActivity.class);
                         in.putExtra("myId", id);
                         in.putExtra("myName", username);
@@ -299,10 +304,12 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         in.putExtra("$PerMin", rateperMin);
                         in.putExtra("about", about);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerHomeActivity.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         Intent in = new Intent(SellerHomeActivity.this, SellerNotificationFragment.class);
                         in.putExtra("myId", id);
                         in.putExtra("myName", username);
@@ -312,17 +319,24 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                         in.putExtra("$PerMin", rateperMin);
                         in.putExtra("about", about);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerHomeActivity.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 5:{
+                    case 5: {
                         break;
                     }
-                    case 6:{
+                    case 6: {
+
+                        dialog.setMessage("Please wait...");
+                        dialog.show();
+
                         myId = PreferenceUtils.getId(SellerHomeActivity.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
                         map.put("isOnline", "0");
+                        map.put("notifications", "0");
 
                         firestore.collection("users")
                                 .document(myId)
@@ -331,21 +345,23 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+
+                                            MyFirebaseInstanceIDService.deleteRegistrationFromServer(SellerHomeActivity.this.getClass().getSimpleName(), myId);
                                             PreferenceUtils.clearMemory(getApplicationContext());
                                             disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
 
+                                            dialog.dismiss();
                                             Intent intent = new Intent(SellerHomeActivity.this, SellerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
                                         } else {
-                                            showToast("Unable to logout!");
+                                            showToast("Something went wrong. Try again later!");
                                         }
                                     }
                                 });
-
                         break;
                     }
                 }
@@ -407,20 +423,21 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                     @Override
                     public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
-                        rateperMin = documentSnapshot.getString("$perMin");
+                        username = documentSnapshot.getString("username");
+                        email = documentSnapshot.getString("email");
+                        password = documentSnapshot.getString("password");
+                        id = documentSnapshot.getString("id");
                         isActive = documentSnapshot.getString("IsActive");
                         type = documentSnapshot.getString("Type");
-                        coinPerMin = documentSnapshot.getString("coinPerMin");
-                        totalEarnings = documentSnapshot.getString("dollersEarned");
-                        email = documentSnapshot.getString("email");
-                        id = documentSnapshot.getString("id");
                         imageUrl = documentSnapshot.getString("imageUrl");
                         isOnline = documentSnapshot.getString("isOnline");
-                        password = documentSnapshot.getString("password");
+                        rateperMin = documentSnapshot.getString("$perMin");
                         rating = documentSnapshot.getString("rating");
-                        token = documentSnapshot.getString("token");
-                        username = documentSnapshot.getString("username");
+                        coinPerMin = documentSnapshot.getString("coinPerMin");
+                        totalEarnings = documentSnapshot.getString("dollersEarned");
                         about = documentSnapshot.getString("about");
+                        notifications = documentSnapshot.getString("notifications");
+                        token = documentSnapshot.getString("token");
 
                         DecimalFormat df = new DecimalFormat("0.00");
                         double number = Double.parseDouble(totalEarnings);
@@ -428,9 +445,9 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
 
                         total_earnings.setText("$" + val);
 
-                        PreferenceUtils.saveSellerData(username, email, password, id, isActive, type, imageUrl, isOnline, rateperMin, rating, coinPerMin, about, SellerHomeActivity.this);
+                        PreferenceUtils.saveSellerData(username, email, password, id, isActive, type, imageUrl, isOnline, rateperMin, rating, coinPerMin, about, notifications, SellerHomeActivity.this);
 
-                        if (rateperMin.equals("free")){
+                        if (rateperMin.equals("free")) {
 
                             Flashbar flashbar = new Flashbar.Builder(SellerHomeActivity.this)
                                     .gravity(Flashbar.Gravity.BOTTOM)
@@ -517,147 +534,148 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if (isChecked) {
+                if (isChecked && onlineTime.getVisibility() == View.GONE) {
 
-                    if (onlineTime.getVisibility() == View.GONE){
+                    final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerHomeActivity.this);
+                    final AlertDialog alert = dialog.create();
+                    LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+                    final View attachFileLayout = inflater.inflate(R.layout.seller_online_dialog, null);
+                    attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    alert.setView(attachFileLayout);
+                    alert.setCancelable(false);
+                    alert.setCanceledOnTouchOutside(false);
 
-                        final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerHomeActivity.this);
-                        final AlertDialog alert = dialog.create();
-                        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-                        final View attachFileLayout = inflater.inflate(R.layout.seller_online_dialog, null);
-                        attachFileLayout.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        alert.setView(attachFileLayout);
+                    calendar = Calendar.getInstance();
+                    simpleDateFormat = new SimpleDateFormat("mm:ss");
+                    date_time = simpleDateFormat.format(calendar.getTime());
 
-                        calendar = Calendar.getInstance();
-                        simpleDateFormat = new SimpleDateFormat("mm:ss");
-                        date_time = simpleDateFormat.format(calendar.getTime());
+                    ImageButton ok_btn = attachFileLayout.findViewById(R.id.ok_btn);
+                    RadioGroup radio_grp = attachFileLayout.findViewById(R.id.radio_grp);
+                    final RadioButton radio15 = attachFileLayout.findViewById(R.id.radio_15);
+                    final RadioButton radio30 = attachFileLayout.findViewById(R.id.radio_30);
+                    final RadioButton radio45 = attachFileLayout.findViewById(R.id.radio_45);
+                    final RadioButton radio60 = attachFileLayout.findViewById(R.id.radio_60);
+                    final RadioButton radiooffline = attachFileLayout.findViewById(R.id.radio_offline);
 
-                        ImageButton ok_btn = attachFileLayout.findViewById(R.id.ok_btn);
-                        RadioGroup radio_grp = attachFileLayout.findViewById(R.id.radio_grp);
-                        final RadioButton radio15 = attachFileLayout.findViewById(R.id.radio_15);
-                        final RadioButton radio30 = attachFileLayout.findViewById(R.id.radio_30);
-                        final RadioButton radio45 = attachFileLayout.findViewById(R.id.radio_45);
-                        final RadioButton radio60 = attachFileLayout.findViewById(R.id.radio_60);
-                        final RadioButton radiooffline = attachFileLayout.findViewById(R.id.radio_offline);
+                    radio_grp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                        public void onCheckedChanged(RadioGroup group, int checkedId) {
+                            switch (checkedId) {
+                                case R.id.radio_15: {
+                                    selectedValue = "1";
+                                    radio15.setChecked(true);
+                                    break;
+                                }
 
-                        radio_grp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                                switch (checkedId) {
-                                    case R.id.radio_15: {
-                                        selectedValue = "1";
-                                        radio15.setChecked(true);
-                                        break;
-                                    }
+                                case R.id.radio_30: {
+                                    selectedValue = "30";
+                                    radio30.setChecked(true);
+                                    break;
+                                }
 
-                                    case R.id.radio_30: {
-                                        selectedValue = "30";
-                                        radio30.setChecked(true);
-                                        break;
-                                    }
+                                case R.id.radio_45: {
+                                    selectedValue = "45";
+                                    radio45.setChecked(true);
+                                    break;
+                                }
 
-                                    case R.id.radio_45: {
-                                        selectedValue = "45";
-                                        radio45.setChecked(true);
-                                        break;
-                                    }
+                                case R.id.radio_60: {
+                                    selectedValue = "60";
+                                    radio60.setChecked(true);
+                                    break;
+                                }
 
-                                    case R.id.radio_60: {
-                                        selectedValue = "60";
-                                        radio60.setChecked(true);
-                                        break;
-                                    }
-
-                                    case R.id.radio_offline: {
-                                        selectedValue = "Offline";
-                                        radiooffline.setChecked(true);
-                                        break;
-                                    }
+                                case R.id.radio_offline: {
+                                    selectedValue = "Offline";
+                                    radiooffline.setChecked(true);
+                                    break;
                                 }
                             }
-                        });
+                        }
+                    });
 
-                        ok_btn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+                    ok_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                                if (selectedValue.equals("Offline")) {
-                                    Intent intent = new Intent(getApplicationContext(), TimerService.class);
-                                    stopService(intent);
+                            if (selectedValue.equals("Offline")) {
+                                Intent intent = new Intent(getApplicationContext(), TimerService.class);
+                                stopService(intent);
 //                                mEditor.clear().commit();
-                                    mEditor.remove("data").commit();
-                                    mEditor.remove("mins").commit();
-                                    onlineTime.setText("");
-                                    onlineTime.setVisibility(View.GONE);
-                                    online_switch.setChecked(false);
+                                mEditor.remove("data").commit();
+                                mEditor.remove("mins").commit();
+                                onlineTime.setText("");
+                                onlineTime.setVisibility(View.GONE);
+                                online_switch.setChecked(false);
 
-                                    myId = PreferenceUtils.getId(SellerHomeActivity.this);
+                                myId = PreferenceUtils.getId(SellerHomeActivity.this);
 
-                                    HashMap<String, Object> map = new HashMap<String, Object>();
-                                    map.put("isOnline", "0");
+                                HashMap<String, Object> map = new HashMap<String, Object>();
+                                map.put("isOnline", "0");
 
-                                    firestore.collection("users")
-                                            .document(myId)
-                                            .update(map)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        //PreferenceUtils.clearMemory(getApplicationContext());
-                                                        //disconnect();
+                                firestore.collection("users")
+                                        .document(myId)
+                                        .update(map)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    //PreferenceUtils.clearMemory(getApplicationContext());
+                                                    //disconnect();
 
-                                                    } else {
-                                                        showToast("Unable to logout!");
-                                                    }
+                                                } else {
+                                                    showToast("Unable to logout!");
                                                 }
-                                            });
-                                } else {
-                                    mEditor.putString("data", date_time).commit();
-                                    mEditor.putString("mins", selectedValue).commit();
-                                    Intent intent_service = new Intent(SellerHomeActivity.this, TimerService.class);
-                                    startService(intent_service);
-                                    online_switch.setChecked(true);
-                                    onlineTime.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                            } else {
+                                mEditor.putString("data", date_time).commit();
+                                mEditor.putString("mins", selectedValue).commit();
+                                Intent intent_service = new Intent(SellerHomeActivity.this, TimerService.class);
+                                startService(intent_service);
+                                online_switch.setChecked(true);
+                                onlineTime.setVisibility(View.VISIBLE);
 
-                                    myId = PreferenceUtils.getId(SellerHomeActivity.this);
+                                myId = PreferenceUtils.getId(SellerHomeActivity.this);
 
-                                    HashMap<String, Object> map = new HashMap<String, Object>();
-                                    map.put("isOnline", "1");
+                                HashMap<String, Object> map = new HashMap<String, Object>();
+                                map.put("isOnline", "1");
 
-                                    firestore.collection("users")
-                                            .document(myId)
-                                            .update(map);
-                                }
-                                alert.dismiss();
+                                firestore.collection("users")
+                                        .document(myId)
+                                        .update(map);
                             }
-                        });
+                            alert.dismiss();
+                        }
+                    });
 
-                        Window window = alert.getWindow();
-                        WindowManager.LayoutParams wlp = window.getAttributes();
+                    Window window = alert.getWindow();
+                    WindowManager.LayoutParams wlp = window.getAttributes();
 
-                        wlp.gravity = Gravity.TOP;
-                        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-                        window.setAttributes(wlp);
-                        window.getAttributes().windowAnimations = R.style.DialogAnimation_2; //style id
-                        alert.show();
+                    wlp.gravity = Gravity.TOP;
+                    wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+                    window.setAttributes(wlp);
+                    window.getAttributes().windowAnimations = R.style.DialogAnimation_2; //style id
+                    alert.show();
 
-                        DisplayMetrics displayMetrics = new DisplayMetrics();
-                        alert.getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                        int displayWidth = displayMetrics.widthPixels;
-                        int displayHeight = displayMetrics.heightPixels;
+                    DisplayMetrics displayMetrics = new DisplayMetrics();
+                    alert.getWindow().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                    int displayWidth = displayMetrics.widthPixels;
+                    int displayHeight = displayMetrics.heightPixels;
 
-                        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+                    WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
 
-                        layoutParams.copyFrom(alert.getWindow().getAttributes());
+                    layoutParams.copyFrom(alert.getWindow().getAttributes());
 
-                        int dialogWindowWidth = (int) (displayWidth * 0.999f);
-                        int dialogWindowHeight = (int) (displayHeight * 0.9f);
+                    int dialogWindowWidth = (int) (displayWidth * 0.999f);
+                    int dialogWindowHeight = (int) (displayHeight * 0.9f);
 
-                        layoutParams.width = dialogWindowWidth;
-                        layoutParams.height = ActionBar.LayoutParams.WRAP_CONTENT;
+                    layoutParams.width = dialogWindowWidth;
+                    layoutParams.height = ActionBar.LayoutParams.WRAP_CONTENT;
 
-                        alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
-                        alert.getWindow().setAttributes(layoutParams);
-                    }
+                    alert.getWindow().setBackgroundDrawableResource(android.R.color.white);
+                    alert.getWindow().setAttributes(layoutParams);
+
+                } else if (isChecked && onlineTime.getVisibility() == View.VISIBLE) {
 
                 } else {
                     Intent intent = new Intent(getApplicationContext(), TimerService.class);
@@ -704,7 +722,11 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
             String str_time = intent.getStringExtra("time");
             onlineTime.setText(str_time);
 
-            if (onlineTime.getText().toString().equals("0:0:1")){
+            if (onlineTime.getVisibility() == View.VISIBLE) {
+                online_switch.setChecked(true);
+            }
+
+            if (onlineTime.getText().toString().equals("0:0:1")) {
                 onlineTime.setVisibility(View.GONE);
                 online_switch.setChecked(false);
 
@@ -731,17 +753,6 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
         long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
         return String.format(Locale.US, "%02d:%02d", minutes, seconds);
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-
     }
 
     private void requestPermission() {
@@ -837,5 +848,85 @@ public class SellerHomeActivity extends BaseActivity implements SinchService.Sta
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START);
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Flashbar flashbar = new Flashbar.Builder(SellerHomeActivity.this)
+                    .gravity(Flashbar.Gravity.BOTTOM)
+                    .duration(2000)
+                    .message("Click back again to exit!")
+                    .backgroundColorRes(R.color.colorPrimaryDark)
+                    .build();
+            flashbar.show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
+    }
+
+    public class RandomizedAdapter extends SparkAdapter {
+        //private final float[] yData;
+        private final ArrayList<Float> yData;
+        private final Random random;
+
+        public RandomizedAdapter() {
+            random = new Random();
+            yData = new ArrayList<>();
+            //yData = new float[20];
+            randomize();
+        }
+
+        public void randomize() {
+            /*for (int i = 0, count = yData.length; i < count; i++) {
+                yData[i] = random.nextFloat();
+            }*/
+
+            firestore.collection("calls")
+                    .whereEqualTo("sellerId", PreferenceUtils.getId(SellerHomeActivity.this))
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                            int i = 0;
+                            for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
+
+                                yData.add(Float.valueOf(dc.getDocument().getString("dollerEarned")));
+                            }
+
+                            notifyDataSetChanged();
+                        }
+                    });
+        }
+
+        @Override
+        public int getCount() {
+            return yData.size();
+        }
+
+        @NonNull
+        @Override
+        public Object getItem(int position) {
+            return yData.get(position);
+        }
+
+        @Override
+        public float getY(int position) {
+            return yData.get(position);
+        }
     }
 }

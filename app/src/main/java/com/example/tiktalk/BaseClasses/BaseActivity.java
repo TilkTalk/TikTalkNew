@@ -77,13 +77,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     public void onStartActivity(Intent intent) {
         startActivity(intent);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         super.startActivityForResult(intent, requestCode);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
@@ -102,7 +102,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         super.finish();
 
         //override transition to skip the standard window transition
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     public void setupComponents() {

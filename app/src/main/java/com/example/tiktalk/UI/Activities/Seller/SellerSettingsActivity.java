@@ -14,11 +14,13 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +71,7 @@ public class SellerSettingsActivity extends BaseActivity {
     Uri imageUri;
     Button update_btn;
     EditText about_edittext;
+    Switch notification_switch;
 
     FirebaseAuth auth;
     StorageReference storage;
@@ -89,6 +92,13 @@ public class SellerSettingsActivity extends BaseActivity {
         Wave wave = new Wave();
         progressBar.setIndeterminateDrawable(wave);
         pDialog.setIndeterminateDrawable(wave);
+
+        if (PreferenceUtils.getNotifications(this).equals("1")){
+            notification_switch.setChecked(true);
+        }
+        else {
+            notification_switch.setChecked(false);
+        }
     }
 
     @Override
@@ -107,6 +117,7 @@ public class SellerSettingsActivity extends BaseActivity {
         settings_spinner = findViewById(R.id.settings_spinner);
         update_btn = findViewById(R.id.update_btn);
         about_edittext = findViewById(R.id.about_edittext);
+        notification_switch = findViewById(R.id.notification_switch);
 
         final List<String> list = new ArrayList<String>();
 
@@ -231,6 +242,7 @@ public class SellerSettingsActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent in = new Intent(SellerSettingsActivity.this, SellerHomeActivity.class);
                 startActivity(in);
+                Bungee.fade(SellerSettingsActivity.this);
                 finish();
             }
         });
@@ -242,6 +254,29 @@ public class SellerSettingsActivity extends BaseActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Please select Image!"), Image_Request_Code);
+            }
+        });
+
+        notification_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("notifications", "1");
+
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
+                            .update(map);
+                }
+                else {
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("notifications", "0");
+
+                    firestore.collection("users")
+                            .document(PreferenceUtils.getId(SellerSettingsActivity.this))
+                            .update(map);
+                }
             }
         });
 

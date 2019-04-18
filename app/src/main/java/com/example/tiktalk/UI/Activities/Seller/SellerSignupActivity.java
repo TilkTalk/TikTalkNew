@@ -2,10 +2,13 @@ package com.example.tiktalk.UI.Activities.Seller;
 
 import android.app.Notification;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ParseException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -20,6 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -47,6 +53,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.Range;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -76,6 +83,8 @@ public class SellerSignupActivity extends BaseActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private static int RC_SIGN_IN = 123;
     private static String TAG = "BuyerLoginActivity";
+    String emailPattern = "[a-zA-Z0-9._-a-zA-Z0-9]+@[a-z._-]+\\.+[a-z]+";
+    private AwesomeValidation awesomeValidation;
 
     CardView name_cardview, email_cardview, password_cardview;
     View name_view, email_view, password_view;
@@ -92,16 +101,17 @@ public class SellerSignupActivity extends BaseActivity {
     LoginButton regButton_fb;
     CallbackManager callbackManager;
 
-    String isActive = "1";
+    String isActive = "0";
     String type = "Seller";
-    String isOnline = "1";
+    String isOnline = "0";
     String rating = "0";
-    String $perMin = "0";
-    String coinPerMin = "0";
+    String $perMin = "free";
+    String coinPerMin = "free";
     String dollersEarned = "0";
     String about = "";
+    String notifications = "0";
 
-    String name,email,password;
+    String name, email, password;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,6 +121,7 @@ public class SellerSignupActivity extends BaseActivity {
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
         Random random = new Random();
         code = String.format("%04d", random.nextInt(10000));
@@ -203,6 +214,9 @@ public class SellerSignupActivity extends BaseActivity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(SellerSignupActivity.this, BuyerSignupActivity.class);
+                startActivity(intent);
+                Bungee.slideRight(SellerSignupActivity.this);
                 finish();
             }
         });
@@ -261,13 +275,14 @@ public class SellerSignupActivity extends BaseActivity {
 
     private void signUp() {
         String verificationCode = code;
-            Intent intent = new Intent(this, NumberVerificationActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("email", email);
-            intent.putExtra("password", password);
-            intent.putExtra("code", verificationCode);
-            startActivity(intent);
-
+        Intent intent = new Intent(this, NumberVerificationActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("email", email);
+        intent.putExtra("password", password);
+        intent.putExtra("code", verificationCode);
+        startActivity(intent);
+        Bungee.slideLeft(SellerSignupActivity.this);
+        finish();
     }
 
     public static boolean isEmailValid(String email) {
@@ -280,7 +295,9 @@ public class SellerSignupActivity extends BaseActivity {
 
     public void SendOTP() {
 
-        BackgroundMail bm = new BackgroundMail(this);
+        signUp();
+
+        /*BackgroundMail bm = new BackgroundMail(this);
 
         bm.newBuilder(this)
                 .withUsername("benibinyaminbenibinyamin@gmail.com")
@@ -290,9 +307,7 @@ public class SellerSignupActivity extends BaseActivity {
                 .withSubject("Verification Code")
                 .withBody(code)
                 .withSendingMessage("Sending OTP")
-                .send();
-
-        signUp();
+                .send();*/
 
     }
 
@@ -357,6 +372,7 @@ public class SellerSignupActivity extends BaseActivity {
                                     users.put("coinPerMin", coinPerMin);
                                     users.put("dollersEarned", dollersEarned);
                                     users.put("about", about);
+                                    users.put("notifications", notifications);
 
                                     firestore.collection("users")
                                             .document(userDetails.getUid())
@@ -365,13 +381,29 @@ public class SellerSignupActivity extends BaseActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerSignupActivity.this);
-                                                    MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+//                                                    PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"), users.get("notifications"), SellerSignupActivity.this);
+//                                                    MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                     dialog.dismiss();
-                                                    Intent in = new Intent(SellerSignupActivity.this, SellerHomeActivity.class);
-                                                    startActivity(in);
-                                                    finish();
+//                                                    Intent in = new Intent(SellerSignupActivity.this, SellerHomeActivity.class);
+//                                                    startActivity(in);
+//                                                    finish();
+                                                    final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerSignupActivity.this);
+                                                    dialog.setTitle("Approval Required!");
+                                                    dialog.setMessage("Please wait for the approval of your account.");
+
+                                                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                            Intent intent = new Intent(SellerSignupActivity.this, SellerLoginActivity.class);
+                                                            startActivity(intent);
+                                                            Bungee.slideDown(SellerSignupActivity.this);
+                                                            finish();
+                                                        }
+                                                    });
+
+                                                    dialog.show();
                                                 }
                                             });
 
@@ -435,13 +467,29 @@ public class SellerSignupActivity extends BaseActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerSignupActivity.this);
-                                                MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
+//                                                PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerSignupActivity.this);
+//                                                MyFirebaseInstanceIDService.sendRegistrationToServer(SellerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();
-                                                Intent in = new Intent(SellerSignupActivity.this, SellerHomeActivity.class);
-                                                startActivity(in);
-                                                finish();
+//                                                Intent in = new Intent(SellerSignupActivity.this, SellerHomeActivity.class);
+//                                                startActivity(in);
+//                                                finish();
+                                                final AlertDialog.Builder dialog = new AlertDialog.Builder(SellerSignupActivity.this);
+                                                dialog.setTitle("Approval Required!");
+                                                dialog.setMessage("Please wait for the approval of your account.");
+
+                                                dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                        Intent intent = new Intent(SellerSignupActivity.this, SellerLoginActivity.class);
+                                                        startActivity(intent);
+                                                        Bungee.slideDown(SellerSignupActivity.this);
+                                                        finish();
+                                                    }
+                                                });
+
+                                                dialog.show();
                                             }
                                         });
                             } else {
@@ -464,17 +512,17 @@ public class SellerSignupActivity extends BaseActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void validate(){
+    public void validate() {
 
         name = nameEditTxt.getText().toString();
         email = emailEditTxt.getText().toString();
         password = passwordEditTxt.getText().toString();
 
-        name= name.trim();
-        email= email.trim();
-        password= password.trim();
+        name = name.trim();
+        email = email.trim();
+        password = password.trim();
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(emailEditTxt.getText().toString()).matches()) {
+        /*if (!Patterns.EMAIL_ADDRESS.matcher(emailEditTxt.getText().toString()).matches()) {
             emailEditTxt.setError("Please enter a Valid E-Mail Address!");
         }
         if (password.length()<6){
@@ -487,6 +535,49 @@ public class SellerSignupActivity extends BaseActivity {
         }else if (TextUtils.isEmpty(password)) {
             passwordEditTxt.setError("required");
         } else
+            SendOTP();*/
+
+        //User side validation
+        /*if (TextUtils.isEmpty(name)) {
+            nameEditTxt.setError("required");
+        } else if (TextUtils.isEmpty(email)) {
+            emailEditTxt.setError("required");
+        } else if (TextUtils.isEmpty(password)) {
+            passwordEditTxt.setError("required");
+        } else if (!emailEditTxt.getText().toString().matches(emailPattern)) {
+            emailEditTxt.setError("Please enter a Valid E-Mail Address!");
+        } else if (password.length() < 6) {
+            passwordEditTxt.setError("Password Must Have 6 Characters");
+        } else {
             SendOTP();
+        }*/
+
+        awesomeValidation.addValidation(this, R.id.signup_name_seller, "[a-zA-Z\\s]+", R.string.nameerror);
+        awesomeValidation.addValidation(this, R.id.signup_email_seller, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        awesomeValidation.addValidation(this, R.id.signup_password_seller, new SimpleCustomValidation() {
+
+            @Override
+            public boolean compare(String s) {
+                try {
+                    if (s.length() >= 6) {
+                        return true;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        }, R.string.passworderror);
+
+        if (awesomeValidation.validate()) {
+            SendOTP();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(SellerSignupActivity.this, BuyerSignupActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

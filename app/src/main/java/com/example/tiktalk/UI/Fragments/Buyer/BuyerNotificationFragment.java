@@ -24,10 +24,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
 import com.example.tiktalk.Adapters.NotificationsAdapter;
+import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.BaseClasses.BaseFragment;
 import com.example.tiktalk.Model.Notifications;
 import com.example.tiktalk.R;
+import com.example.tiktalk.SendBird.SendbirdChatActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerHomeActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
@@ -50,14 +52,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.sendbird.android.GroupChannel;
+import com.sendbird.android.GroupChannelParams;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
-public class BuyerNotificationFragment extends BaseActivity implements NotificationsAdapter.OnClickListener{
+import spencerstudios.com.bungeelib.Bungee;
+
+public class BuyerNotificationFragment extends BaseActivity implements NotificationsAdapter.OnClickListener {
 
     FirebaseFirestore firestore;
     ProgressBar progressBar;
@@ -75,6 +84,7 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+    int notificationCount = 0;
 
     public String[] menuName = {"Home", "My Wallet", "Inbox", "Notifications", "Contact", "Logout"};
     public int[] menuicons = {R.drawable.home, R.drawable.my_wallets, R.drawable.inbox,
@@ -157,35 +167,42 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:{
+                    case 1: {
                         Intent in = new Intent(BuyerNotificationFragment.this, BuyerHomeActivity.class);
                         startActivity(in);
+                        Bungee.zoom(BuyerNotificationFragment.this);
                         finish();
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         Intent intent = new Intent(BuyerNotificationFragment.this, BuyerMyWalletFragment.class);
                         startActivity(intent);
+                        Bungee.zoom(BuyerNotificationFragment.this);
                         finish();
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         Intent intent1 = new Intent(BuyerNotificationFragment.this, BuyerInboxFragment.class);
+                        intent1.putExtra("type", "buyer");
                         startActivity(intent1);
+                        Bungee.zoom(BuyerNotificationFragment.this);
                         finish();
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         Intent in = new Intent(BuyerNotificationFragment.this, BuyerNotificationFragment.class);
                         startActivity(in);
+                        Bungee.zoom(BuyerNotificationFragment.this);
                         finish();
                         break;
                     }
-                    case 5:{
+                    case 5: {
                         Toast.makeText(BuyerNotificationFragment.this, "Contact page is under development!", Toast.LENGTH_SHORT).show();
                         break;
                     }
-                    case 6:{
+                    case 6: {
+                        dialog.setMessage("Please wait...");
+                        dialog.show();
                         myId = PreferenceUtils.getId(BuyerNotificationFragment.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -197,18 +214,19 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
+                                        if (task.isSuccessful()) {
+                                            MyFirebaseInstanceIDService.deleteRegistrationFromServer(BuyerNotificationFragment.this.getClass().getSimpleName(), myId);
                                             PreferenceUtils.clearMemory(getApplicationContext());
                                             disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
 
+                                            dialog.dismiss();
                                             Intent intent = new Intent(BuyerNotificationFragment.this, BuyerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
-                                        }
-                                        else {
+                                        } else {
 //                                            showToast("Unable to logout!");
                                             Toast.makeText(BuyerNotificationFragment.this, "Unable to logout!", Toast.LENGTH_SHORT).show();
                                         }
@@ -220,6 +238,20 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
                 }
             }
         });
+
+        firestore.collection("notifications")
+                .whereEqualTo("receiver", PreferenceUtils.getId(this))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (DocumentSnapshot dc : task.getResult()){
+                                notificationCount++;
+                            }
+                        }
+                    }
+                });
 
     }
 
@@ -242,22 +274,35 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
                     @Override
                     public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
-                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                            final DocumentSnapshot documentSnapshot = dc.getDocument();
+                        notificationArrayList.clear();
+                        for (DocumentSnapshot dc : queryDocumentSnapshots.getDocuments()) {
 
-                            Notifications notify = new Notifications(documentSnapshot.getString("sender"),
-                                    documentSnapshot.getString("receiver"),
-                                    documentSnapshot.getString("name"),
-                                    documentSnapshot.getString("message"),
-                                    documentSnapshot.getString("image"));
+                            Notifications notify = new Notifications(dc.getString("sender"),
+                                    dc.getString("receiver"),
+                                    dc.getString("name"),
+                                    dc.getString("message"),
+                                    dc.getString("image"),
+                                    dc.getString("status"));
 
-                            if (documentSnapshot.get("messageTime") != null) {
+                            if (dc.get("messageTime") != null) {
 
-                                long seconds = ((Timestamp) (Object) documentSnapshot.get("messageTime")).getSeconds();
+                                long seconds = ((Timestamp) (Object) dc.get("messageTime")).getSeconds();
                                 long milliSeconds = seconds * 1000;
-                                notify.callTime = new Date(milliSeconds);
+                                notify.messageTime = new Date(milliSeconds);
                                 notificationArrayList.add(notify);
                             }
+                        }
+
+                        if (notificationArrayList != null) {
+
+                            Comparator<Notifications> c = new Comparator<Notifications>() {
+
+                                @Override
+                                public int compare(Notifications a, Notifications b) {
+                                    return Long.compare(b.getCallTime().getTime(), a.getCallTime().getTime());
+                                }
+                            };
+                            Collections.sort(notificationArrayList, c);
                         }
 
                         adapter = new NotificationsAdapter(notificationArrayList, BuyerNotificationFragment.this);
@@ -271,8 +316,40 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
     }
 
     @Override
-    public void onClick(int position) {
+    public void onClick(final int position) {
 
+        dialog.setMessage("Please wait...");
+        dialog.show();
+
+        GroupChannel.GroupChannelCreateHandler groupChannelCreateHandler = new GroupChannel.GroupChannelCreateHandler() {
+            @Override
+            public void onResult(GroupChannel groupChannel, SendBirdException e) {
+                if (e != null) {    // Error.
+                } else {
+                    final Intent chatIntent = new Intent(BuyerNotificationFragment.this, SendbirdChatActivity.class);
+                    chatIntent.putExtra("title", groupChannel.getName());
+                    chatIntent.putExtra("channelUrl", groupChannel.getUrl());
+                    chatIntent.putExtra("cover", groupChannel.getCoverUrl());
+                    chatIntent.putExtra("members", notificationArrayList.get(position).sender);
+                    chatIntent.putExtra("type", "buyer");
+
+                    dialog.dismiss();
+                    startActivity(chatIntent);
+                    finish();
+                }
+            }
+        };
+        List<String> users = new ArrayList<>();
+        users.add(notificationArrayList.get(position).sender);
+
+        GroupChannelParams params = new GroupChannelParams()
+                .setPublic(false)
+                .setEphemeral(false)
+                .setDistinct(true)//If true same users can not create new channel
+                .addUserIds(users)
+                .setName(notificationArrayList.get(position).name)
+                .setCoverUrl(notificationArrayList.get(position).image);
+        GroupChannel.createChannel(params, groupChannelCreateHandler);
     }
 
     private void disconnect() {
@@ -285,9 +362,6 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
                     return;
                 }
 
-//                Toast.makeText(Patient_HomeActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
-//                        .show();
-
                 SendBird.disconnect(new SendBird.DisconnectHandler() {
                     @Override
                     public void onDisconnected() {
@@ -298,5 +372,13 @@ public class BuyerNotificationFragment extends BaseActivity implements Notificat
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(BuyerNotificationFragment.this, BuyerHomeActivity.class);
+        startActivity(in);
+        Bungee.zoom(BuyerNotificationFragment.this);
+        finish();
     }
 }

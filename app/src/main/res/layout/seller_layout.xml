@@ -4,9 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="10dp"
+    android:layout_marginTop="5dp"
     android:layout_marginRight="10dp"
     android:layout_marginBottom="12dp"
-    android:layout_marginTop="5dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="7dp">
 
@@ -50,15 +50,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginStart="10dp">
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true">
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
 
                 <!--<ImageView
                     android:layout_width="14dp"
@@ -74,17 +74,17 @@
                     app:srb_borderColor="#FFBF00"
                     app:srb_fillColor="#FFBF00"
                     app:srb_numberOfStars="1"
-                    app:srb_starSize="12dp"
-                    app:srb_rating="1"/>
+                    app:srb_rating="1"
+                    app:srb_starSize="12dp" />
 
                 <TextView
                     android:id="@+id/seller_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
+                    android:textColor="#FFBF00"
                     android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFBF00"/>
+                    android:textStyle="bold" />
 
                 <!--<TextView
                     android:layout_width="wrap_content"
@@ -98,23 +98,25 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="10dp"
-                android:layout_centerVertical="true">
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/call_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/call"
-                    android:layout_marginEnd="25dp"/>
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/call" />
 
                 <ImageButton
                     android:id="@+id/chat_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/chat" />
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/chat" />
 
             </LinearLayout>
 

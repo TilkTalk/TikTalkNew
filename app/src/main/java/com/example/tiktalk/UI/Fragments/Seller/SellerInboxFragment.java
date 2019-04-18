@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
+import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.BaseClasses.BaseFragment;
 import com.example.tiktalk.MessageModule.ChannelsList_Fragment;
@@ -40,12 +41,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 
 import java.util.HashMap;
+
+import spencerstudios.com.bungeelib.Bungee;
 
 public class SellerInboxFragment extends BaseActivity {
 
@@ -58,6 +63,9 @@ public class SellerInboxFragment extends BaseActivity {
     ImageButton cancel_btn, settings_btn;
     String myId, type;
     String id, username, imageUrl, rating, coinPerMin, rateperMin, about;
+    int notificationCount = 0;
+    ProgressBar progressBar;
+    ProgressDialog dialog;
 
     public String[] menuName = {"Dashboard", "Inbox", "My Profile", "Notifications", "Contact", "Logout"};
     public int[] menuicons = {R.drawable.dashboard, R.drawable.inbox, R.drawable.my_profile, R.drawable.notification, R.drawable.contact, R.drawable.logout};
@@ -98,11 +106,23 @@ public class SellerInboxFragment extends BaseActivity {
 
         Bundle bundle = new Bundle();
         bundle.putString("type", type);
+        bundle.putString("myId", id);
+        bundle.putString("myName", username);
+        bundle.putString("myImage", imageUrl);
+        bundle.putString("myRating", rating);
+        bundle.putString("coinPerMin", coinPerMin);
+        bundle.putString("$PerMin", rateperMin);
+        bundle.putString("about", about);
         ChannelsList_Fragment channelsList_fragment = new ChannelsList_Fragment();
         channelsList_fragment.setArguments(bundle);
         onAddFragment(R.id.seller_inbox_container, channelsList_fragment, false);
 
         firestore = FirebaseFirestore.getInstance();
+        dialog = new ProgressDialog(this);
+        progressBar = findViewById(R.id.spin_kit);
+        Wave wave = new Wave();
+        progressBar.setIndeterminateDrawable(wave);
+        dialog.setIndeterminateDrawable(wave);
 
         menu_btn = findViewById(R.id.menu_btn);
 
@@ -153,15 +173,18 @@ public class SellerInboxFragment extends BaseActivity {
                     case 1:{
                         Intent in = new Intent(SellerInboxFragment.this, SellerHomeActivity.class);
                         startActivity(in);
+                        Bungee.zoom(SellerInboxFragment.this);
                         finish();
-                        drawer_layout.closeDrawer(mDrawerList);
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 2:{
                         Intent intent1 = new Intent(SellerInboxFragment.this, SellerInboxFragment.class);
                         intent1.putExtra("type", "seller");
                         startActivity(intent1);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerInboxFragment.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 3:{
@@ -174,14 +197,16 @@ public class SellerInboxFragment extends BaseActivity {
                         in.putExtra("$PerMin", rateperMin);
                         in.putExtra("about", about);
                         startActivity(in);
+                        Bungee.zoom(SellerInboxFragment.this);
                         finish();
-                        drawer_layout.closeDrawer(mDrawerList);
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
                     case 4:{
                         Intent in = new Intent(SellerInboxFragment.this, SellerNotificationFragment.class);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerInboxFragment.this);
+                        //drawer_layout.closeDrawer(mDrawerList);
                         finish();
                         break;
                     }
@@ -189,10 +214,14 @@ public class SellerInboxFragment extends BaseActivity {
                         break;
                     }
                     case 6:{
+
+                        dialog.setMessage("Please wait...");
+                        dialog.show();
                         myId = PreferenceUtils.getId(SellerInboxFragment.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
                         map.put("isOnline", "0");
+                        map.put("notifications", "0");
 
                         firestore.collection("users")
                                 .document(myId)
@@ -201,26 +230,42 @@ public class SellerInboxFragment extends BaseActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+
+                                            MyFirebaseInstanceIDService.deleteRegistrationFromServer(SellerInboxFragment.this.getClass().getSimpleName(), myId);
                                             PreferenceUtils.clearMemory(getApplicationContext());
                                             disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
 
+                                            dialog.dismiss();
                                             Intent intent = new Intent(SellerInboxFragment.this, SellerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
                                         } else {
-                                            Toast.makeText(SellerInboxFragment.this, "Unable to logout!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SellerInboxFragment.this, "Something went wrong. Try again later!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
-
                         break;
                     }
                 }
             }
         });
+
+        firestore.collection("notifications")
+                .whereEqualTo("receiver", PreferenceUtils.getId(this))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (DocumentSnapshot dc : task.getResult()){
+                                notificationCount++;
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
@@ -246,9 +291,6 @@ public class SellerInboxFragment extends BaseActivity {
                     return;
                 }
 
-//                Toast.makeText(Patient_HomeActivity.this, "All push tokens unregistered.", Toast.LENGTH_SHORT)
-//                        .show();
-
                 SendBird.disconnect(new SendBird.DisconnectHandler() {
                     @Override
                     public void onDisconnected() {
@@ -259,5 +301,13 @@ public class SellerInboxFragment extends BaseActivity {
                 });
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(SellerInboxFragment.this, SellerHomeActivity.class);
+        startActivity(in);
+        Bungee.zoom(SellerInboxFragment.this);
+        finish();
     }
 }

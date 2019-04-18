@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
+import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.BaseClasses.BaseFragment;
 import com.example.tiktalk.MessageModule.ChannelsList_Fragment;
@@ -32,18 +33,23 @@ import com.example.tiktalk.UI.Activities.Seller.SellerHomeActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.github.ybq.android.spinkit.style.Wave;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.SendBirdException;
 
 import java.util.HashMap;
+
+import spencerstudios.com.bungeelib.Bungee;
 
 import static com.example.tiktalk.TikTalk.getContext;
 
@@ -59,6 +65,9 @@ public class BuyerInboxFragment extends BaseActivity {
     public DrawerLayout drawer_layout;
     public ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+    int notificationCount = 0;
+    ProgressBar progressBar;
+    ProgressDialog dialog;
 
     public String[] menuName = {"Home", "My Wallet", "Inbox", "Notifications", "Contact", "Logout"};
     public int[] menuicons = {R.drawable.home, R.drawable.my_wallets, R.drawable.inbox,
@@ -72,6 +81,11 @@ public class BuyerInboxFragment extends BaseActivity {
         setupComponents();
 
         firestore = FirebaseFirestore.getInstance();
+        dialog = new ProgressDialog(this);
+        progressBar = findViewById(R.id.spin_kit);
+        Wave wave = new Wave();
+        progressBar.setIndeterminateDrawable(wave);
+        dialog.setIndeterminateDrawable(wave);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
@@ -129,24 +143,29 @@ public class BuyerInboxFragment extends BaseActivity {
                     case 1: {
                         Intent in = new Intent(BuyerInboxFragment.this, BuyerHomeActivity.class);
                         startActivity(in);
+                        Bungee.zoom(BuyerInboxFragment.this);
                         finish();
                         break;
                     }
                     case 2: {
                         Intent intent = new Intent(BuyerInboxFragment.this, BuyerMyWalletFragment.class);
                         startActivity(intent);
+                        Bungee.zoom(BuyerInboxFragment.this);
                         finish();
                         break;
                     }
                     case 3: {
                         Intent intent1 = new Intent(BuyerInboxFragment.this, BuyerInboxFragment.class);
+                        intent1.putExtra("type", "buyer");
                         startActivity(intent1);
+                        Bungee.zoom(BuyerInboxFragment.this);
                         finish();
                         break;
                     }
                     case 4: {
                         Intent in = new Intent(BuyerInboxFragment.this, BuyerNotificationFragment.class);
                         startActivity(in);
+                        Bungee.zoom(BuyerInboxFragment.this);
                         finish();
                         break;
                     }
@@ -155,6 +174,8 @@ public class BuyerInboxFragment extends BaseActivity {
                         break;
                     }
                     case 6: {
+                        dialog.setMessage("Please wait...");
+                        dialog.show();
                         myId = PreferenceUtils.getId(BuyerInboxFragment.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -167,12 +188,14 @@ public class BuyerInboxFragment extends BaseActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+                                            MyFirebaseInstanceIDService.deleteRegistrationFromServer(BuyerInboxFragment.this.getClass().getSimpleName(), myId);
                                             PreferenceUtils.clearMemory(getApplicationContext());
                                             disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
 
+                                            dialog.dismiss();
                                             Intent intent = new Intent(BuyerInboxFragment.this, BuyerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
@@ -187,6 +210,20 @@ public class BuyerInboxFragment extends BaseActivity {
                 }
             }
         });
+
+        firestore.collection("notifications")
+                .whereEqualTo("receiver", PreferenceUtils.getId(this))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (DocumentSnapshot dc : task.getResult()){
+                                notificationCount++;
+                            }
+                        }
+                    }
+                });
 
     }
 
@@ -241,5 +278,11 @@ public class BuyerInboxFragment extends BaseActivity {
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(BuyerInboxFragment.this, BuyerHomeActivity.class);
+        startActivity(in);
+        Bungee.zoom(BuyerInboxFragment.this);
+        finish();
+    }
 }

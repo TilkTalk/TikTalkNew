@@ -14,6 +14,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -49,17 +50,19 @@ import spencerstudios.com.bungeelib.Bungee;
 public class UploadPhotoActivity extends BaseActivity {
 
     private static int Image_Request_Code = 1;
-    Button cancelBtn, doneBtn;
+    Button doneBtn;
+    ImageButton cancelBtn;
     String name, email, password;
 
     String isActive = "0";
     String type = "Seller";
-    String isOnline = "1";
+    String isOnline = "0";
     String rating = "0";
-    String $perMin = "0";
-    String coinPerMin = "0";
+    String value;
+    String coins;
     String dollersEarned = "0";
     String about = "";
+    String notifications = "0";
 
     Uri imageUri;
 
@@ -70,7 +73,6 @@ public class UploadPhotoActivity extends BaseActivity {
     ImageView seller_signup_image;
     Button seller_uploadPhoto_btn;
     Spinner seller_spinner;
-    String value, coins;
 
     ProgressDialog dialog;
     ProgressBar progressBar;
@@ -140,6 +142,9 @@ public class UploadPhotoActivity extends BaseActivity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent in = new Intent(UploadPhotoActivity.this, SellerSignupActivity.class);
+                startActivity(in);
+                Bungee.slideRight(UploadPhotoActivity.this);
                 finish();
             }
         });
@@ -221,6 +226,7 @@ public class UploadPhotoActivity extends BaseActivity {
                                     users.put("coinPerMin", coins);
                                     users.put("dollersEarned", dollersEarned);
                                     users.put("about", about);
+                                    users.put("notifications", notifications);
 
                                     firestore.collection("users")
                                             .document(currentUser)
@@ -289,7 +295,7 @@ public class UploadPhotoActivity extends BaseActivity {
                                             dialog.show();
                                         }
                                     });
-                            showToast("Image uploaded!");
+                            //showToast("Image uploaded!");
                         }
                     });
 

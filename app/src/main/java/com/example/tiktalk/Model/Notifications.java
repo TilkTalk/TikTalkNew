@@ -7,47 +7,50 @@ import java.util.Date;
 public class Notifications {
 
     @ServerTimestamp
-    public Date callTime;
+    public Date messageTime;
 
-    public String senderId;
-    public String receiverId;
+    public String sender;
+    public String receiver;
     public String name;
     public String message;
     public String image;
+    public String status;
 
     public Notifications() {
     }
 
-    public Notifications(String senderId, String receiverId, String name, String message, String image) {
-        this.senderId = senderId;
-        this.receiverId = receiverId;
+    public Notifications(String sender, String receiver, String name, String message, String image, String status) {
+        this.sender = sender;
+        this.receiver = receiver;
         this.name = name;
         this.message = message;
         this.image = image;
+        this.status = status;
+
     }
 
     public Date getCallTime() {
-        return callTime;
+        return messageTime;
     }
 
     public void setCallTime(Date callTime) {
-        this.callTime = callTime;
+        this.messageTime = callTime;
     }
 
     public String getSenderId() {
-        return senderId;
+        return sender;
     }
 
     public void setSenderId(String senderId) {
-        this.senderId = senderId;
+        this.sender = senderId;
     }
 
     public String getReceiverId() {
-        return receiverId;
+        return receiver;
     }
 
     public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
+        this.receiver = receiverId;
     }
 
     public String getName() {
@@ -72,5 +75,13 @@ public class Notifications {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

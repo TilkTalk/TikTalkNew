@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andrognito.flashbar.Flashbar;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
@@ -29,6 +31,7 @@ import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.Model.User;
 import com.example.tiktalk.R;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
+import com.example.tiktalk.UI.Activities.ResetPasswordActivity;
 import com.example.tiktalk.Utils.PreferenceUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -79,9 +82,11 @@ public class SellerLoginActivity extends AppCompatActivity {
     EditText emailEditText;
     EditText passwordEditText;
     ImageView check;
-    RelativeLayout email_layout, password_layout;
+    RelativeLayout email_layout;
+    LinearLayout password_layout;
     Button googleSignInBtn;
     Button facebookSignInBtn;
+    TextView forgotPasswordBtn;
 
     FirebaseFirestore firestore;
     FirebaseAuth auth;
@@ -94,10 +99,11 @@ public class SellerLoginActivity extends AppCompatActivity {
     String type = "Seller";
     String isOnline = "0";
     String rating = "0";
-    String $perMin = "0";
-    String coinPerMin = "0";
+    String $perMin = "free";
+    String coinPerMin = "free";
     String dollersEarned = "0";
     String about = "";
+    String notifications = "1";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,6 +130,7 @@ public class SellerLoginActivity extends AppCompatActivity {
         googleSignInBtn = findViewById(R.id.googleSignInBtn);
         facebookSignInBtn = findViewById(R.id.facebookSignInBtn);
         regButton_fb = (LoginButton) findViewById(R.id.login_with_facebook);
+        forgotPasswordBtn = findViewById(R.id.forget_textView);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("459654563361-f1f2d6fkhlpbim0ljb7rrabs4gdf7vrq.apps.googleusercontent.com")
@@ -186,7 +193,7 @@ public class SellerLoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                if (emailEditText.getText().toString().contains(".com")) {
+                if (Patterns.EMAIL_ADDRESS.matcher(emailEditText.getText().toString()).matches()) {
                     check.setVisibility(View.VISIBLE);
                 } else
                     check.setVisibility(View.GONE);
@@ -226,6 +233,15 @@ public class SellerLoginActivity extends AppCompatActivity {
             }
         });
 
+        forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SellerLoginActivity.this, ResetPasswordActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -258,6 +274,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                 users.put("coinPerMin", coinPerMin);
                                 users.put("dollersEarned", dollersEarned);
                                 users.put("about", about);
+                                users.put("notifications", notifications);
 
                                 firestore.collection("users")
                                         .document(userDetails.getUid())
@@ -266,7 +283,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"),SellerLoginActivity.this);
+                                                PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"), users.get("notifications"), SellerLoginActivity.this);
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();
@@ -312,9 +329,10 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                         user.ratePerMin = dc.getString("$perMin");
                                                         user.coinPerMin = dc.getString("coinPerMin");
                                                         user.dollersEarned = dc.getString("dollersEarned");
-//                                                        user.about = dc.getString("about");
+                                                        user.about = dc.getString("about");
+                                                        user.notifications = dc.getString("notifications");
 
-                                                        PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, SellerLoginActivity.this);
+                                                        PreferenceUtils.saveSellerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.ratePerMin, user.rating, user.coinPerMin, user.about, user.notifications, SellerLoginActivity.this);
                                                         MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                         dialog.dismiss();
@@ -399,6 +417,8 @@ public class SellerLoginActivity extends AppCompatActivity {
                                     users.put("$perMin", $perMin);
                                     users.put("coinPerMin", coinPerMin);
                                     users.put("dollersEarned", dollersEarned);
+                                    users.put("about", about);
+                                    users.put("notifications", notifications);
 
                                     firestore.collection("users")
                                             .document(userDetails.getUid())
@@ -407,7 +427,7 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), SellerLoginActivity.this);
+                                                    PreferenceUtils.saveSellerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("$perMin"), users.get("rating"), users.get("coinPerMin"), users.get("about"), users.get("notifications"), SellerLoginActivity.this);
                                                     MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                     dialog.dismiss();
@@ -453,8 +473,10 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                             user.ratePerMin = dc.getString("$perMin");
                                                             user.coinPerMin = dc.getString("coinPerMin");
                                                             user.dollersEarned = dc.getString("dollersEarned");
+                                                            user.about = dc.getString("about");
+                                                            user.notifications = dc.getString("notifications");
 
-                                                            PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, SellerLoginActivity.this);
+                                                            PreferenceUtils.saveSellerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.ratePerMin, user.rating, user.coinPerMin, user.about, user.notifications, SellerLoginActivity.this);
                                                             MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                             dialog.dismiss();
@@ -539,27 +561,23 @@ public class SellerLoginActivity extends AppCompatActivity {
                                                 user.rating = dc.getString("rating");
                                                 user.ratePerMin = dc.getString("$perMin");
                                                 user.coinPerMin = dc.getString("coinPerMin");
+                                                user.dollersEarned = dc.getString("dollersEarned");
                                                 user.about = dc.getString("about");
-
-                                                PreferenceUtils.saveSellerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.ratePerMin, user.rating, user.coinPerMin, user.about, SellerLoginActivity.this);
-
-                                                MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), currentUser);
+                                                user.notifications = dc.getString("notifications");
 
                                                 dialog.dismiss();
 
                                                 if (user.IsActive.equals("1")) {
 
-                                                    HashMap<String, Object> online = new HashMap<String, Object>();
-                                                    online.put("isOnline", "1");
-
-                                                    firestore.collection("users")
-                                                            .document(currentUser)
-                                                            .update(online);
+                                                    PreferenceUtils.saveSellerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.ratePerMin, user.rating, user.coinPerMin, user.about, user.notifications, SellerLoginActivity.this);
+                                                    MyFirebaseInstanceIDService.sendRegistrationToServer(SellerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), currentUser);
 
                                                     Intent intent = new Intent(SellerLoginActivity.this, SellerHomeActivity.class);
                                                     startActivity(intent);
+                                                    Bungee.slideLeft(SellerLoginActivity.this);
                                                     finish();
-                                                } else {
+                                                }
+                                                else {
                                                     Toast.makeText(SellerLoginActivity.this, "Your account is not approved yet.", Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -568,8 +586,15 @@ public class SellerLoginActivity extends AppCompatActivity {
 
 
                         } else{
-                            Toast.makeText(SellerLoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
+                            Flashbar flashbar = new Flashbar.Builder(SellerLoginActivity.this)
+                                    .gravity(Flashbar.Gravity.BOTTOM)
+                                    .duration(1000)
+                                    .message("Username or password incorrect!")
+                                    .backgroundColorRes(R.color.colorPrimaryDark)
+                                    .showOverlay()
+                                    .build();
+                            flashbar.show();
                         }
 
 

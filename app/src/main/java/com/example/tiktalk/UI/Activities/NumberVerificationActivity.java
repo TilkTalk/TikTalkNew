@@ -17,8 +17,11 @@ import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.R;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerLoginActivity;
+import com.example.tiktalk.UI.Activities.Seller.SellerSignupActivity;
 import com.example.tiktalk.UI.Activities.Seller.UploadPhotoActivity;
 import com.thekhaeng.pushdownanim.PushDownAnim;
+
+import spencerstudios.com.bungeelib.Bungee;
 
 import static com.thekhaeng.pushdownanim.PushDownAnim.MODE_STATIC_DP;
 
@@ -59,10 +62,22 @@ public class NumberVerificationActivity extends BaseActivity {
 
         emailTxt.setText(email);
 
+        BackgroundMail bm = new BackgroundMail(this);
+
+        bm.newBuilder(this)
+                .withUsername("benibinyaminbenibinyamin@gmail.com")
+                .withPassword("zxc!asd123")
+                .withMailto(email)
+                .withType(BackgroundMail.TYPE_PLAIN)
+                .withSubject("Verification Code")
+                .withBody(code)
+                .send();
+
         code1.addTextChangedListener(new GenericTextWatcher(code1));
         code2.addTextChangedListener(new GenericTextWatcher(code2));
         code3.addTextChangedListener(new GenericTextWatcher(code3));
         code4.addTextChangedListener(new GenericTextWatcher(code4));
+
 
     }
 
@@ -121,6 +136,9 @@ public class NumberVerificationActivity extends BaseActivity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent in = new Intent(NumberVerificationActivity.this, SellerSignupActivity.class);
+                startActivity(in);
+                Bungee.slideRight(NumberVerificationActivity.this);
                 finish();
             }
         });
@@ -147,6 +165,7 @@ public class NumberVerificationActivity extends BaseActivity {
                     in.putExtra("email", email);
                     in.putExtra("password", password);
                     startActivity(in);
+                    Bungee.slideLeft(NumberVerificationActivity.this);
                     finish();
                 }
                 else{
@@ -159,14 +178,15 @@ public class NumberVerificationActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                BackgroundMail.newBuilder(getApplicationContext())
+                BackgroundMail bm = new BackgroundMail(NumberVerificationActivity.this);
+
+                bm.newBuilder(NumberVerificationActivity.this)
                         .withUsername("benibinyaminbenibinyamin@gmail.com")
                         .withPassword("zxc!asd123")
                         .withMailto(email)
                         .withType(BackgroundMail.TYPE_PLAIN)
                         .withSubject("Verification Code")
                         .withBody(code)
-                        .withSendingMessage("Sending OTP")
                         .send();
             }
         });

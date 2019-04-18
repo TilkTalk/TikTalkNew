@@ -2,6 +2,7 @@ package com.example.tiktalk.UI.Activities.Buyer;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.ParseException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
+import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
@@ -71,6 +75,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private static int RC_SIGN_IN = 123;
     private static String TAG = "BuyerLoginActivity";
+    private AwesomeValidation awesomeValidation;
 
     CardView name_cardview, email_cardview, password_cardview;
     View name_view, email_view, password_view;
@@ -90,7 +95,8 @@ public class BuyerSignupActivity extends AppCompatActivity {
     String type = "Buyer";
     String isOnline = "1";
     String coins = "0";
-    String name,email,password;
+    String notifications = "0";
+    String name, email, password;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +106,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
         dialog = new ProgressDialog(this);
         progressBar = findViewById(R.id.spin_kit);
@@ -231,6 +238,8 @@ public class BuyerSignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(BuyerSignupActivity.this, SellerSignupActivity.class);
                 startActivity(intent);
+                Bungee.slideLeft(BuyerSignupActivity.this);
+                finish();
             }
         });
 
@@ -247,12 +256,12 @@ public class BuyerSignupActivity extends AppCompatActivity {
 
     private void signUp() {
 
-            Intent intent = new Intent(this, UploadPhotoActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("email", email);
-            intent.putExtra("password", password);
-            startActivity(intent);
-            finish();
+        Intent intent = new Intent(this, UploadPhotoActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("email", email);
+        intent.putExtra("password", password);
+        startActivity(intent);
+        finish();
     }
 
     public static boolean isEmailValid(String email) {
@@ -319,6 +328,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
                                     users.put("Type", type);
                                     users.put("isOnline", isOnline);
                                     users.put("coins", coins);
+                                    users.put("notifications", notifications);
 
                                     firestore.collection("users")
                                             .document(userDetails.getUid())
@@ -327,7 +337,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), BuyerSignupActivity.this);
+                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), users.get("notifications"), BuyerSignupActivity.this);
                                                     MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                     dialog.dismiss();
@@ -385,6 +395,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
                                 users.put("Type", type);
                                 users.put("isOnline", isOnline);
                                 users.put("coins", coins);
+                                users.put("notifications", notifications);
 
                                 firestore.collection("users")
                                         .document(userDetails.getUid())
@@ -393,7 +404,7 @@ public class BuyerSignupActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), BuyerSignupActivity.this);
+                                                PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), users.get("notifications"), BuyerSignupActivity.this);
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerSignupActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();
@@ -422,30 +433,36 @@ public class BuyerSignupActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void validate(){
+    public void validate() {
 
         name = nameEditTxt.getText().toString();
         email = emailEditTxt.getText().toString();
         password = passwordEditTxt.getText().toString();
 
-        name= name.trim();
-        email= email.trim();
-        password= password.trim();
+        name = name.trim();
+        email = email.trim();
+        password = password.trim();
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(emailEditTxt.getText().toString()).matches()) {
-            emailEditTxt.setError("Please enter a Valid E-Mail Address!");
-        }
-        if (password.length()<6){
-            passwordEditTxt.setError("Password Must Have 6 Characters");
-        }
-        else if (TextUtils.isEmpty(name)){
-            nameEditTxt.setError("required");
-        }else if(TextUtils.isEmpty(email)) {
-            emailEditTxt.setError("required");
-        }else if (TextUtils.isEmpty(password)) {
-            passwordEditTxt.setError("required");
-        } else
+        awesomeValidation.addValidation(this, R.id.signup_name_seller, "[a-zA-Z\\s]+", R.string.nameerror);
+        awesomeValidation.addValidation(this, R.id.signup_email_seller, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        awesomeValidation.addValidation(this, R.id.signup_password_seller, new SimpleCustomValidation() {
+
+            @Override
+            public boolean compare(String s) {
+                try {
+                    if (s.length() >= 6) {
+                        return true;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        }, R.string.passworderror);
+
+        if (awesomeValidation.validate()) {
             signUp();
         }
     }
+}
 

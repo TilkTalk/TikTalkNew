@@ -12,42 +12,84 @@ import com.choota.dev.ctimeago.TimeAgo;
 import com.example.tiktalk.Model.SellerRating;
 import com.example.tiktalk.R;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
-import com.google.firebase.Timestamp;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SellerRatingAdapter extends RecyclerView.Adapter<SellerRatingAdapter.ViewHolder> {
+public class SellerRatingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<SellerRating> sellerRatingListItems;
+    private ArrayList<String> firstListItems;
+    private ArrayList<String> secondListItems;
     private Context context;
     TimeAgo timeAgo = new TimeAgo();
+    private static final int LAYOUT_ONE= 0;
+    private static final int LAYOUT_TWO= 1;
+    private static final int LAYOUT_THREE= 2;
+    int newPosition = 0;
 
     public SellerRatingAdapter(ArrayList<SellerRating> sellerRatingListItems, Context context) {
+        this.firstListItems = firstListItems;
         this.sellerRatingListItems = sellerRatingListItems;
         this.context = context;
     }
 
     @Override
-    public SellerRatingAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position)
+    {
+        if(position==0){
+            return LAYOUT_ONE;
+        }
+        else {
+            return LAYOUT_TWO;
+        }
+    }
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.seller_rating_item, parent, false);
 
-        return new ViewHolder(v);
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        View view =null;
+        RecyclerView.ViewHolder viewHolder = null;
+
+        if(viewType==LAYOUT_ONE)
+        {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.coinspermin_layout_item,parent,false);
+            viewHolder = new ViewHolderOne(view);
+        }
+
+        if(viewType==LAYOUT_TWO)
+        {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.seller_rating_item,parent,false);
+            viewHolder = new ViewHolderTwo(view);
+//            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.seller_rating_item, parent, false);
+        }
+
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
-        Glide.with(context).load(sellerRatingListItems.get(position).getUserImage()).into(holder.image);
-        holder.name.setText(sellerRatingListItems.get(position).getUserName());
-        holder.rating.setText(sellerRatingListItems.get(position).getValue());
-        holder.feedback.setText(sellerRatingListItems.get(position).getFeedback());
-        holder.date.setReferenceTime(sellerRatingListItems.get(position).getUpdateDate().getTime());
-        holder.ratingBar.setRating(Float.parseFloat(sellerRatingListItems.get(position).getValue()));
+        if(holder.getItemViewType()== LAYOUT_ONE)
+        {
+            ViewHolderOne holderOne = (ViewHolderOne) holder;
+            holderOne.profileCoinsPerMin.setText(sellerRatingListItems.get(position).getCoin() + " coins per minute");
+            holderOne.seller_profile_about.setText(sellerRatingListItems.get(position).getAbout());
+        }
+
+        if(holder.getItemViewType()== LAYOUT_TWO)
+        {
+            ViewHolderTwo holderTwo = (ViewHolderTwo) holder;
+            Glide.with(context).load(sellerRatingListItems.get(position-1).getUserImage()).into(holderTwo.image);
+            holderTwo.name.setText(sellerRatingListItems.get(position-1).getUserName());
+            holderTwo.rating.setText(sellerRatingListItems.get(position-1).getValue());
+            holderTwo.feedback.setText(sellerRatingListItems.get(position-1).getFeedback());
+            holderTwo.date.setReferenceTime(sellerRatingListItems.get(position-1).getUpdateDate().getTime());
+            holderTwo.ratingBar.setRating(Float.parseFloat(sellerRatingListItems.get(position-1).getValue()));
+        }
 
     }
 
@@ -56,7 +98,20 @@ public class SellerRatingAdapter extends RecyclerView.Adapter<SellerRatingAdapte
         return sellerRatingListItems.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolderOne extends RecyclerView.ViewHolder {
+
+        public TextView profileCoinsPerMin;
+        public TextView seller_profile_about;
+
+        public ViewHolderOne(View itemView) {
+            super(itemView);
+
+            profileCoinsPerMin = itemView.findViewById(R.id.seller_profile_coinsPerMin);
+            seller_profile_about = itemView.findViewById(R.id.seller_profile_about);
+        }
+    }
+
+    public class ViewHolderTwo extends RecyclerView.ViewHolder {
 
         public CircleImageView image;
         public TextView name;
@@ -65,7 +120,7 @@ public class SellerRatingAdapter extends RecyclerView.Adapter<SellerRatingAdapte
         public RelativeTimeTextView date;
         public SimpleRatingBar ratingBar;
 
-        public ViewHolder(final View itemView) {
+        public ViewHolderTwo(final View itemView) {
             super(itemView);
 
             image = itemView.findViewById(R.id.image);

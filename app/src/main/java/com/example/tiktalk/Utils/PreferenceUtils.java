@@ -21,7 +21,7 @@ public class PreferenceUtils {
     }
 
     //Login
-    public static boolean saveBuyerData(String username, String email, String password, String id, String isActive, String type, String imageUrl, String isOnline, String coins, Context context) {
+    public static boolean saveBuyerData(String username, String email, String password, String id, String isActive, String type, String imageUrl, String isOnline, String coins, String notifications, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString("username", username);
@@ -33,6 +33,7 @@ public class PreferenceUtils {
         prefsEditor.putString("imageUrl", imageUrl);
         prefsEditor.putString("isOnline", isOnline);
         prefsEditor.putString("coins", coins);
+        prefsEditor.putString("notifications", notifications);
         prefsEditor.apply();
         return true;
     }
@@ -69,7 +70,7 @@ public class PreferenceUtils {
         return true;
     }
 
-    public static boolean saveSellerData(String username, String email, String password, String id, String isActive, String type, String imageUrl, String isOnline, String value, String rating, String coins, String about, Context context) {
+    public static boolean saveSellerData(String username, String email, String password, String id, String isActive, String type, String imageUrl, String isOnline, String value, String rating, String coins, String about, String notifications, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.putString("username", username);
@@ -84,6 +85,7 @@ public class PreferenceUtils {
         prefsEditor.putString("rating", rating);
         prefsEditor.putString("coinPerMin", coins);
         prefsEditor.putString("about", about);
+        prefsEditor.putString("notifications", notifications);
         prefsEditor.apply();
         return true;
     }
@@ -189,7 +191,8 @@ public class PreferenceUtils {
                 prefs.getString("id", null),
                 prefs.getString("imageUrl", null),
                 prefs.getString("isOnline", null),
-                prefs.getString("coins", null));
+                prefs.getString("coins", null),
+                prefs.getString("notifications", null));
         buyerArrayList.add(ul);
 
         return buyerArrayList;
@@ -220,6 +223,11 @@ public class PreferenceUtils {
     public static String getSellerImageUrl(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString("SellerImage", null);
+    }
+
+    public static String getNotifications(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString("notifications", null);
     }
 
     public static String getRatePerMin(Context context) {

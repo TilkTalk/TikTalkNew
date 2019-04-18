@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -88,7 +89,8 @@ public class BuyerLoginActivity extends AppCompatActivity {
     Button loginBtn;
     TextView partnerLoginBtn;
     TextView forgotPasswordBtn;
-    RelativeLayout email_layout, password_layout;
+    RelativeLayout email_layout;
+    LinearLayout password_layout;
 
     FirebaseFirestore firestore;
     FirebaseAuth auth;
@@ -101,6 +103,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
     String type = "Buyer";
     String isOnline = "1";
     String coins = "0";
+    String notifications = "0";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -200,7 +203,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                if (emailEditText.getText().toString().contains(".com")) {
+                if (Patterns.EMAIL_ADDRESS.matcher(emailEditText.getText().toString()).matches()) {
                     check.setVisibility(View.VISIBLE);
                 } else
                     check.setVisibility(View.GONE);
@@ -236,6 +239,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(BuyerLoginActivity.this, ResetPasswordActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -266,6 +270,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                 users.put("Type", type);
                                 users.put("isOnline", isOnline);
                                 users.put("coins", coins);
+                                users.put("notifications", notifications);
 
                                 firestore.collection("users")
                                         .document(userDetails.getUid())
@@ -274,7 +279,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
 
-                                                PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), BuyerLoginActivity.this);
+                                                PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), users.get("notifications"), BuyerLoginActivity.this);
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                 dialog.dismiss();
@@ -325,8 +330,9 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                                         user.imageUrl = dc.getString("imageUrl");
                                                         user.isOnline = dc.getString("isOnline");
                                                         user.coins = dc.getString("coins");
+                                                        user.notifications = dc.getString("notifications");
 
-                                                        PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
+                                                        PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, user.notifications, BuyerLoginActivity.this);
                                                         MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                         dialog.dismiss();
@@ -415,6 +421,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                     users.put("Type", type);
                                     users.put("isOnline", isOnline);
                                     users.put("coins", coins);
+                                    users.put("notifications", notifications);
 
                                     firestore.collection("users")
                                             .document(userDetails.getUid())
@@ -423,7 +430,7 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
 
-                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), BuyerLoginActivity.this);
+                                                    PreferenceUtils.saveBuyerData(users.get("username"), users.get("email"), users.get("password"), users.get("id"), users.get("IsActive"), users.get("Type"), users.get("imageUrl"), users.get("isOnline"), users.get("coins"), users.get("notifications"), BuyerLoginActivity.this);
                                                     MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                     dialog.dismiss();
@@ -468,8 +475,9 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                                             user.imageUrl = dc.getString("imageUrl");
                                                             user.isOnline = dc.getString("isOnline");
                                                             user.coins = dc.getString("coins");
+                                                            user.notifications = dc.getString("notifications");
 
-                                                            PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
+                                                            PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, user.notifications, BuyerLoginActivity.this);
                                                             MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), userDetails.getUid());
 
                                                             dialog.dismiss();
@@ -562,15 +570,15 @@ public class BuyerLoginActivity extends AppCompatActivity {
                                                 user.imageUrl = dc.getString("imageUrl");
                                                 user.isOnline = dc.getString("isOnline");
                                                 user.coins = dc.getString("coins");
+                                                user.notifications = dc.getString("notifications");
 
-                                                PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, BuyerLoginActivity.this);
-
+                                                PreferenceUtils.saveBuyerData(user.username, user.email, user.password, user.id, user.IsActive, user.Type, user.imageUrl, user.isOnline, user.coins, user.notifications, BuyerLoginActivity.this);
                                                 MyFirebaseInstanceIDService.sendRegistrationToServer(BuyerLoginActivity.this.getClass().getSimpleName(), FirebaseInstanceId.getInstance().getToken(), currentUser);
 
                                                 dialog.dismiss();
                                                 Intent intent = new Intent(BuyerLoginActivity.this, BuyerHomeActivity.class);
                                                 startActivity(intent);
-                                                Bungee.slideRight(BuyerLoginActivity.this);
+                                                Bungee.slideLeft(BuyerLoginActivity.this);
                                                 finish();
                                             }
                                         }

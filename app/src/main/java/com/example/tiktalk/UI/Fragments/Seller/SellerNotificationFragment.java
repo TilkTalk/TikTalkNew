@@ -24,10 +24,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.tiktalk.Adapters.Navigations_ItemsAdapter;
 import com.example.tiktalk.Adapters.NotificationsAdapter;
+import com.example.tiktalk.AppServices.MyFirebaseInstanceIDService;
 import com.example.tiktalk.BaseClasses.BaseActivity;
 import com.example.tiktalk.BaseClasses.BaseFragment;
 import com.example.tiktalk.Model.Notifications;
 import com.example.tiktalk.R;
+import com.example.tiktalk.SendBird.SendbirdChatActivity;
 import com.example.tiktalk.UI.Activities.Buyer.BuyerChatActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerHomeActivity;
 import com.example.tiktalk.UI.Activities.Seller.SellerLoginActivity;
@@ -42,6 +44,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,9 +53,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.sendbird.android.GroupChannel;
+import com.sendbird.android.GroupChannelParams;
+import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+
+import spencerstudios.com.bungeelib.Bungee;
 
 public class SellerNotificationFragment extends BaseActivity implements NotificationsAdapter.OnClickListener {
 
@@ -68,6 +81,7 @@ public class SellerNotificationFragment extends BaseActivity implements Notifica
     ImageButton menu_btn;
     ImageButton cancel_btn, settings_btn;
     String myId, type;
+    int notificationCount = 0;
 
     public String[] menuName = {"Dashboard", "Inbox", "My Profile", "Notifications", "Contact", "Logout"};
     public int[] menuicons = {R.drawable.dashboard, R.drawable.inbox, R.drawable.my_profile, R.drawable.notification, R.drawable.contact, R.drawable.logout};
@@ -162,20 +176,24 @@ public class SellerNotificationFragment extends BaseActivity implements Notifica
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 switch (i) {
-                    case 1:{
+                    case 1: {
                         Intent in = new Intent(SellerNotificationFragment.this, SellerHomeActivity.class);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerNotificationFragment.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 2:{
+                    case 2: {
                         Intent intent1 = new Intent(SellerNotificationFragment.this, SellerInboxFragment.class);
                         intent1.putExtra("type", "seller");
                         startActivity(intent1);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerNotificationFragment.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 3:{
+                    case 3: {
                         Intent in = new Intent(SellerNotificationFragment.this, SellerMyProfileActivity.class);
                         in.putExtra("myId", id);
                         in.putExtra("myName", username);
@@ -185,24 +203,32 @@ public class SellerNotificationFragment extends BaseActivity implements Notifica
                         in.putExtra("$PerMin", rateperMin);
                         in.putExtra("about", about);
                         startActivity(in);
-                        drawer_layout.closeDrawer(mDrawerList);
+                        Bungee.zoom(SellerNotificationFragment.this);
+                        finish();
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 4:{
+                    case 4: {
                         Intent in = new Intent(SellerNotificationFragment.this, SellerNotificationFragment.class);
                         startActivity(in);
+                        Bungee.zoom(SellerNotificationFragment.this);
                         finish();
-                        drawer_layout.closeDrawer(mDrawerList);
+                        //drawer_layout.closeDrawer(mDrawerList);
                         break;
                     }
-                    case 5:{
+                    case 5: {
                         break;
                     }
-                    case 6:{
+                    case 6: {
+
+                        dialog.setMessage("Please wait...");
+                        dialog.show();
+
                         myId = PreferenceUtils.getId(SellerNotificationFragment.this);
 
                         HashMap<String, Object> map = new HashMap<String, Object>();
                         map.put("isOnline", "0");
+                        map.put("notifications", "0");
 
                         firestore.collection("users")
                                 .document(myId)
@@ -211,26 +237,42 @@ public class SellerNotificationFragment extends BaseActivity implements Notifica
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+
+                                            MyFirebaseInstanceIDService.deleteRegistrationFromServer(SellerNotificationFragment.this.getClass().getSimpleName(), myId);
                                             PreferenceUtils.clearMemory(getApplicationContext());
-                                            //disconnect();
+                                            disconnect();
                                             FirebaseAuth.getInstance().signOut();
                                             mGoogleSignInClient.signOut();
                                             LoginManager.getInstance().logOut();
 
+                                            dialog.dismiss();
                                             Intent intent = new Intent(SellerNotificationFragment.this, SellerLoginActivity.class);
                                             startActivity(intent);
                                             finish();
                                         } else {
-                                            Toast.makeText(SellerNotificationFragment.this, "Unable to logout!", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(SellerNotificationFragment.this, "Something went wrong. Try again later!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
-
                         break;
                     }
                 }
             }
         });
+
+        firestore.collection("notifications")
+                .whereEqualTo("receiver", PreferenceUtils.getId(this))
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot dc : task.getResult()) {
+                                notificationCount++;
+                            }
+                        }
+                    }
+                });
 
     }
 
@@ -253,15 +295,35 @@ public class SellerNotificationFragment extends BaseActivity implements Notifica
                     @Override
                     public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
 
-                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
-                            final DocumentSnapshot documentSnapshot = dc.getDocument();
+                        notificationArrayList.clear();
+                        for (DocumentSnapshot dc : queryDocumentSnapshots.getDocuments()) {
 
-                            Notifications notify = new Notifications(documentSnapshot.getString("sender"),
-                                    documentSnapshot.getString("receiver"),
-                                    documentSnapshot.getString("name"),
-                                    documentSnapshot.getString("message"),
-                                    documentSnapshot.getString("image"));
-                            notificationArrayList.add(notify);
+                            Notifications notify = new Notifications(dc.getString("sender"),
+                                    dc.getString("receiver"),
+                                    dc.getString("name"),
+                                    dc.getString("message"),
+                                    dc.getString("image"),
+                                    dc.getString("status"));
+
+                            if (dc.get("messageTime") != null) {
+
+                                long seconds = ((Timestamp) (Object) dc.get("messageTime")).getSeconds();
+                                long milliSeconds = seconds * 1000;
+                                notify.messageTime = new Date(milliSeconds);
+                                notificationArrayList.add(notify);
+                            }
+                        }
+
+                        if (notificationArrayList != null) {
+
+                            Comparator<Notifications> c = new Comparator<Notifications>() {
+
+                                @Override
+                                public int compare(Notifications a, Notifications b) {
+                                    return Long.compare(b.getCallTime().getTime(), a.getCallTime().getTime());
+                                }
+                            };
+                            Collections.sort(notificationArrayList, c);
                         }
 
                         adapter = new NotificationsAdapter(notificationArrayList, SellerNotificationFragment.this);
@@ -273,7 +335,68 @@ public class SellerNotificationFragment extends BaseActivity implements Notifica
     }
 
     @Override
-    public void onClick(int position) {
+    public void onClick(final int position) {
 
+        dialog.setMessage("Please wait...");
+        dialog.show();
+
+        GroupChannel.GroupChannelCreateHandler groupChannelCreateHandler = new GroupChannel.GroupChannelCreateHandler() {
+            @Override
+            public void onResult(GroupChannel groupChannel, SendBirdException e) {
+                if (e != null) {    // Error.
+                } else {
+                    final Intent chatIntent = new Intent(SellerNotificationFragment.this, SendbirdChatActivity.class);
+                    chatIntent.putExtra("title", groupChannel.getName());
+                    chatIntent.putExtra("channelUrl", groupChannel.getUrl());
+                    chatIntent.putExtra("cover", groupChannel.getCoverUrl());
+                    chatIntent.putExtra("members", notificationArrayList.get(position).sender);
+                    chatIntent.putExtra("type", "seller");
+
+                    dialog.dismiss();
+                    startActivity(chatIntent);
+                    finish();
+                }
+            }
+        };
+        List<String> users = new ArrayList<>();
+        users.add(notificationArrayList.get(position).sender);
+
+        GroupChannelParams params = new GroupChannelParams()
+                .setPublic(false)
+                .setEphemeral(false)
+                .setDistinct(true)//If true same users can not create new channel
+                .addUserIds(users)
+                .setName(notificationArrayList.get(position).name)
+                .setCoverUrl(notificationArrayList.get(position).image);
+        GroupChannel.createChannel(params, groupChannelCreateHandler);
+    }
+
+    private void disconnect() {
+        SendBird.unregisterPushTokenAllForCurrentUser(new SendBird.UnregisterPushTokenHandler() {
+            @Override
+            public void onUnregistered(SendBirdException e) {
+                if (e != null) {
+                    // Error!
+                    e.printStackTrace();
+                    return;
+                }
+                SendBird.disconnect(new SendBird.DisconnectHandler() {
+                    @Override
+                    public void onDisconnected() {
+//                        Intent intent = new Intent(getApplicationContext(), User_Selection_Screen.class);
+//                        startActivity(intent);
+//                        finish();
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent in = new Intent(SellerNotificationFragment.this, SellerHomeActivity.class);
+        startActivity(in);
+        Bungee.zoom(SellerNotificationFragment.this);
+        finish();
     }
 }
